@@ -530,7 +530,7 @@ MazeExitTrigger
 - Utility AI 在攻击、追击、调查、搜索和巡逻之间的评分边界；
 - 十关 `DungeonCondition` 和局部雾区配置。
 
-### v1.4 PlayMode `44/44`
+### v1.4 PlayMode `46/46`
 
 适合验证需要场景和组件生命周期的行为：
 
@@ -546,6 +546,8 @@ MazeExitTrigger
 - 固定地下城状态和局部雾区回归。
 - 左半屏浮动摇杆按下、拖动、松手与输入归零；
 - 移动端战斗按钮分区和低分辨率布局边界。
+- 开镜按钮点击切换，松手保持，再次点击关闭；
+- 冲刺按钮点击锁定，以及摇杆上推自动冲刺、松手续跑和再次触摸解除。
 
 自动测试用于防止版本迭代破坏规则，不能代替真实玩家对难度和手感的判断。
 
@@ -627,12 +629,13 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 设计与参考：[`V1_4_STEP_01_ENEMY_STATE_SKELETON.md`](V1_4_STEP_01_ENEMY_STATE_SKELETON.md)
 - 完整开发日志：[`11-v1.4.0-dungeon-ai-and-loadout.md`](devlogs/11-v1.4.0-dungeon-ai-and-loadout.md)
 - 狙击枪与相机补充日志：[`12-v1.4.0-sniper-camera-and-animation.md`](devlogs/12-v1.4.0-sniper-camera-and-animation.md)
+- 移动端开镜与冲刺日志：[`15-v1.4.0-mobile-scope-and-sprint.md`](devlogs/15-v1.4.0-mobile-scope-and-sprint.md)
 - 候选版说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
 
 - EditMode：`21/21 PASS`；
-- PlayMode：`44/44 PASS`；
+- PlayMode：`46/46 PASS`；
 - Windows Release：构建成功，`0 errors / 0 warnings`；
 - Android Release：构建成功，`0 errors / 0 warnings`；
 - 独立 Player：默认长刀、第三人称狙击枪、配镜、换弹、双手持械和背负武器截图通过检查。
@@ -647,10 +650,20 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 
 完整记录见 [`14-v1.4.0-mobile-hud-layout.md`](devlogs/14-v1.4.0-mobile-hud-layout.md)。
 
+### 移动端开镜与冲刺状态机
+
+上一版仍把桌面端“按住右键开镜、按住 Shift 冲刺”的语义直接映射到了触摸按钮。`MobileActionButton` 在 `OnPointerDown` 中把状态设为 `true`，在 `OnPointerUp` 中立即设回 `false`，因此普通点击冲刺几乎没有可见效果，开镜手指也无法离开按钮去点击射击。
+
+现在 `GameInput` 分开保存三类状态：点击开镜、冲刺按钮锁定、摇杆自动冲刺。开镜按钮每次点击切换状态，换弹、切刀、暂停和离开战斗负责清理；冲刺按钮点击后保持加速，再次点击解除。摇杆向正前方拖过上方冲刺门槛后，松手仍保持向前冲刺；再次触摸左半屏或点击冲刺键即可解除。
+
+这一改造的重点不是模仿某个游戏的外观，而是把桌面端连续按住输入改造成适合双手触屏的离散状态：左手负责移动或自动冲刺，右手可以独立转向、开镜、射击和装弹。按钮高亮负责显示当前锁定状态，关卡准备页负责说明操作，战斗 HUD 不重新堆放大段教学文字。
+
+完整记录见 [`15-v1.4.0-mobile-scope-and-sprint.md`](devlogs/15-v1.4.0-mobile-scope-and-sprint.md)。
+
 ### 尚未完成的发布步骤
 
 - 作者真人完整试玩和难度调平；
-- 最新移动 HUD APK 的真机回归；
+- 最新点击开镜、冲刺锁定和自动冲刺 APK 的真机回归；
 - WebGL 构建；
 - GitHub PR 合并、`v1.4.0` 标签和 Release。
 
