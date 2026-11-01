@@ -7,6 +7,9 @@ namespace FogboundMaze
     [RequireComponent(typeof(CharacterController), typeof(Health))]
     public sealed class EnemyAgent : MonoBehaviour
     {
+        private const float SeparationRadius = 1.2f;
+        private const float SeparationWeight = 2.4f;
+        private static readonly HashSet<EnemyAgent> ActiveAgents = new();
         private CharacterController controller;
         private Health health;
         private PlayerController player;
@@ -49,12 +52,16 @@ namespace FogboundMaze
             health.Died += OnDied;
         }
 
+        private void OnEnable() => ActiveAgents.Add(this);
+        private void OnDisable() => ActiveAgents.Remove(this);
+
         public void Spawn(PlayerController target, MazeWorld mazeWorld, Vector3 position, bool isElite)
         {
             StopAllCoroutines();
             player = target;
             world = mazeWorld;
             elite = isElite;
+            gameObject.name = elite ? "Abyss Brute" : "Goblin";
             speed = elite ? 3.35f : 2.65f;
             damage = elite ? 22f : 13f;
             controller.enabled = false;
@@ -72,8 +79,8 @@ namespace FogboundMaze
             hitFlash = null;
             hadDirectSight = hasPatrolTarget = false;
             random = new System.Random(GetInstanceID() ^ Mathf.RoundToInt(position.x * 31f + position.z * 17f));
-            var normal = transform.Find("Normal Visual");
-            var heavy = transform.Find("Elite Visual");
+            var normal = transform.Find("Goblin Visual");
+            var heavy = transform.Find("Abyss Brute Visual");
             if (normal != null) normal.gameObject.SetActive(!elite);
             if (heavy != null) heavy.gameObject.SetActive(elite);
             animationPlayer = GetComponentInChildren<Animation>();
@@ -98,8 +105,13 @@ namespace FogboundMaze
 
             var distance = Vector3.Distance(transform.position, player.transform.position);
             LastDecision = EnemyDecisionModel.Evaluate(new EnemyDecisionContext(
-                perception.CanSeePlayer, perception.HeardRecently, perception.HasTargetMemory, distance));
+                perception.CanSeePlayer,
+                perception.HeardRecently,
+                perception.HasTargetMemory,
+                distance,
+                State));
             State = LastDecision.State;
+            ApplySeparation();
 
             switch (State)
             {
@@ -134,6 +146,7 @@ namespace FogboundMaze
 
         private void AttackPlayer()
         {
+            FaceToward(player.transform.position);
             if (Time.time < nextAttack) return;
             nextAttack = Time.time + (elite ? .78f : 1.05f);
             Play("Idle_Attack", true);
@@ -190,9 +203,47 @@ namespace FogboundMaze
             }
             var direction = delta.normalized;
             controller.SimpleMove(direction * speed * (running ? 1f : .78f));
-            if (direction.sqrMagnitude > .01f)
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 10f * Time.deltaTime);
+            FaceToward(transform.position + direction);
             Play(running ? "Run" : "Walk");
+        }
+
+        private Vector3 CalculateSeparation()
+        {
+            var steering = Vector3.zero;
+            foreach (var other in ActiveAgents)
+            {
+                if (other == this || !other.IsActive) continue;
+                var offset = transform.position - other.transform.position;
+                offset.y = 0f;
+                var distance = offset.magnitude;
+                if (distance >= SeparationRadius) continue;
+                if (distance < .001f)
+                {
+                    offset = GetInstanceID() < other.GetInstanceID()
+                        ? transform.right : -transform.right;
+                    distance = 1f;
+                }
+                steering += offset / distance * ((SeparationRadius - distance) / SeparationRadius);
+            }
+            return Vector3.ClampMagnitude(steering, 1f);
+        }
+
+        private void ApplySeparation()
+        {
+            var separation = CalculateSeparation();
+            if (separation.sqrMagnitude <= .001f) return;
+            controller.Move(separation * speed * SeparationWeight * Time.deltaTime);
+        }
+
+        private void FaceToward(Vector3 target)
+        {
+            var direction = target - transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude <= .001f) return;
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(direction.normalized),
+                9f * Time.deltaTime);
         }
 
         public void TakeDamage(float amount)

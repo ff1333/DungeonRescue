@@ -290,7 +290,7 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
-        public IEnumerator NearbyZombieCannotDamagePlayerThroughWall()
+        public IEnumerator NearbyMonsterCannotDamagePlayerThroughWall()
         {
             var enemy = Enemy(Vector3.forward * 1.1f);
             var wall = Wall(new Vector3(0,1,.55f),new Vector3(3,3,.2f));

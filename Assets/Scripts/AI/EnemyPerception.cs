@@ -12,6 +12,7 @@ namespace FogboundMaze
         private float lastKnownTime = float.NegativeInfinity;
         private float lastHeardTime = float.NegativeInfinity;
         private NoiseKind lastNoiseKind;
+        private readonly RaycastHit[] sightHits = new RaycastHit[16];
 
         public bool CanSeePlayer { get; private set; }
         public bool HeardRecently => Time.time - lastHeardTime <= HearingDuration;
@@ -65,7 +66,23 @@ namespace FogboundMaze
             var flat = new Vector3(delta.x, 0f, delta.z);
             if (flat.sqrMagnitude > distance * distance || flat.sqrMagnitude < .001f) return false;
             if (Vector3.Angle(transform.forward, flat) > fov * .5f) return false;
-            return !Physics.Linecast(origin, target, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var hitCount = Physics.RaycastNonAlloc(
+                origin,
+                delta.normalized,
+                sightHits,
+                delta.magnitude,
+                Physics.DefaultRaycastLayers,
+                QueryTriggerInteraction.Ignore);
+            for (var i = 0; i < hitCount; i++)
+            {
+                var hitTransform = sightHits[i].transform;
+                if (hitTransform == null || hitTransform == transform || hitTransform.IsChildOf(transform)
+                    || hitTransform == player.transform || hitTransform.IsChildOf(player.transform)
+                    || hitTransform.GetComponentInParent<EnemyAgent>() != null)
+                    continue;
+                return false;
+            }
+            return true;
         }
 
         private void OnEnable() => NoiseSystem.Emitted += OnNoise;

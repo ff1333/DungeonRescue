@@ -12,11 +12,11 @@ namespace FogboundMaze
 
         public static string LevelBrief(int number) => number switch
         {
-            1 => "THE FIRST EXIT\nLearn the corridors. Ordinary zombies follow the maze paths. Reach the exit alive.",
+            1 => "THE FIRST EXIT\nLearn the corridors. Goblins follow the maze paths. Reach the exit alive.",
             2 => "MORE CROSSROADS\nA larger maze and more dead ends. The map remembers where you have walked.",
-            3 => "NOISE DISCIPLINE\nGunfire reaches farther than the blade. Switch weapons to control how many zombies investigate.",
-            4 => "LOCAL FOG\nVisible fog pockets reduce both player awareness and zombie sight. Use the explored map to cross them.",
-            5 => "RED ALERT\nEmergency lighting and elite zombies increase pressure without changing during the short run.",
+            3 => "NOISE DISCIPLINE\nGunfire reaches farther than the blade. Switch weapons to control how many monsters investigate.",
+            4 => "LOCAL FOG\nVisible fog pockets reduce both player awareness and monster sight. Use the explored map to cross them.",
+            5 => "RED ALERT\nEmergency lighting and Abyss Brutes increase pressure without changing during the short run.",
             6 => "BLACKOUT\nMost fixed lights are offline. Use the flashlight, quieter attacks and remembered corridors.",
             7 => "CONTAMINATION\nMiasma drains health outside safe lights. Lamps also stand in side routes and dead ends.",
             8 => "DEEP ZONE\nFog pockets, elites and contamination combine while the environment remains consistently readable.",

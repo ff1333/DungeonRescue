@@ -12,7 +12,7 @@ namespace FogboundMaze
 
         public static void Create(Vector3 position, bool elite, Action onCompleted)
         {
-            var root = new GameObject(elite ? "Elite Spawn Warning" : "Spawn Warning");
+            var root = new GameObject(elite ? "Abyss Brute Spawn Warning" : "Goblin Spawn Warning");
             root.transform.position = position;
             var telegraph = root.AddComponent<SpawnTelegraph>();
             telegraph.completed = onCompleted;

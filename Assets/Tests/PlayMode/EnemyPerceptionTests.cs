@@ -75,6 +75,33 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
+        public IEnumerator AnotherMonsterDoesNotBlockPlayerVision()
+        {
+            var observer = CreateEnemy(origin, forward);
+            var blocker = CreateEnemy(origin + forward.normalized * 2f, forward);
+            blocker.enabled = false;
+            Physics.SyncTransforms();
+
+            yield return null;
+
+            Assert.That(observer.CanSeePlayer, Is.True);
+            Assert.That(observer.State, Is.EqualTo(EnemyState.Chase));
+        }
+
+        [UnityTest]
+        public IEnumerator NearbyMonstersSteerApartInsteadOfStackingAtOnePoint()
+        {
+            var first = CreateEnemy(origin + Vector3.left * .08f, forward);
+            var second = CreateEnemy(origin + Vector3.right * .08f, forward);
+            var initialDistance = Vector3.Distance(first.transform.position, second.transform.position);
+
+            yield return new WaitForSeconds(.55f);
+
+            var separatedDistance = Vector3.Distance(first.transform.position, second.transform.position);
+            Assert.That(separatedDistance, Is.GreaterThan(initialDistance + .2f));
+        }
+
+        [UnityTest]
         public IEnumerator SoundCreatesInvestigationWithoutExactContinuousTracking()
         {
             var enemy = CreateEnemy(origin, -forward);

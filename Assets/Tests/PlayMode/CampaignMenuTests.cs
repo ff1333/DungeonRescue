@@ -200,7 +200,7 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
-        public IEnumerator PooledZombie_ResetsDeathAndSwitchesToEliteModel()
+        public IEnumerator PooledMonster_ResetsDeathAndSwitchesToAbyssBruteModel()
         {
             var game = GameDirector.Instance;
             game.ShowLevelSelection();
@@ -218,8 +218,9 @@ namespace FogboundMaze.Tests
             Assert.That(reused, Is.SameAs(enemy));
             Assert.That(reused.GetComponent<CharacterController>().enabled, Is.True);
             Assert.That(reused.State, Is.EqualTo(EnemyState.Patrol));
-            Assert.That(reused.transform.Find("Elite Visual").gameObject.activeSelf, Is.True);
-            Assert.That(reused.transform.Find("Normal Visual").gameObject.activeSelf, Is.False);
+            Assert.That(reused.name, Is.EqualTo("Abyss Brute"));
+            Assert.That(reused.transform.Find("Abyss Brute Visual").gameObject.activeSelf, Is.True);
+            Assert.That(reused.transform.Find("Goblin Visual").gameObject.activeSelf, Is.False);
             Assert.That(reused.GetComponent<Health>().Current, Is.EqualTo(125f));
         }
     }

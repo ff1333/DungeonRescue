@@ -4,18 +4,25 @@ namespace FogboundMaze
 {
     public readonly struct EnemyDecisionContext
     {
-        public EnemyDecisionContext(bool visible, bool heard, bool hasMemory, float distance)
+        public EnemyDecisionContext(
+            bool visible,
+            bool heard,
+            bool hasMemory,
+            float distance,
+            EnemyState currentState = EnemyState.Patrol)
         {
             Visible = visible;
             Heard = heard;
             HasMemory = hasMemory;
             Distance = distance;
+            CurrentState = currentState;
         }
 
         public bool Visible { get; }
         public bool Heard { get; }
         public bool HasMemory { get; }
         public float Distance { get; }
+        public EnemyState CurrentState { get; }
     }
 
     public readonly struct EnemyDecisionResult
@@ -43,11 +50,12 @@ namespace FogboundMaze
         public static EnemyDecisionResult Evaluate(EnemyDecisionContext context)
         {
             const float patrol = 10f;
+            var attackDistance = context.CurrentState == EnemyState.Attack ? 1.72f : 1.34f;
             var investigate = context.Heard && !context.Visible ? 58f : 0f;
-            var chase = context.Visible && context.Distance > 1.45f
+            var chase = context.Visible && context.Distance > attackDistance
                 ? 78f + Mathf.Clamp(18f - context.Distance, 0f, 18f) : 0f;
             var search = !context.Visible && context.HasMemory && !context.Heard ? 46f : 0f;
-            var attack = context.Visible && context.Distance <= 1.45f ? 100f : 0f;
+            var attack = context.Visible && context.Distance <= attackDistance ? 100f : 0f;
             var state = EnemyState.Patrol;
             var best = patrol;
             if (investigate > best) { best = investigate; state = EnemyState.Investigate; }

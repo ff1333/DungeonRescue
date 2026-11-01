@@ -23,5 +23,20 @@ namespace FogboundMaze.Tests
             Assert.That(result.AttackScore, Is.GreaterThan(result.InvestigateScore));
             Assert.That(result.State, Is.EqualTo(EnemyState.Attack));
         }
+
+        [Test]
+        public void AttackDistanceUsesHysteresisToPreventBoundaryThrashing()
+        {
+            var enterBand = EnemyDecisionModel.Evaluate(
+                new EnemyDecisionContext(true, false, true, 1.5f, EnemyState.Chase));
+            var holdBand = EnemyDecisionModel.Evaluate(
+                new EnemyDecisionContext(true, false, true, 1.5f, EnemyState.Attack));
+            var exitBand = EnemyDecisionModel.Evaluate(
+                new EnemyDecisionContext(true, false, true, 1.8f, EnemyState.Attack));
+
+            Assert.That(enterBand.State, Is.EqualTo(EnemyState.Chase));
+            Assert.That(holdBand.State, Is.EqualTo(EnemyState.Attack));
+            Assert.That(exitBand.State, Is.EqualTo(EnemyState.Chase));
+        }
     }
 }
