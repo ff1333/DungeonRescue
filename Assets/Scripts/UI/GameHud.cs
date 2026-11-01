@@ -536,7 +536,7 @@ namespace FogboundMaze
             AddWeaponPreview(pistol, "SniperRiflePreview");
             AddWeaponPreview(machete, "LongBladePreview");
             var controls = Application.isMobilePlatform
-                ? "LEFT STICK MOVE  |  SWIPE LOOK  |  FIRE ATTACK\nGUN / BLADE SWITCH  |  R MANUAL RELOAD  |  VIEW CAMERA"
+                ? "LEFT STICK MOVE / DRAG UP AUTO-SPRINT  |  SWIPE LOOK\nTAP SCOPE TOGGLE  |  ATTACK FIRE  |  SPRINT LOCK\nGUN / BLADE SWITCH  |  RELOAD  |  VIEW CAMERA"
                 : "WASD MOVE  |  LEFT CLICK ATTACK  |  RIGHT CLICK SCOPE\n1 / 2 OR WHEEL SWITCH  |  R MANUAL RELOAD  |  V CAMERA";
             var help = Label("Controls", selectionPanel.transform, controls, 22, TextAnchor.MiddleCenter);
             SetRect(help.rectTransform, new Vector2(0.04f, 0.10f), new Vector2(0.96f, 0.23f));

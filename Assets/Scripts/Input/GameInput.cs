@@ -9,7 +9,8 @@ namespace FogboundMaze
         private Vector2 mobileLook;
         private bool mobileAttack;
         private bool mobileAim;
-        private bool mobileSprint;
+        private bool mobileSprintButton;
+        private bool mobileAutoSprint;
         private bool mobileReload;
         private bool mobileGun;
         private bool mobileBlade;
@@ -27,6 +28,9 @@ namespace FogboundMaze
         public bool ToggleViewPressed { get; private set; }
         public bool PausePressed { get; private set; }
         public bool SprintHeld { get; private set; }
+        public bool MobileAimToggled => mobileAim;
+        public bool MobileSprintLocked => mobileSprintButton || mobileAutoSprint;
+        public bool MobileAutoSprint => mobileAutoSprint;
 
         private void Update()
         {
@@ -52,22 +56,54 @@ namespace FogboundMaze
                 || scroll < -0.01f || Consume(ref mobileBlade);
             ToggleViewPressed = (keyboard != null && keyboard.vKey.wasPressedThisFrame) || Consume(ref mobileToggle);
             PausePressed = (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) || Consume(ref mobilePause);
-            SprintHeld = (keyboard != null && keyboard.leftShiftKey.isPressed) || mobileSprint;
+            SprintHeld = (keyboard != null && keyboard.leftShiftKey.isPressed)
+                || mobileSprintButton || mobileAutoSprint;
         }
 
         public void SetMobileMove(Vector2 value) => mobileMove = Vector2.ClampMagnitude(value, 1f);
         public void ResetMobile()
         {
             mobileMove = mobileLook = Vector2.zero;
-            mobileAttack = mobileAim = mobileSprint = mobileReload = mobileGun = mobileBlade = mobileToggle = mobilePause = false;
+            mobileAttack = mobileAim = mobileSprintButton = mobileAutoSprint = mobileReload =
+                mobileGun = mobileBlade = mobileToggle = mobilePause = false;
         }
         public void AddMobileLook(Vector2 value) => mobileLook += value;
         public void SetMobileAttack(bool value) => mobileAttack = value;
         public void SetMobileAim(bool value) => mobileAim = value;
-        public void SetMobileSprint(bool value) => mobileSprint = value;
-        public void PressMobileReload() => mobileReload = true;
+        public void ToggleMobileAim() => mobileAim = !mobileAim;
+        public void SetMobileSprint(bool value) => mobileSprintButton = value;
+        public void ToggleMobileSprint()
+        {
+            if (mobileAutoSprint)
+            {
+                mobileAutoSprint = false;
+                mobileMove = Vector2.zero;
+                return;
+            }
+            mobileSprintButton = !mobileSprintButton;
+        }
+        public void BeginMobileMove()
+        {
+            if (!mobileAutoSprint) return;
+            mobileAutoSprint = false;
+            mobileMove = Vector2.zero;
+        }
+        public void SetMobileAutoSprint(bool value)
+        {
+            mobileAutoSprint = value;
+            if (value) mobileSprintButton = false;
+        }
+        public void PressMobileReload()
+        {
+            mobileAim = false;
+            mobileReload = true;
+        }
         public void PressMobileGun() => mobileGun = true;
-        public void PressMobileBlade() => mobileBlade = true;
+        public void PressMobileBlade()
+        {
+            mobileAim = false;
+            mobileBlade = true;
+        }
         public void PressMobileToggle() => mobileToggle = true;
         public void PressMobilePause() => mobilePause = true;
 

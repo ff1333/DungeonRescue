@@ -74,7 +74,13 @@ namespace FogboundMaze
             }
 
             if (input.SelectGunPressed) Weapon.Equip(WeaponType.SniperRifle);
-            if (input.SelectBladePressed) Weapon.Equip(WeaponType.LongBlade);
+            if (input.SelectBladePressed)
+            {
+                input.SetMobileAim(false);
+                Weapon.Equip(WeaponType.LongBlade);
+            }
+            if (Weapon.Type != WeaponType.SniperRifle && input.MobileAimToggled)
+                input.SetMobileAim(false);
             Weapon.Tick(input.AttackHeld, input.AttackPressed, input.ReloadPressed, input.AimHeld);
         }
     }
