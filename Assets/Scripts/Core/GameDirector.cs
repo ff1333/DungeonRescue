@@ -143,7 +143,7 @@ namespace FogboundMaze
         {
             if (Phase != GamePhase.Staging || !LoadoutConfirmed) return;
             Phase = GamePhase.Playing;
-            nextSpawn = Time.time + 1.2f;
+            nextSpawn = Time.time + .8f;
             Hud.SetPhase(Phase, currentLevel);
             Hud.HideEntryPrompt();
         }

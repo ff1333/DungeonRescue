@@ -9,6 +9,7 @@ namespace FogboundMaze
     {
         private const float SeparationRadius = 1.2f;
         private const float SeparationWeight = 2.4f;
+        private const float DirectPursuitDistance = 4.5f;
         private static readonly HashSet<EnemyAgent> ActiveAgents = new();
         private CharacterController controller;
         private Health health;
@@ -181,6 +182,16 @@ namespace FogboundMaze
 
         private void MoveToward(Vector3 destination, bool running)
         {
+            var directDelta = destination - transform.position;
+            directDelta.y = 0f;
+            if (running && perception.CanSeePlayer
+                && directDelta.sqrMagnitude <= DirectPursuitDistance * DirectPursuitDistance)
+            {
+                MoveInDirection(directDelta, speed);
+                Play("Run");
+                return;
+            }
+
             if (Time.time >= nextPathTime)
             {
                 nextPathTime = Time.time + (elite ? .38f : .58f);
@@ -201,10 +212,16 @@ namespace FogboundMaze
                 waypoint++;
                 return;
             }
-            var direction = delta.normalized;
-            controller.SimpleMove(direction * speed * (running ? 1f : .78f));
-            FaceToward(transform.position + direction);
+            MoveInDirection(delta, speed * (running ? 1f : .78f));
             Play(running ? "Run" : "Walk");
+        }
+
+        private void MoveInDirection(Vector3 delta, float movementSpeed)
+        {
+            if (delta.sqrMagnitude <= .001f) return;
+            var direction = delta.normalized;
+            controller.SimpleMove(direction * movementSpeed);
+            FaceToward(transform.position + direction);
         }
 
         private Vector3 CalculateSeparation()

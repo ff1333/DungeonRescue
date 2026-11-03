@@ -44,6 +44,8 @@ namespace FogboundMaze.Tests
             var controller = root.AddComponent<CharacterController>();
             controller.height = 1.9f;
             controller.center = Vector3.up * .95f;
+            controller.radius = .32f;
+            controller.minMoveDistance = 0f;
             root.AddComponent<Health>();
             var enemy = root.AddComponent<EnemyAgent>();
             enemy.Spawn(game.Player, game.World, position, false);
@@ -86,6 +88,44 @@ namespace FogboundMaze.Tests
 
             Assert.That(observer.CanSeePlayer, Is.True);
             Assert.That(observer.State, Is.EqualTo(EnemyState.Chase));
+        }
+
+        [UnityTest]
+        public IEnumerator ClosePlayerRemainsDetectedOutsideTheForwardViewCone()
+        {
+            game.Player.Teleport(origin + forward.normalized * 1.15f + Vector3.up * .1f);
+            var enemy = CreateEnemy(origin, -forward);
+            Physics.SyncTransforms();
+
+            yield return null;
+
+            Assert.That(enemy.CanSeePlayer, Is.True);
+            Assert.That(enemy.State, Is.EqualTo(EnemyState.Attack));
+        }
+
+        [UnityTest]
+        public IEnumerator MonsterRunsToStationaryPlayerAndAttacksInsteadOfReturningToPatrol()
+        {
+            var arena = new Vector3(1000f, 0f, 1000f);
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            created.Add(floor);
+            floor.transform.position = arena + Vector3.down * .15f;
+            floor.transform.localScale = new Vector3(12f, .3f, 12f);
+            game.Player.Teleport(arena + Vector3.forward * 4f + Vector3.up * .1f);
+            var enemy = CreateEnemy(arena, Vector3.forward);
+            Physics.SyncTransforms();
+            var initialHealth = game.Player.Health.Current;
+            var initialFrame = Time.frameCount;
+
+            yield return new WaitForSeconds(2.2f);
+
+            var distance = Vector3.Distance(enemy.transform.position, game.Player.transform.position);
+            Assert.That(enemy.State, Is.EqualTo(EnemyState.Attack),
+                $"distance={distance:F3}, visible={enemy.CanSeePlayer}, memory={enemy.HasTargetMemory}, " +
+                $"enemy={enemy.transform.position}, player={game.Player.transform.position}, " +
+                $"phase={game.Phase}, enemyEnabled={enemy.enabled}, controllerEnabled={enemy.GetComponent<CharacterController>().enabled}, " +
+                $"frames={Time.frameCount - initialFrame}, timeScale={Time.timeScale:F2}");
+            Assert.That(game.Player.Health.Current, Is.LessThan(initialHealth));
         }
 
         [UnityTest]

@@ -6,6 +6,7 @@ namespace FogboundMaze
     {
         private const float MemoryDuration = 6f;
         private const float HearingDuration = 3.5f;
+        private const float CloseAwarenessDistance = 2.4f;
         private PlayerController player;
         private float viewDistance;
         private float fieldOfView;
@@ -65,7 +66,9 @@ namespace FogboundMaze
             var delta = target - origin;
             var flat = new Vector3(delta.x, 0f, delta.z);
             if (flat.sqrMagnitude > distance * distance || flat.sqrMagnitude < .001f) return false;
-            if (Vector3.Angle(transform.forward, flat) > fov * .5f) return false;
+            if (flat.sqrMagnitude > CloseAwarenessDistance * CloseAwarenessDistance
+                && Vector3.Angle(transform.forward, flat) > fov * .5f)
+                return false;
             var hitCount = Physics.RaycastNonAlloc(
                 origin,
                 delta.normalized,
