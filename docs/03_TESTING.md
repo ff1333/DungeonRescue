@@ -1,6 +1,6 @@
 # 测试说明
 
-当前 v1.4.0 候选版：EditMode **22/22**、PlayMode **48/48 PASS**。除默认长刀、栓动狙击枪、手动换弹、配镜减速、双手持械和贴墙相机外，新增测试还覆盖左半屏浮动摇杆、点击开镜、冲刺锁定、攻击距离迟滞、同伴视线忽略和近距离怪物分离；Windows/Android Release 均为 0 errors / 0 warnings。证据见 [v1.4.0 验证索引](test-results/v1.4.0/README.md)。
+当前 v1.4.0 候选版：EditMode **22/22**、PlayMode **50/50 PASS**。除默认长刀、栓动狙击枪、手动换弹、配镜减速、双手持械和贴墙相机外，新增测试还覆盖左半屏浮动摇杆、点击开镜、冲刺锁定、攻击距离迟滞、同伴视线忽略、近距离怪物分离、近身全向感知和静止玩家追击攻击；Windows/Android Release 均为 0 errors / 0 warnings。证据见 [v1.4.0 验证索引](test-results/v1.4.0/README.md)。
 
 当前 v1.2.2：EditMode **15/15**、PlayMode **34/34 PASS**。证据与平台状态见 [本轮验证索引](test-results/v1.2.2/README.md)。
 新增全图避难灯分布/瘴气暴露检查，以及装弹完成、暂停、中断回归。几何采样不等于完整战斗平衡验收。

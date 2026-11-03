@@ -78,11 +78,11 @@
 ## 当前验证结果
 
 - v1.4.0 EditMode：`22/22 PASS`
-- v1.4.0 PlayMode：`48/48 PASS`
+- v1.4.0 PlayMode：`50/50 PASS`
 - v1.4.0 Windows Release：构建成功，0 errors，0 warnings
-- v1.4.0 Android Release：构建成功，0 errors，0 warnings；最新怪物稳定性 APK 待覆盖安装回归
+- v1.4.0 Android Release：构建成功，0 errors，0 warnings；最新近距离攻击与刷怪增压 APK 待覆盖安装回归
 - Windows 独立 Player：默认长刀、双手持械与背负武器、配镜画面、拉栓/换弹状态和地下环境截图通过检查
-- v1.4.0 旧候选包已完成 Windows/Android 基本试玩；最新怪物群体稳定性、WebGL 和完整难度回归尚未完成，不能视为正式发布完成
+- v1.4.0 旧候选包已完成 Windows/Android 基本试玩；最新近距离攻击、刷怪增压、WebGL 和完整难度回归尚未完成，不能视为正式发布完成
 - WebGL：Edge 中完成设置、图鉴、选关、选武器、移动、攻击、装弹和暂停交互，未捕获游戏异常
 - Android：作者已完成一次 v1.3.0 真实设备基本验收，未发现阻塞发布的问题
 

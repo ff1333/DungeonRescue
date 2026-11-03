@@ -531,7 +531,7 @@ MazeExitTrigger
 - 攻击进入/退出距离迟滞，避免临界距离状态抖动；
 - 十关 `DungeonCondition` 和局部雾区配置。
 
-### v1.4 PlayMode `48/48`
+### v1.4 PlayMode `50/50`
 
 适合验证需要场景和组件生命周期的行为：
 
@@ -549,6 +549,8 @@ MazeExitTrigger
 - 移动端战斗按钮分区和低分辨率布局边界。
 - 其他怪物不会被误判为视线墙体；
 - 两只怪物靠近时会主动拉开间距。
+- 玩家进入 `2.4m` 近身范围后，即使暂时位于怪物背后也不会因视野角丢失；
+- 怪物会从远处追到静止玩家的实际位置，进入攻击并造成伤害，而不是停在路径格中心后退回巡逻。
 - 开镜按钮点击切换，松手保持，再次点击关闭；
 - 冲刺按钮点击锁定，以及摇杆上推自动冲刺、松手续跑和再次触摸解除。
 
@@ -634,12 +636,13 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 狙击枪与相机补充日志：[`12-v1.4.0-sniper-camera-and-animation.md`](devlogs/12-v1.4.0-sniper-camera-and-animation.md)
 - 移动端开镜与冲刺日志：[`15-v1.4.0-mobile-scope-and-sprint.md`](devlogs/15-v1.4.0-mobile-scope-and-sprint.md)
 - 怪物群体稳定性日志：[`16-v1.4.0-monster-crowd-stability.md`](devlogs/16-v1.4.0-monster-crowd-stability.md)
+- 近距离攻击与刷怪增压日志：[`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)
 - 候选版说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
 
 - EditMode：`22/22 PASS`；
-- PlayMode：`48/48 PASS`；
+- PlayMode：`50/50 PASS`；
 - Windows Release：构建成功，`0 errors / 0 warnings`；
 - Android Release：构建成功，`0 errors / 0 warnings`；
 - 独立 Player：默认长刀、第三人称狙击枪、配镜、换弹、双手持械和背负武器截图通过检查。
@@ -672,10 +675,18 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 
 普通怪物命名为“哥布林 / Goblin”，紫色精英命名为“深渊蛮兵 / Abyss Brute”，其他说明统一使用“怪物”。第三方素材包和原始资源路径中的 Zombie 保留，因为它们属于外部资源名称和引用路径。完整记录见 [`16-v1.4.0-monster-crowd-stability.md`](devlogs/16-v1.4.0-monster-crowd-stability.md)。
 
+### 近距离攻击与关卡增压
+
+真机继续暴露出一个比群体抖动更具体的追击边界：A* 路径最后一个执行点是玩家所在格子的中心，不一定是玩家的实际坐标。玩家静止在格子边缘时，怪物可能已经到达格中心，却仍未进入攻击距离；近距离转身或分离又可能让玩家短暂离开前向视野角，决策便退回搜索或巡逻。
+
+现在玩家可见且距离不超过 `4.5m` 时，`EnemyAgent` 直接追向玩家实际位置。玩家进入 `2.4m` 后，`EnemyPerception` 不再使用前向视野角淘汰目标，但仍保留墙体遮挡射线，因此怪物不会在玩家面前停下，也不会隔墙攻击。
+
+关卡压力同步提高：第一关上限为 `6`、生成间隔 `4.2s`，之后逐关递增到第十关上限 `18`、间隔 `1.8s`；首次出生预警提前到 `0.8s`。出生点仍避开起点、终点和玩家 `12m` 范围，保留预警，不通过贴脸生成制造虚假难度。完整记录见 [`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)。
+
 ### 尚未完成的发布步骤
 
 - 作者真人完整试玩和难度调平；
-- 最新点击开镜、冲刺锁定和自动冲刺 APK 的真机回归；
+- 最新近距离攻击、开镜、切换武器和刷怪增压 APK 的真机回归；
 - WebGL 构建；
 - GitHub PR 合并、`v1.4.0` 标签和 Release。
 
