@@ -16,6 +16,8 @@ namespace FogboundMaze
         public const float ScopeSlowDuration = 3f;
         public const float SniperCooldown = 0.85f;
         public const float BoltCycleDuration = 0.85f;
+        public const float FirstPersonRifleScale = 0.78f;
+        public const float FirstPersonBladeScale = 0.68f;
         private PlayerController owner;
         private Camera viewCamera;
         private Transform viewMount;
@@ -80,9 +82,9 @@ namespace FogboundMaze
                 Time.deltaTime * (targetObstruction > obstructionAmount ? 8f : 5f));
             var restPosition = GetViewMountPosition();
             viewMount.localPosition = restPosition + Vector3.Scale(
-                new Vector3(-.08f, -.24f, -.48f), Vector3.one * obstructionAmount);
+                new Vector3(-.10f, -.28f, -.75f), Vector3.one * obstructionAmount);
             viewMount.localRotation = Quaternion.Slerp(Quaternion.identity,
-                Quaternion.Euler(32f, -8f, 18f), obstructionAmount);
+                Quaternion.Euler(38f, -10f, 20f), obstructionAmount);
             recoil = Mathf.MoveTowards(recoil, 0f, Time.deltaTime * 9f);
             if (viewWeapon != null && !swinging && !reloading && !cyclingBolt)
             {
@@ -128,6 +130,9 @@ namespace FogboundMaze
             viewMount.localRotation = Quaternion.identity;
             var prefab = Resources.Load<GameObject>(type == WeaponType.SniperRifle ? "Weapons/SniperRifle" : "Weapons/LongBlade");
             viewWeapon = Instantiate(prefab, viewMount).transform;
+            viewWeapon.localScale = Vector3.one * (type == WeaponType.SniperRifle
+                ? FirstPersonRifleScale
+                : FirstPersonBladeScale);
             muzzleTip = viewWeapon.Find("Muzzle");
             foreach (var child in viewWeapon.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
@@ -380,16 +385,22 @@ namespace FogboundMaze
         private float MeasureWeaponObstruction()
         {
             if (type == WeaponType.None) return 0f;
+            var firstPerson = viewCamera.GetComponent<CameraRig>().UsesFirstPersonView;
             var distance = type == WeaponType.LongBlade ? 1.45f : 1.15f;
-            var origin = owner.transform.position + Vector3.up * 1.22f;
-            var count = Physics.SphereCastNonAlloc(origin, .11f, owner.transform.forward,
+            var origin = firstPerson
+                ? viewCamera.transform.position
+                : owner.transform.position + Vector3.up * 1.22f;
+            var direction = firstPerson ? viewCamera.transform.forward : owner.transform.forward;
+            var count = Physics.SphereCastNonAlloc(origin, .11f, direction,
                 obstructionHits, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
             var nearest = distance;
             var found = false;
             for (var index = 0; index < count; index++)
             {
                 var hit = obstructionHits[index];
-                if (hit.collider == null || hit.collider.GetComponentInParent<EnemyAgent>() != null) continue;
+                if (hit.collider == null
+                    || hit.collider.GetComponentInParent<EnemyAgent>() != null
+                    || hit.collider.GetComponentInParent<PlayerController>() == owner) continue;
                 found = true;
                 nearest = Mathf.Min(nearest, hit.distance);
             }

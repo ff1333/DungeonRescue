@@ -5,6 +5,9 @@ namespace FogboundMaze
 {
     public sealed class PlayerVisual : MonoBehaviour
     {
+        public const float HeldRifleScale = 0.82f;
+        public const float HeldBladeLengthScale = 1.35f;
+        public const float BackWeaponScale = 0.72f;
         private Animation animationPlayer;
         private PlayerController player;
         private GameObject pistol;
@@ -39,7 +42,11 @@ namespace FogboundMaze
             visual.localScale = new Vector3(-1f, 1f, 1f);
             foreach (var child in visual.GetComponentsInChildren<Transform>(true))
             {
-                if (child.name == "Rifle") pistol = child.gameObject;
+                if (child.name == "Rifle")
+                {
+                    pistol = child.gameObject;
+                    child.localScale *= HeldRifleScale;
+                }
                 if (child.name == "Knife")
                 {
                     knife = child.gameObject;
@@ -48,7 +55,7 @@ namespace FogboundMaze
                     var scale = Vector3.one;
                     var axis = size.x > size.y ? 0 : 1;
                     if (size.z > size[axis]) axis = 2;
-                    scale[axis] = 1.8f;
+                    scale[axis] = HeldBladeLengthScale;
                     child.localScale = Vector3.Scale(child.localScale, scale);
                 }
             }
@@ -164,8 +171,8 @@ namespace FogboundMaze
         {
             if (HeldWeapon == null || player.Weapon.Type == WeaponType.None) return;
             var center = transform.position
-                + transform.up * Mathf.Lerp(1.12f, .82f, amount)
-                + transform.forward * Mathf.Lerp(.42f, .10f, amount);
+                + transform.up * Mathf.Lerp(1.12f, 1.05f, amount)
+                + transform.forward * Mathf.Lerp(.42f, .18f, amount);
             var leftTarget = center - transform.right * .13f;
             var rightTarget = center + transform.right * .13f;
             for (var iteration = 0; iteration < 2; iteration++)
@@ -197,7 +204,7 @@ namespace FogboundMaze
             weapon.name = "Back " + prefab.name;
             weapon.transform.localPosition = position;
             weapon.transform.localRotation = rotation;
-            weapon.transform.localScale = Vector3.one * 0.9f;
+            weapon.transform.localScale = Vector3.one * BackWeaponScale;
             foreach (var child in weapon.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             return weapon;

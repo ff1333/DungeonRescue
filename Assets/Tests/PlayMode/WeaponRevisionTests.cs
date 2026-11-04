@@ -296,6 +296,35 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
+        public IEnumerator FirstPersonObstructionUsesCameraDirectionAndIgnoresMonsters()
+        {
+            var gun = game.Player.Weapon;
+            gun.Equip(WeaponType.SniperRifle);
+            game.CameraRig.TickLook(Vector2.zero, true);
+            game.CameraRig.transform.SetPositionAndRotation(arena + Vector3.up * 1.35f,
+                Quaternion.Euler(0f, 90f, 0f));
+            var mount = game.CameraRig.transform.Find("First Person Weapon Mount");
+            var restPosition = mount.localPosition;
+            var wall = Wall(new Vector3(.72f, 1.35f, 0f), new Vector3(.18f, 2.8f, 2.5f));
+
+            yield return new WaitForSeconds(.2f);
+
+            Assert.That(Vector3.Distance(game.Player.transform.forward, Vector3.forward), Is.LessThan(.001f));
+            Assert.That(gun.ObstructionAmount, Is.GreaterThan(.45f));
+            Assert.That(mount.localPosition.z, Is.LessThan(restPosition.z - .35f));
+            Assert.That(mount.GetChild(0).localScale.x, Is.EqualTo(WeaponController.FirstPersonRifleScale).Within(.001f));
+
+            Object.Destroy(wall);
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(.35f);
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
+
+            Enemy(Vector3.right * .72f);
+            yield return new WaitForSeconds(.2f);
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
+        }
+
+        [UnityTest]
         public IEnumerator MuzzleBehindCoverCannotExploitClearCameraRay()
         {
             var enemy = Enemy(Vector3.forward * 8f);
