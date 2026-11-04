@@ -6,10 +6,18 @@ namespace FogboundMaze
 {
     public sealed class WeaponController : MonoBehaviour
     {
-        public const float GunRange = 32f;
+        public const float GunRange = 80f;
         public const float BladeRange = 3.4f;
-        public const float GunDamage = 22f;
+        public const float GunDamage = 100f;
         public const float BladeDamage = 70f;
+        public const int GunMagazineSize = 5;
+        public const int StartingReserveAmmunition = 20;
+        public const float ReloadDuration = 2.2f;
+        public const float ScopeSlowDuration = 3f;
+        public const float SniperCooldown = 0.85f;
+        public const float BoltCycleDuration = 0.85f;
+        public const float FirstPersonRifleScale = 0.78f;
+        public const float FirstPersonBladeScale = 0.68f;
         private PlayerController owner;
         private Camera viewCamera;
         private Transform viewMount;
@@ -19,20 +27,38 @@ namespace FogboundMaze
         private float nextAttack;
         private float recoil;
         private int ammunition;
+        private int reserveAmmunition;
         private bool reloading;
         private bool swinging;
+        private bool aiming;
+        private bool cyclingBolt;
+        private float aimSlowUntil;
+        private float boltProgress;
         private float reloadProgress;
         private float reloadReadyUntil;
+        private float emptyFeedbackUntil;
+        private float nextDryFire;
         private AudioSource audioSource;
         private readonly HashSet<EnemyAgent> struck = new();
+        private readonly RaycastHit[] obstructionHits = new RaycastHit[8];
+        private float obstructionAmount;
 
         public float ReloadProgress => reloadProgress;
         public WeaponType Type => type;
         public int Ammunition => ammunition;
-        public int MagazineSize => type == WeaponType.SubmachineGun ? 30 : 0;
+        public int MagazineSize => GunMagazineSize;
+        public int ReserveAmmunition => reserveAmmunition;
         public bool IsReloading => reloading;
         public bool ReloadReady => Time.time < reloadReadyUntil;
         public bool IsSwinging => swinging;
+        public bool IsAiming => aiming;
+        public bool IsCyclingBolt => cyclingBolt;
+        public float BoltProgress => boltProgress;
+        public float AimSlowRemaining => aiming ? Mathf.Max(0f, aimSlowUntil - Time.unscaledTime) : 0f;
+        public bool EmptyFeedback => Time.time < emptyFeedbackUntil;
+        public bool HasLoadout => type != WeaponType.None;
+        public float AttackCooldownRemaining => Mathf.Max(0f, nextAttack - Time.time);
+        public float ObstructionAmount => obstructionAmount;
 
         public void Initialize(PlayerController player, Camera camera)
         {
@@ -49,56 +75,109 @@ namespace FogboundMaze
 
         private void LateUpdate()
         {
-            viewMount.gameObject.SetActive(viewCamera.GetComponent<CameraRig>().IsFirstPerson);
+            viewMount.gameObject.SetActive(!owner.Health.IsDead
+                && viewCamera.GetComponent<CameraRig>().UsesFirstPersonView && !aiming);
+            var targetObstruction = owner.Health.IsDead ? 0f : MeasureWeaponObstruction();
+            obstructionAmount = Mathf.MoveTowards(obstructionAmount, targetObstruction,
+                Time.deltaTime * (targetObstruction > obstructionAmount ? 8f : 5f));
+            var restPosition = GetViewMountPosition();
+            viewMount.localPosition = restPosition + Vector3.Scale(
+                new Vector3(-.10f, -.28f, -.75f), Vector3.one * obstructionAmount);
+            viewMount.localRotation = Quaternion.Slerp(Quaternion.identity,
+                Quaternion.Euler(38f, -10f, 20f), obstructionAmount);
             recoil = Mathf.MoveTowards(recoil, 0f, Time.deltaTime * 9f);
-            if (viewWeapon != null && !swinging && !reloading)
+            if (viewWeapon != null && !swinging && !reloading && !cyclingBolt)
             {
                 viewWeapon.localRotation = Quaternion.Euler(-5f * recoil, 0f, 0f);
                 viewWeapon.localPosition = Vector3.back * (.045f * recoil);
             }
         }
 
-        public void Equip(WeaponType weaponType)
+        public void PrepareLoadout()
         {
-            StopAllCoroutines();
-            reloading = swinging = false;
-            reloadProgress = recoil = nextAttack = 0f;
-            reloadReadyUntil = 0f;
-            type = weaponType;
-            ammunition = MagazineSize;
+            CancelTransientAction();
+            ammunition = GunMagazineSize;
+            reserveAmmunition = StartingReserveAmmunition;
+            Equip(WeaponType.LongBlade);
+            owner.GetComponent<PlayerVisual>()?.Equip(type);
+        }
+
+        public void ClearLoadout()
+        {
+            CancelTransientAction();
+            type = WeaponType.None;
+            ammunition = reserveAmmunition = 0;
             foreach (Transform child in viewMount) Destroy(child.gameObject);
             viewWeapon = muzzleTip = null;
             owner.GetComponent<PlayerVisual>()?.Equip(type);
-            if (type == WeaponType.None) return;
-            viewMount.localPosition = type == WeaponType.SubmachineGun
-                ? new Vector3(.32f,-.30f,.65f) : new Vector3(.38f,-.38f,.85f);
-            var prefab = Resources.Load<GameObject>(type == WeaponType.SubmachineGun ? "Weapons/SMG" : "Weapons/LongBlade");
+        }
+
+        public void Equip(WeaponType weaponType)
+        {
+            if (weaponType == WeaponType.None)
+            {
+                ClearLoadout();
+                return;
+            }
+            if (weaponType is not (WeaponType.SniperRifle or WeaponType.LongBlade)) return;
+            if (type == weaponType && viewWeapon != null) return;
+            CancelTransientAction();
+            type = weaponType;
+            foreach (Transform child in viewMount) Destroy(child.gameObject);
+            viewWeapon = muzzleTip = null;
+            owner.GetComponent<PlayerVisual>()?.Equip(type);
+            viewMount.localPosition = GetViewMountPosition();
+            viewMount.localRotation = Quaternion.identity;
+            var prefab = Resources.Load<GameObject>(type == WeaponType.SniperRifle ? "Weapons/SniperRifle" : "Weapons/LongBlade");
             viewWeapon = Instantiate(prefab, viewMount).transform;
+            viewWeapon.localScale = Vector3.one * (type == WeaponType.SniperRifle
+                ? FirstPersonRifleScale
+                : FirstPersonBladeScale);
             muzzleTip = viewWeapon.Find("Muzzle");
             foreach (var child in viewWeapon.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         }
 
-        public void Tick(bool held, bool pressed, bool reloadPressed)
+        public void Tick(bool held, bool pressed, bool reloadPressed, bool aimHeld = false)
         {
-            if (type == WeaponType.None || reloading || owner.Health.IsDead) return;
-            if (reloadPressed && type == WeaponType.SubmachineGun && ammunition < MagazineSize)
+            if (type == WeaponType.None) return;
+            if (owner.Health.IsDead)
             {
-                StartCoroutine(Reload());
+                UpdateAim(false);
                 return;
             }
-            if ((!held && !pressed) || Time.time < nextAttack) return;
-            if (type == WeaponType.SubmachineGun)
+            if (reloading)
             {
-                if (ammunition <= 0) { StartCoroutine(Reload()); return; }
-                nextAttack = Time.time + .105f;
+                UpdateAim(false);
+                return;
+            }
+            UpdateAim(aimHeld && type == WeaponType.SniperRifle);
+            if (cyclingBolt) return;
+            if (reloadPressed && type == WeaponType.SniperRifle && ammunition < MagazineSize)
+            {
+                if (reserveAmmunition > 0) StartCoroutine(Reload());
+                return;
+            }
+            if (Time.time < nextAttack) return;
+            if (type == WeaponType.SniperRifle)
+            {
+                if (!pressed) return;
+                if (ammunition <= 0)
+                {
+                    SignalEmptyMagazine();
+                    return;
+                }
+                nextAttack = Time.time + SniperCooldown;
                 Fire();
+                StartCoroutine(CycleBolt());
             }
             else
             {
+                if (!held && !pressed) return;
                 nextAttack = Time.time + .72f;
                 owner.GetComponent<PlayerVisual>()?.Attack();
                 audioSource.PlayOneShot(ProceduralAudio.Machete);
+                NoiseSystem.Emit(transform.position, 7f, NoiseKind.Blade, owner);
                 StartCoroutine(Swing());
             }
         }
@@ -136,7 +215,8 @@ namespace FogboundMaze
             CombatEffects.Tracer(blocked ? chest : muzzle, end);
             if (!blocked) CombatEffects.Muzzle(muzzle, viewCamera.transform);
             GameDirector.Instance?.Hud?.PulseShot();
-            audioSource.PlayOneShot(ProceduralAudio.SubmachineGun, .7f);
+            audioSource.PlayOneShot(ProceduralAudio.SniperRifle, .85f);
+            NoiseSystem.Emit(transform.position, 42f, NoiseKind.Gunshot, owner);
         }
 
         private void ApplyHit(EnemyAgent enemy, float damage)
@@ -215,12 +295,15 @@ namespace FogboundMaze
 
         private IEnumerator Reload()
         {
-            if (reloading || type != WeaponType.SubmachineGun) yield break;
+            if (reloading || type != WeaponType.SniperRifle || ammunition >= MagazineSize || reserveAmmunition <= 0)
+                yield break;
+            UpdateAim(false);
             reloading = true;
+            emptyFeedbackUntil = 0f;
             audioSource.PlayOneShot(ProceduralAudio.Reload, .7f);
-            for (var elapsed = 0f; elapsed < 1.35f; elapsed += Time.deltaTime)
+            for (var elapsed = 0f; elapsed < ReloadDuration; elapsed += Time.deltaTime)
             {
-                reloadProgress = elapsed / 1.35f;
+                reloadProgress = elapsed / ReloadDuration;
                 var dip = Mathf.Sin(reloadProgress * Mathf.PI);
                 viewWeapon.localPosition = new Vector3(0f, -.24f * dip, 0f);
                 viewWeapon.localRotation = Quaternion.Euler(20f * dip, 0f, -30f * dip);
@@ -238,10 +321,91 @@ namespace FogboundMaze
                 yield break;
             }
             reloadProgress = 1f;
-            ammunition = MagazineSize;
+            var transferred = Mathf.Min(MagazineSize - ammunition, reserveAmmunition);
+            ammunition += transferred;
+            reserveAmmunition -= transferred;
             reloading = false;
             reloadReadyUntil = Time.time + .85f;
             audioSource.PlayOneShot(ProceduralAudio.ReloadComplete, .9f);
+        }
+
+        private IEnumerator CycleBolt()
+        {
+            cyclingBolt = true;
+            boltProgress = 0f;
+            owner.GetComponent<PlayerVisual>()?.BoltAction(BoltCycleDuration);
+            for (var elapsed = 0f; elapsed < BoltCycleDuration; elapsed += Time.deltaTime)
+            {
+                boltProgress = elapsed / BoltCycleDuration;
+                var pull = Mathf.Sin(boltProgress * Mathf.PI);
+                viewWeapon.localPosition = new Vector3(.055f * pull, -.025f * pull, -.085f * pull);
+                viewWeapon.localRotation = Quaternion.Euler(7f * pull, 0f, -9f * pull);
+                if (boltProgress >= .28f && boltProgress - Time.deltaTime / BoltCycleDuration < .28f)
+                    audioSource.PlayOneShot(ProceduralAudio.BoltAction, .9f);
+                yield return null;
+            }
+            viewWeapon.localPosition = Vector3.zero;
+            viewWeapon.localRotation = Quaternion.identity;
+            boltProgress = 1f;
+            cyclingBolt = false;
+        }
+
+        private void SignalEmptyMagazine()
+        {
+            emptyFeedbackUntil = Time.time + .65f;
+            if (Time.time < nextDryFire) return;
+            nextDryFire = Time.time + .3f;
+            audioSource.PlayOneShot(ProceduralAudio.DryFire, .65f);
+        }
+
+        private void CancelTransientAction()
+        {
+            StopAllCoroutines();
+            reloading = swinging = cyclingBolt = false;
+            reloadProgress = boltProgress = recoil = nextAttack = 0f;
+            reloadReadyUntil = emptyFeedbackUntil = 0f;
+            UpdateAim(false);
+        }
+
+        private void UpdateAim(bool value)
+        {
+            if (value && !aiming) aimSlowUntil = Time.unscaledTime + ScopeSlowDuration;
+            aiming = value;
+            viewCamera.GetComponent<CameraRig>().SetAiming(aiming);
+            GameDirector.Instance?.SetAimSlowMotion(aiming && Time.unscaledTime < aimSlowUntil);
+        }
+
+        public void ExitAim() => UpdateAim(false);
+
+        private Vector3 GetViewMountPosition()
+            => type == WeaponType.SniperRifle
+                ? new Vector3(.32f, -.30f, .65f)
+                : new Vector3(.38f, -.38f, .85f);
+
+        private float MeasureWeaponObstruction()
+        {
+            if (type == WeaponType.None) return 0f;
+            var firstPerson = viewCamera.GetComponent<CameraRig>().UsesFirstPersonView;
+            var distance = type == WeaponType.LongBlade ? 1.45f : 1.15f;
+            var origin = firstPerson
+                ? viewCamera.transform.position
+                : owner.transform.position + Vector3.up * 1.22f;
+            var direction = firstPerson ? viewCamera.transform.forward : owner.transform.forward;
+            var count = Physics.SphereCastNonAlloc(origin, .11f, direction,
+                obstructionHits, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var nearest = distance;
+            var found = false;
+            for (var index = 0; index < count; index++)
+            {
+                var hit = obstructionHits[index];
+                if (hit.collider == null
+                    || hit.collider.GetComponentInParent<EnemyAgent>() != null
+                    || hit.collider.GetComponentInParent<PlayerController>() == owner) continue;
+                found = true;
+                nearest = Mathf.Min(nearest, hit.distance);
+            }
+            if (!found) return 0f;
+            return 1f - Mathf.InverseLerp(.22f, distance, nearest);
         }
 
         private void OnDestroy()

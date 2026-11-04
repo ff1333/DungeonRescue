@@ -24,7 +24,7 @@ namespace FogboundMaze.Tests
             Assert.That(game.Hud.transform.Find("Title Screen/Version").GetComponent<Text>().text,
                 Is.EqualTo("v" + ReleaseVersion.Current));
             game.ShowLevelSelection(); game.SelectLevel(1);
-            game.SelectWeapon(WeaponType.SubmachineGun); game.BeginRun();
+            game.SelectWeapon(WeaponType.SniperRifle); game.BeginRun();
             game.enabled = false;
             game.Player.enabled = false;
             game.CameraRig.enabled = false;
@@ -56,38 +56,129 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
-        public IEnumerator HeldFireUsesCooldownAndReloadsThirtyRounds()
+        public IEnumerator SniperUsesSingleShotBoltCycleAndManualReload()
         {
             var enemy = Enemy(Vector3.forward * 8f);
             var gun = game.Player.Weapon;
+            gun.Tick(false, true, false);
             gun.Tick(true, false, false);
-            gun.Tick(true, false, false);
-            Assert.That(gun.Ammunition, Is.EqualTo(29));
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
             Assert.That(enemy.GetComponent<Health>().Current, Is.EqualTo(125f - WeaponController.GunDamage));
-            yield return new WaitForSeconds(.13f);
-            gun.Tick(true, false, false);
-            Assert.That(gun.Ammunition, Is.EqualTo(28));
+            Assert.That(gun.IsCyclingBolt, Is.True);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
+            gun.Tick(false, true, false);
+            Assert.That(gun.Ammunition, Is.EqualTo(3));
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
             gun.Tick(false, false, true);
             Assert.That(gun.IsReloading, Is.True);
-            gun.Tick(true, false, false);
-            Assert.That(gun.Ammunition, Is.EqualTo(28));
-            yield return new WaitForSeconds(1.5f);
+            gun.Tick(false, true, false);
+            Assert.That(gun.Ammunition, Is.EqualTo(3));
+            yield return new WaitForSeconds(WeaponController.ReloadDuration + .05f);
             Assert.That(gun.IsReloading, Is.False);
-            Assert.That(gun.Ammunition, Is.EqualTo(30));
+            Assert.That(gun.Ammunition, Is.EqualTo(5));
+            Assert.That(gun.ReserveAmmunition, Is.EqualTo(18));
             Assert.That(gun.ReloadReady, Is.True);
             yield return null;
             game.Hud.Refresh(game, game.Player);
-            Assert.That(game.Hud.transform.Find("Top Bar/Weapon").GetComponent<Text>().text, Is.EqualTo("READY  30 / 30"));
-            gun.Tick(true, false, false);
+            Assert.That(game.Hud.transform.Find("Weapon HUD/Ammo").GetComponent<Text>().text, Is.EqualTo("05 / 018"));
+            Assert.That(game.Hud.transform.Find("Weapon HUD/State").GetComponent<Text>().text, Is.EqualTo("READY"));
+            gun.Tick(false, true, false);
             Assert.That(gun.ReloadReady, Is.False);
-            Assert.That(gun.Ammunition, Is.EqualTo(29));
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
+        }
+
+        [UnityTest]
+        public IEnumerator ScopeUsesFirstPersonViewAndOnlySlowsTheFirstThreeRealtimeSeconds()
+        {
+            var gun = game.Player.Weapon;
+            gun.Tick(false, false, false, true);
+            Assert.That(gun.IsAiming, Is.True);
+            Assert.That(game.CameraRig.UsesFirstPersonView, Is.True);
+            Assert.That(game.IsAimSlowMotion, Is.True);
+            Assert.That(Time.timeScale, Is.EqualTo(.5f));
+            yield return new WaitForSecondsRealtime(WeaponController.ScopeSlowDuration + .1f);
+            gun.Tick(false, false, false, true);
+            Assert.That(gun.IsAiming, Is.True);
+            Assert.That(game.IsAimSlowMotion, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+            gun.Tick(false, false, false, false);
+            Assert.That(gun.IsAiming, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+
+            gun.Tick(false, false, false, true);
+            game.Player.Health.Damage(200f);
+            Assert.That(gun.IsAiming, Is.False);
+            Assert.That(game.CameraRig.IsAiming, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+        }
+
+        [UnityTest]
+        public IEnumerator ReloadForcesScopeClosedEvenWhenAimInputRemainsHeld()
+        {
+            var gun = game.Player.Weapon;
+            gun.Tick(false, true, false, true);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
+            gun.Tick(false, false, true, true);
+            Assert.That(gun.IsReloading, Is.True);
+            gun.Tick(false, false, false, true);
+            Assert.That(gun.IsAiming, Is.False);
+            Assert.That(game.CameraRig.IsAiming, Is.False);
+            Assert.That(Time.timeScale, Is.EqualTo(1f));
+        }
+
+        [UnityTest]
+        public IEnumerator CurrentWeaponIsHeldAndOtherWeaponIsCarriedOnBack()
+        {
+            yield return null;
+            var visual = game.Player.GetComponent<PlayerVisual>();
+            var transforms = game.Player.GetComponentsInChildren<Transform>(true);
+            var backRifle = System.Array.Find(transforms, value => value.name == "Back SniperRifle");
+            var backBlade = System.Array.Find(transforms, value => value.name == "Back LongBlade");
+            Assert.That(visual.HeldWeapon.name, Is.EqualTo("Rifle"));
+            Assert.That(backRifle, Is.Not.Null);
+            Assert.That(backBlade, Is.Not.Null);
+            Assert.That(backRifle.gameObject.activeSelf, Is.False);
+            Assert.That(backBlade.gameObject.activeSelf, Is.True);
+            game.Player.Weapon.Equip(WeaponType.LongBlade);
+            Assert.That(visual.HeldWeapon.name, Is.EqualTo("Knife"));
+            Assert.That(backRifle.gameObject.activeSelf, Is.True);
+            Assert.That(backBlade.gameObject.activeSelf, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator DeathHidesHeldAndBackWeapons_RespawnRestoresDefaultLoadout()
+        {
+            yield return null;
+            var transforms = game.Player.GetComponentsInChildren<Transform>(true);
+            var heldRifle = System.Array.Find(transforms, value => value.name == "Rifle");
+            var heldBlade = System.Array.Find(transforms, value => value.name == "Knife");
+            var backRifle = System.Array.Find(transforms, value => value.name == "Back SniperRifle");
+            var backBlade = System.Array.Find(transforms, value => value.name == "Back LongBlade");
+
+            game.Player.Health.Damage(200f);
+            yield return null;
+
+            Assert.That(heldRifle.gameObject.activeSelf, Is.False);
+            Assert.That(heldBlade.gameObject.activeSelf, Is.False);
+            Assert.That(backRifle.gameObject.activeSelf, Is.False);
+            Assert.That(backBlade.gameObject.activeSelf, Is.False);
+
+            game.Player.Health.ResetHealth(100f);
+            game.Player.Weapon.PrepareLoadout();
+            yield return null;
+
+            Assert.That(heldBlade.gameObject.activeSelf, Is.True);
+            Assert.That(backRifle.gameObject.activeSelf, Is.True);
+            Assert.That(heldRifle.gameObject.activeSelf, Is.False);
+            Assert.That(backBlade.gameObject.activeSelf, Is.False);
         }
 
         [UnityTest]
         public IEnumerator ReloadPauseFreezesProgressAndReadyExpires()
         {
             var gun = game.Player.Weapon;
-            gun.Tick(true, false, false);
+            gun.Tick(false, true, false);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
             gun.Tick(false, false, true);
             yield return new WaitForSeconds(.2f);
             game.SetPaused(true);
@@ -96,10 +187,10 @@ namespace FogboundMaze.Tests
             yield return new WaitForSecondsRealtime(1.5f);
             Assert.That(gun.ReloadProgress, Is.EqualTo(progress).Within(.001f));
             Assert.That(gun.IsReloading, Is.True);
-            Assert.That(gun.Ammunition, Is.EqualTo(29));
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
             Assert.That(gun.ReloadReady, Is.False);
             game.SetPaused(false);
-            yield return new WaitForSeconds(1.3f);
+            yield return new WaitForSeconds(WeaponController.ReloadDuration - .2f);
             Assert.That(gun.ReloadReady, Is.True);
             yield return new WaitForSeconds(.9f);
             Assert.That(gun.ReloadReady, Is.False);
@@ -109,26 +200,53 @@ namespace FogboundMaze.Tests
         public IEnumerator ReloadDeathDoesNotRefillOrSignalReady()
         {
             var gun = game.Player.Weapon;
-            gun.Tick(true, false, false);
+            gun.Tick(false, true, false);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
             gun.Tick(false, false, true);
             game.Player.Health.Damage(200f);
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(WeaponController.ReloadDuration + .1f);
             Assert.That(gun.ReloadReady, Is.False);
             Assert.That(gun.IsReloading, Is.False);
-            Assert.That(gun.Ammunition, Is.EqualTo(29));
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
         }
 
         [UnityTest]
         public IEnumerator ChangingWeaponCancelsReloadCompletion()
         {
             var gun = game.Player.Weapon;
-            gun.Tick(true, false, false);
+            gun.Tick(false, true, false);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
             gun.Tick(false, false, true);
             gun.Equip(WeaponType.LongBlade);
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(WeaponController.ReloadDuration + .1f);
             Assert.That(gun.IsReloading, Is.False);
             Assert.That(gun.ReloadReady, Is.False);
-            Assert.That(gun.Ammunition, Is.Zero);
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
+            Assert.That(gun.ReserveAmmunition, Is.EqualTo(20));
+            gun.Equip(WeaponType.SniperRifle);
+            Assert.That(gun.Ammunition, Is.EqualTo(4));
+        }
+
+        [UnityTest]
+        public IEnumerator EmptyMagazineNeverAutoReloads_AndManualReloadIsRequired()
+        {
+            var gun = game.Player.Weapon;
+            for (var shot = 0; shot < WeaponController.GunMagazineSize; shot++)
+            {
+                gun.Tick(false,true,false);
+                yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
+            }
+            Assert.That(gun.Ammunition,Is.Zero);
+            gun.Tick(false,true,false);
+            yield return new WaitForSeconds(.4f);
+            Assert.That(gun.IsReloading,Is.False);
+            Assert.That(gun.Ammunition,Is.Zero);
+            Assert.That(gun.EmptyFeedback,Is.True);
+            gun.Tick(false,false,true);
+            Assert.That(gun.IsReloading,Is.True);
+            yield return new WaitForSeconds(WeaponController.ReloadDuration + .1f);
+            Assert.That(gun.Ammunition,Is.EqualTo(WeaponController.GunMagazineSize));
+            Assert.That(gun.ReserveAmmunition,Is.EqualTo(15));
         }
 
         [UnityTest]
@@ -136,15 +254,74 @@ namespace FogboundMaze.Tests
         {
             var enemy = Enemy(Vector3.forward * 8f);
             var wall = Wall(new Vector3(0,1,2), new Vector3(4,3,.2f));
-            game.Player.Weapon.Tick(true, false, false);
+            game.Player.Weapon.Tick(false, true, false);
             Assert.That(enemy.GetComponent<Health>().Current, Is.EqualTo(125f));
             Object.Destroy(wall);
-            enemy.Spawn(game.Player, game.World, arena + Vector3.forward * 36f, true);
+            enemy.Spawn(game.Player, game.World, arena + Vector3.forward * 86f, true);
             enemy.enabled = false;
-            yield return new WaitForSeconds(.13f);
+            yield return new WaitForSeconds(WeaponController.BoltCycleDuration + .05f);
             Physics.SyncTransforms();
-            game.Player.Weapon.Tick(true, false, false);
+            game.Player.Weapon.Tick(false, true, false);
             Assert.That(enemy.GetComponent<Health>().Current, Is.EqualTo(125f));
+        }
+
+        [UnityTest]
+        public IEnumerator WeaponRetractsNearWallAndReturnsAfterClearance()
+        {
+            var gun = game.Player.Weapon;
+            var mount = game.CameraRig.transform.Find("First Person Weapon Mount");
+            Assert.That(mount, Is.Not.Null);
+            yield return null;
+            var heldWeapon = game.Player.GetComponent<PlayerVisual>().HeldWeapon;
+            var restForwardReach = Vector3.Dot(heldWeapon.position - game.Player.transform.position,
+                game.Player.transform.forward);
+            var restPosition = mount.localPosition;
+            var wall = Wall(new Vector3(0f, 1.2f, .72f), new Vector3(2.5f, 2.8f, .18f));
+
+            yield return new WaitForSeconds(.2f);
+
+            Assert.That(gun.ObstructionAmount, Is.GreaterThan(.45f));
+            Assert.That(mount.localPosition.z, Is.LessThan(restPosition.z - .15f));
+            Assert.That(Mathf.Abs(mount.localRotation.eulerAngles.x), Is.GreaterThan(5f));
+            var obstructedForwardReach = Vector3.Dot(heldWeapon.position - game.Player.transform.position,
+                game.Player.transform.forward);
+            Assert.That(obstructedForwardReach, Is.LessThan(restForwardReach - .08f));
+
+            Object.Destroy(wall);
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(.35f);
+
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
+            Assert.That(Vector3.Distance(mount.localPosition, restPosition), Is.LessThan(.02f));
+        }
+
+        [UnityTest]
+        public IEnumerator FirstPersonObstructionUsesCameraDirectionAndIgnoresMonsters()
+        {
+            var gun = game.Player.Weapon;
+            gun.Equip(WeaponType.SniperRifle);
+            game.CameraRig.TickLook(Vector2.zero, true);
+            game.CameraRig.transform.SetPositionAndRotation(arena + Vector3.up * 1.35f,
+                Quaternion.Euler(0f, 90f, 0f));
+            var mount = game.CameraRig.transform.Find("First Person Weapon Mount");
+            var restPosition = mount.localPosition;
+            var wall = Wall(new Vector3(.72f, 1.35f, 0f), new Vector3(.18f, 2.8f, 2.5f));
+
+            yield return new WaitForSeconds(.2f);
+
+            Assert.That(Vector3.Distance(game.Player.transform.forward, Vector3.forward), Is.LessThan(.001f));
+            Assert.That(gun.ObstructionAmount, Is.GreaterThan(.45f));
+            Assert.That(mount.localPosition.z, Is.LessThan(restPosition.z - .35f));
+            Assert.That(mount.GetChild(0).localScale.x, Is.EqualTo(WeaponController.FirstPersonRifleScale).Within(.001f));
+
+            Object.Destroy(wall);
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(.35f);
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
+
+            Enemy(Vector3.right * .72f);
+            yield return new WaitForSeconds(.2f);
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
         }
 
         [UnityTest]
@@ -154,7 +331,7 @@ namespace FogboundMaze.Tests
             var muzzle = game.Player.GetComponent<PlayerVisual>().GunMuzzle;
             var cover = Vector3.Lerp(arena + Vector3.up * 1.35f, muzzle, .7f);
             Wall(cover - arena, new Vector3(.10f,1f,.15f));
-            game.Player.Weapon.Tick(true,false,false);
+            game.Player.Weapon.Tick(false,true,false);
             Assert.That(enemy.GetComponent<Health>().Current, Is.EqualTo(125f));
             yield return null;
         }
@@ -200,7 +377,7 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
-        public IEnumerator NearbyZombieCannotDamagePlayerThroughWall()
+        public IEnumerator NearbyMonsterCannotDamagePlayerThroughWall()
         {
             var enemy = Enemy(Vector3.forward * 1.1f);
             var wall = Wall(new Vector3(0,1,.55f),new Vector3(3,3,.2f));
@@ -217,7 +394,7 @@ namespace FogboundMaze.Tests
         {
             yield return null;
             var visual = game.Player.GetComponent<PlayerVisual>();
-            Assert.That(visual.HeldWeapon.name, Is.EqualTo("SMG"));
+            Assert.That(visual.HeldWeapon.name, Is.EqualTo("Rifle"));
             Assert.That(game.Player.transform.InverseTransformPoint(visual.HeldWeapon.position).x, Is.GreaterThan(0f));
             var enemy = Enemy(Vector3.forward * 2f);
             game.Player.Weapon.Equip(WeaponType.LongBlade);

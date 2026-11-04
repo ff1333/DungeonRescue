@@ -6,19 +6,25 @@ namespace FogboundMaze
     public sealed class MazeWorld : MonoBehaviour
     {
         public const float CellSize = 5f;
+        public const float ExitLightRange = 4.8f;
+        public const float ExitLightIntensity = 0.8f;
         private const float WallHeight = 3.4f;
         private const float WallThickness = 0.28f;
 
         private readonly List<Vector3> safeLights = new();
+        private readonly List<Vector3> fogZones = new();
         private Material floorMaterial;
         private Material wallMaterial;
         private Material trimMaterial;
         private Material wallBaseMaterial;
         private Material entryMaterial;
+        private Material fogMaterial;
+        private Texture2D fogTexture;
         private Transform generatedRoot;
 
         public MazeLayout Layout { get; private set; }
         public IReadOnlyList<Vector3> SafeLights => safeLights;
+        public IReadOnlyList<Vector3> FogZones => fogZones;
         public Vector3 StartPosition => CellToWorld(Layout.Start) + Vector3.back * (CellSize * 0.9f);
         public Vector3 EntryPosition => CellToWorld(Layout.Start);
         public Vector3 ExitPosition => CellToWorld(Layout.Goal) + Vector3.right * CellSize;
@@ -53,6 +59,8 @@ namespace FogboundMaze
             CreateStagingArea();
             CreateEntryMarkers();
             CreateExit();
+            CreateDungeonLights(level);
+            CreateLocalFogZones(level);
             if (level.miasma)
             {
                 CreateSafeLights(level);
@@ -92,6 +100,19 @@ namespace FogboundMaze
 
             return false;
         }
+
+        public bool IsInsideFogZone(Vector3 position)
+        {
+            foreach (var center in fogZones)
+            {
+                var delta = position - center;
+                delta.y = 0f;
+                if (delta.sqrMagnitude <= CellSize * CellSize * .7f) return true;
+            }
+            return false;
+        }
+
+        public float LocalVisibilityMultiplier(Vector3 position) => IsInsideFogZone(position) ? .55f : 1f;
 
         public List<Vector2Int> FindPath(Vector3 from, Vector3 to)
         {
@@ -221,7 +242,7 @@ namespace FogboundMaze
             CreateWall(outside + Vector3.right * CellSize * 0.5f, new Vector3(WallThickness, WallHeight, CellSize));
             CreateWall(outside + Vector3.forward * CellSize * 0.5f, new Vector3(CellSize, WallHeight, WallThickness));
             CreateWall(outside + Vector3.back * CellSize * 0.5f, new Vector3(CellSize, WallHeight, WallThickness));
-            var exitFrame = RuntimeArt.Material("Exit Frame", new Color(0.24f, 0.88f, 0.68f), 0.2f, 0.6f);
+            var exitFrame = RuntimeArt.Material("Exit Frame", new Color(0.24f, 0.88f, 0.68f), 0.2f, 0.3f);
             RuntimeArt.Primitive(PrimitiveType.Cube, "Exit Left", generatedRoot,
                 goal + new Vector3(CellSize * 0.5f, 1.6f, -CellSize * 0.45f),
                 new Vector3(0.18f, 3.2f, 0.18f), exitFrame, false);
@@ -237,8 +258,10 @@ namespace FogboundMaze
             var point = beacon.AddComponent<Light>();
             point.type = LightType.Point;
             point.color = new Color(0.3f, 1f, 0.75f);
-            point.range = 10f;
-            point.intensity = 3f;
+            point.range = ExitLightRange;
+            point.intensity = ExitLightIntensity;
+            point.shadows = LightShadows.Hard;
+            point.shadowStrength = 0.7f;
 
             var triggerObject = new GameObject("Exit Trigger");
             triggerObject.transform.SetParent(generatedRoot, false);
@@ -256,6 +279,188 @@ namespace FogboundMaze
         {
             foreach (var cell in SafeLightLayout.Generate(Layout, level.seed))
                 CreateSafeLight(CellToWorld(cell));
+        }
+
+        private void CreateDungeonLights(LevelDefinition level)
+        {
+            if (level.environment == DungeonCondition.Blackout || level.environment == DungeonCondition.DeepCore) return;
+            var count = Mathf.Clamp((level.width * level.height) / 18, 4, 11);
+            var random = new System.Random(level.seed ^ 0x51A7);
+            var used = new HashSet<Vector2Int>();
+            var color = level.environment switch
+            {
+                DungeonCondition.Emergency or DungeonCondition.Lockdown => new Color(1f,.18f,.12f),
+                DungeonCondition.Contaminated => new Color(.42f,1f,.54f),
+                DungeonCondition.Dim => new Color(.55f,.72f,.74f),
+                _ => new Color(.72f,.90f,.84f)
+            };
+            for (var i = 0; i < count * 5 && used.Count < count; i++)
+            {
+                var cell = new Vector2Int(random.Next(Layout.Width), random.Next(Layout.Height));
+                if (cell == Layout.Start || cell == Layout.Goal || !used.Add(cell)) continue;
+                var fixture = new GameObject("Dungeon Ceiling Light");
+                fixture.transform.SetParent(generatedRoot, false);
+                fixture.transform.position = CellToWorld(cell) + Vector3.up * 3.05f;
+                var light = fixture.AddComponent<Light>();
+                light.type = LightType.Point;
+                light.color = color;
+                light.range = level.environment == DungeonCondition.Powered ? 8.5f : 6.5f;
+                light.intensity = level.environment == DungeonCondition.Powered ? 1.15f : .78f;
+                light.shadows = LightShadows.None;
+            }
+        }
+
+        private void CreateLocalFogZones(LevelDefinition level)
+        {
+            if (level.localFogZones <= 0) return;
+            fogMaterial ??= CreateFogMaterial();
+            var random = new System.Random(level.seed ^ 0xF09);
+            var used = new HashSet<Vector2Int>();
+            for (var attempt = 0; attempt < level.localFogZones * 8 && used.Count < level.localFogZones; attempt++)
+            {
+                var cell = new Vector2Int(random.Next(Layout.Width), random.Next(Layout.Height));
+                if (cell == Layout.Start || cell == Layout.Goal || !used.Add(cell)) continue;
+                var center = CellToWorld(cell);
+                fogZones.Add(center);
+                var root = new GameObject("Local Fog Zone");
+                root.transform.SetParent(generatedRoot, false);
+                root.transform.position = center;
+
+                CreateFogLayer(root.transform, "Ground Mist", new Vector3(0f,.28f,0f),
+                    new Vector3(1f,.12f,1f), 2.8f, new Vector2(2.6f,4.8f),
+                    new Vector2(7f,11f), new Vector2(.06f,.16f), 4.5f, 48,
+                    new Color(.54f,.69f,.64f,.13f), .18f);
+                CreateFogLayer(root.transform, "Drifting Mist", new Vector3(0f,1.15f,0f),
+                    new Vector3(1f,.55f,1f), 2.45f, new Vector2(1.35f,3.1f),
+                    new Vector2(5.5f,9f), new Vector2(.06f,.18f), 6f, 56,
+                    new Color(.62f,.76f,.70f,.11f), .28f);
+                CreateFogLayer(root.transform, "Suspended Dust", new Vector3(0f,.9f,0f),
+                    new Vector3(1f,.72f,1f), 2.5f, new Vector2(.025f,.055f),
+                    new Vector2(4f,7f), new Vector2(.03f,.10f), 3.5f, 24,
+                    new Color(.72f,.84f,.76f,.14f), .08f);
+            }
+        }
+
+        private void CreateFogLayer(
+            Transform parent,
+            string name,
+            Vector3 localPosition,
+            Vector3 shapeScale,
+            float radius,
+            Vector2 size,
+            Vector2 lifetime,
+            Vector2 speed,
+            float emissionRate,
+            int maxParticles,
+            Color color,
+            float noiseStrength)
+        {
+            var layer = new GameObject(name);
+            layer.transform.SetParent(parent, false);
+            layer.transform.localPosition = localPosition;
+            layer.transform.localScale = shapeScale;
+
+            var particles = layer.AddComponent<ParticleSystem>();
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = particles.main;
+            main.loop = true;
+            main.playOnAwake = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
+            main.scalingMode = ParticleSystemScalingMode.Shape;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(lifetime.x, lifetime.y);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(speed.x, speed.y);
+            main.startSize = new ParticleSystem.MinMaxCurve(size.x, size.y);
+            main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+            main.startColor = color;
+            main.maxParticles = maxParticles;
+
+            var emission = particles.emission;
+            emission.rateOverTime = emissionRate;
+
+            var shape = particles.shape;
+            shape.shapeType = ParticleSystemShapeType.Sphere;
+            shape.radius = radius;
+            shape.radiusThickness = .82f;
+
+            var noise = particles.noise;
+            noise.enabled = true;
+            noise.quality = ParticleSystemNoiseQuality.Low;
+            noise.strength = noiseStrength;
+            noise.frequency = .18f;
+            noise.scrollSpeed = .05f;
+            noise.damping = true;
+            noise.octaveCount = 1;
+
+            var fade = new Gradient();
+            fade.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(Color.white, 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0f, 0f),
+                    new GradientAlphaKey(1f, .18f),
+                    new GradientAlphaKey(.72f, .72f),
+                    new GradientAlphaKey(0f, 1f)
+                });
+            var colorOverLifetime = particles.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            colorOverLifetime.color = fade;
+
+            var renderer = layer.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = fogMaterial;
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.sortingFudge = 1f;
+            particles.Play();
+        }
+
+        private Material CreateFogMaterial()
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Particles/Unlit")
+                ?? Shader.Find("Particles/Standard Unlit") ?? Shader.Find("Sprites/Default");
+            var material = new Material(shader) { name = "Local Dungeon Fog" };
+            fogTexture = CreateSoftFogTexture();
+            material.color = Color.white;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", material.color);
+            if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", fogTexture);
+            if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", fogTexture);
+            material.SetOverrideTag("RenderType", "Transparent");
+            if (material.HasProperty("_Surface")) material.SetFloat("_Surface", 1f);
+            if (material.HasProperty("_Blend")) material.SetFloat("_Blend", 0f);
+            if (material.HasProperty("_SrcBlend")) material.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            if (material.HasProperty("_DstBlend")) material.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            if (material.HasProperty("_ZWrite")) material.SetFloat("_ZWrite", 0f);
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.renderQueue = 3000;
+            return material;
+        }
+
+        private static Texture2D CreateSoftFogTexture()
+        {
+            const int size = 64;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = "Runtime Soft Fog",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
+            var pixels = new Color[size * size];
+            for (var y = 0; y < size; y++)
+            for (var x = 0; x < size; x++)
+            {
+                var uv = new Vector2((x + .5f) / size, (y + .5f) / size);
+                var distance = Vector2.Distance(uv, Vector2.one * .5f) * 2f;
+                var edge = Mathf.SmoothStep(1f, 0f, Mathf.InverseLerp(.18f, 1f, distance));
+                var cloud = .72f + Mathf.PerlinNoise(uv.x * 4.3f + 7.1f, uv.y * 4.3f + 2.7f) * .28f;
+                pixels[y * size + x] = new Color(1f, 1f, 1f, edge * cloud);
+            }
+            texture.SetPixels(pixels);
+            texture.Apply(false, true);
+            return texture;
         }
 
         private void CreateSafeLight(Vector3 position)
@@ -281,6 +486,7 @@ namespace FogboundMaze
         private void Clear()
         {
             safeLights.Clear();
+            fogZones.Clear();
             if (generatedRoot != null)
             {
                 generatedRoot.gameObject.SetActive(false);

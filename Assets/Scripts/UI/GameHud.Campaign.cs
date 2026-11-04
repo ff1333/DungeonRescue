@@ -40,7 +40,7 @@ namespace FogboundMaze
             SetRect(heading.rectTransform, new Vector2(0.08f, 0.80f), new Vector2(0.60f, 0.92f));
             campaignSummary = Label("Progress", levelPanel.transform, string.Empty, 25, TextAnchor.MiddleRight, Accent);
             SetRect(campaignSummary.rectTransform, new Vector2(0.6f, 0.81f), new Vector2(0.92f, 0.90f));
-            var names = new[] { "ENTRY", "CROSSROADS", "PURSUIT", "DENSE FOG", "ELITES", "NIGHTFALL", "MIASMA", "DEEP ZONE", "LOCKDOWN", "LAST EXIT" };
+            var names = new[] { "ENTRY", "CROSSROADS", "NOISE", "FOG ZONES", "RED ALERT", "BLACKOUT", "CONTAMINATION", "DEEP ZONE", "LOCKDOWN", "LAST EXIT" };
             for (var i = 0; i < 10; i++)
             {
                 var number = i + 1;
@@ -74,6 +74,7 @@ namespace FogboundMaze
             entryPrompt.gameObject.SetActive(false);
             miniMap.gameObject.SetActive(false);
             transform.Find("Top Bar").gameObject.SetActive(false);
+            transform.Find("Weapon HUD").gameObject.SetActive(false);
             if (mobileRoot != null) mobileRoot.SetActive(false);
             titlePanel.SetActive(phase == GamePhase.Title);
             levelPanel.SetActive(phase == GamePhase.LevelSelect);

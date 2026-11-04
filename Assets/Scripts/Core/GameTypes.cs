@@ -3,7 +3,7 @@ namespace FogboundMaze
     public enum WeaponType
     {
         None,
-        SubmachineGun = 1,
+        SniperRifle = 1,
         LongBlade = 2
     }
 
@@ -19,11 +19,24 @@ namespace FogboundMaze
         Lost
     }
 
+    public enum DungeonCondition
+    {
+        Powered,
+        Dim,
+        Emergency,
+        Blackout,
+        Contaminated,
+        Lockdown,
+        DeepCore
+    }
+
     public enum EnemyState
     {
         Inactive,
-        Wander,
+        Patrol,
+        Investigate,
         Chase,
+        Search,
         Attack,
         Dead
     }

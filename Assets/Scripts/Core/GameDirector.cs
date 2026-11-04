@@ -23,6 +23,7 @@ namespace FogboundMaze
         private GamePhase phaseBeforePause;
         private System.Random random;
         private int runGeneration;
+        private bool aimSlowMotion;
 
         public GamePhase Phase { get; private set; }
         public GameHud Hud { get; private set; }
@@ -37,6 +38,11 @@ namespace FogboundMaze
         public bool IsPlayerSafe => !level.miasma || world.IsWithinSafeLight(player.transform.position, level.safeLightRadius);
         public int ActiveEnemyCount => pool.ActiveCount;
         public int EnemyPoolCapacity => pool.Capacity;
+        public bool LoadoutConfirmed { get; private set; }
+        public float EnemyVisionMultiplier => environment != null ? environment.EnemyVisionMultiplier : 1f;
+        public float EnemyVisionMultiplierAt(Vector3 position) => EnemyVisionMultiplier * world.LocalVisibilityMultiplier(position);
+        public bool IsPlayerInFog => world != null && player != null && world.IsInsideFogZone(player.transform.position);
+        public bool IsAimSlowMotion => aimSlowMotion && Phase == GamePhase.Playing;
 
         private void Awake()
         {
@@ -61,7 +67,7 @@ namespace FogboundMaze
             if (input.PausePressed && (Phase == GamePhase.LevelSelect || Phase == GamePhase.Guide)) ShowTitle();
             if (Phase == GamePhase.Staging)
             {
-                if (player.Weapon.Type != WeaponType.None
+                if (LoadoutConfirmed
                     && player.transform.position.z >= world.EntryPosition.z - 1.25f
                     && world.IsInside(player.transform.position))
                     BeginRun();
@@ -69,7 +75,7 @@ namespace FogboundMaze
             }
 
             if (input.PausePressed && (Phase is GamePhase.Playing or GamePhase.Paused
-                || (Phase == GamePhase.Staging && player.Weapon.Type != WeaponType.None)))
+                || (Phase == GamePhase.Staging && LoadoutConfirmed)))
             {
                 SetPaused(Phase != GamePhase.Paused);
             }
@@ -103,7 +109,7 @@ namespace FogboundMaze
                 return;
             }
             if (focused && player != null && player.Weapon != null
-                && player.Weapon.Type != WeaponType.None
+                && LoadoutConfirmed
                 && Phase is GamePhase.Staging or GamePhase.Playing)
                 SetCursorLocked(true);
         }
@@ -112,6 +118,20 @@ namespace FogboundMaze
         {
             if (Phase != GamePhase.Staging) return;
             player.Weapon.Equip(type);
+            ConfirmLoadout();
+        }
+
+        public void SetAimSlowMotion(bool active)
+        {
+            aimSlowMotion = active && Phase == GamePhase.Playing;
+            if (Phase != GamePhase.Paused && !PortfolioSettings.IsOpen)
+                Time.timeScale = aimSlowMotion ? 0.5f : 1f;
+        }
+
+        public void ConfirmLoadout()
+        {
+            if (Phase != GamePhase.Staging || !player.Weapon.HasLoadout || LoadoutConfirmed) return;
+            LoadoutConfirmed = true;
             world.OpenStartGate();
             Hud.HideWeaponSelection();
             Hud.ShowEntryPrompt();
@@ -121,9 +141,9 @@ namespace FogboundMaze
 
         public void BeginRun()
         {
-            if (Phase != GamePhase.Staging || player.Weapon.Type == WeaponType.None) return;
+            if (Phase != GamePhase.Staging || !LoadoutConfirmed) return;
             Phase = GamePhase.Playing;
-            nextSpawn = Time.time + 1.2f;
+            nextSpawn = Time.time + .8f;
             Hud.SetPhase(Phase, currentLevel);
             Hud.HideEntryPrompt();
         }
@@ -132,6 +152,8 @@ namespace FogboundMaze
         {
             if (Phase != GamePhase.Playing) return;
             Phase = GamePhase.Won;
+            player.Weapon.ExitAim();
+            SetAimSlowMotion(false);
             Progress.Complete(currentLevel);
             Hud.Refresh(this, player);
             Hud.ShowResult(true, currentLevel, elapsed, kills);
@@ -172,11 +194,13 @@ namespace FogboundMaze
         {
             CombatEffects.Clear();
             Time.timeScale = 1f;
+            aimSlowMotion = false;
             runGeneration++;
             pool.DespawnAll();
             pendingSpawns = 0;
             input.ResetMobile();
-            player.Weapon.Equip(WeaponType.None);
+            LoadoutConfirmed = false;
+            player.Weapon.ClearLoadout();
             player.Teleport(world.StartPosition + Vector3.up * 0.08f);
             player.Health.ResetHealth(100f);
             player.transform.rotation = Quaternion.identity;
@@ -201,12 +225,12 @@ namespace FogboundMaze
         public void SetPaused(bool paused)
         {
             if (paused && Phase != GamePhase.Playing
-                && !(Phase == GamePhase.Staging && player.Weapon.Type != WeaponType.None)) return;
+                && !(Phase == GamePhase.Staging && LoadoutConfirmed)) return;
             if (!paused && Phase != GamePhase.Paused) return;
             input.ResetMobile();
             if (paused) phaseBeforePause = Phase;
             Phase = paused ? GamePhase.Paused : phaseBeforePause;
-            Time.timeScale = paused ? 0f : 1f;
+            Time.timeScale = paused ? 0f : aimSlowMotion && phaseBeforePause == GamePhase.Playing ? 0.5f : 1f;
             Hud.SetPause(paused);
             SetCursorLocked(!paused);
         }
@@ -215,6 +239,7 @@ namespace FogboundMaze
         {
             CombatEffects.Clear();
             Time.timeScale = 1f;
+            aimSlowMotion = false;
             runGeneration++;
             input.ResetMobile();
             currentLevel = number;
@@ -228,14 +253,15 @@ namespace FogboundMaze
             player.transform.rotation = Quaternion.identity;
             cameraRig.ResetView();
             player.Health.ResetHealth(100f);
-            player.Weapon.Equip(WeaponType.None);
+            LoadoutConfirmed = false;
+            player.Weapon.PrepareLoadout();
             environment.Apply(level);
             elapsed = 0f;
             kills = 0;
             Phase = GamePhase.Staging;
             Hud.ShowWeaponSelection(number);
             Hud.ResetMap(world, player, cameraRig);
-            SetCursorLocked(false);
+            ConfirmLoadout();
         }
 
         private void BuildPersistentSystems()
@@ -299,6 +325,8 @@ namespace FogboundMaze
         {
             if (Phase is GamePhase.Lost or GamePhase.Won) return;
             Phase = GamePhase.Lost;
+            player.Weapon.ExitAim();
+            SetAimSlowMotion(false);
             Hud.Refresh(this, player);
             Hud.ShowResult(false, currentLevel, elapsed, kills);
             SetCursorLocked(false);

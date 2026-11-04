@@ -10,6 +10,7 @@ namespace FogboundMaze
         private CameraRig cameraRig;
         private float verticalSpeed;
         private Vector3 lastGroundedPosition;
+        private float nextFootstepNoise;
 
         public Health Health { get; private set; }
         public WeaponController Weapon { get; private set; }
@@ -42,7 +43,7 @@ namespace FogboundMaze
             }
 
             if (GameDirector.Instance.Phase != GamePhase.Playing
-                && !(GameDirector.Instance.Phase == GamePhase.Staging && Weapon.Type != WeaponType.None))
+                && !(GameDirector.Instance.Phase == GamePhase.Staging && GameDirector.Instance.LoadoutConfirmed))
             {
                 return;
             }
@@ -65,7 +66,22 @@ namespace FogboundMaze
                 && ground.normal.y > 0.9f)
                 lastGroundedPosition = transform.position;
 
-            Weapon.Tick(input.AttackHeld, input.AttackPressed, input.ReloadPressed);
+            if (input.SprintHeld && direction.sqrMagnitude > .1f && controller.isGrounded
+                && GameDirector.Instance.Phase == GamePhase.Playing && Time.time >= nextFootstepNoise)
+            {
+                nextFootstepNoise = Time.time + .48f;
+                NoiseSystem.Emit(transform.position, 10f, NoiseKind.Sprint, this);
+            }
+
+            if (input.SelectGunPressed) Weapon.Equip(WeaponType.SniperRifle);
+            if (input.SelectBladePressed)
+            {
+                input.SetMobileAim(false);
+                Weapon.Equip(WeaponType.LongBlade);
+            }
+            if (Weapon.Type != WeaponType.SniperRifle && input.MobileAimToggled)
+                input.SetMobileAim(false);
+            Weapon.Tick(input.AttackHeld, input.AttackPressed, input.ReloadPressed, input.AimHeld);
         }
     }
 }

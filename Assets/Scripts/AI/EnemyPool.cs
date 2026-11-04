@@ -44,7 +44,7 @@ namespace FogboundMaze
 
         private EnemyAgent CreateEnemy()
         {
-            var root = new GameObject($"Zombie {enemies.Count + 1}");
+            var root = new GameObject($"Monster {enemies.Count + 1}");
             root.transform.SetParent(transform);
             var controller = root.AddComponent<CharacterController>();
             controller.height = 1.9f;
@@ -53,9 +53,9 @@ namespace FogboundMaze
             root.AddComponent<Health>();
             var agent = root.AddComponent<EnemyAgent>();
             var normal = Instantiate(Resources.Load<GameObject>("Characters/Zombie"), root.transform);
-            normal.name = "Normal Visual";
+            normal.name = "Goblin Visual";
             var elite = Instantiate(Resources.Load<GameObject>("Characters/EliteZombie"), root.transform);
-            elite.name = "Elite Visual";
+            elite.name = "Abyss Brute Visual";
             elite.SetActive(false);
             root.SetActive(false);
             enemies.Add(agent);
