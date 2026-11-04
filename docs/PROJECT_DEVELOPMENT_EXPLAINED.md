@@ -531,7 +531,7 @@ MazeExitTrigger
 - 攻击进入/退出距离迟滞，避免临界距离状态抖动；
 - 十关 `DungeonCondition` 和局部雾区配置。
 
-### v1.4 PlayMode `51/51`
+### v1.4 PlayMode `52/52`
 
 适合验证需要场景和组件生命周期的行为：
 
@@ -554,6 +554,7 @@ MazeExitTrigger
 - 开镜按钮点击切换，松手保持，再次点击关闭；
 - 冲刺按钮点击锁定，以及摇杆上推自动冲刺、松手续跑和再次触摸解除。
 - 死亡时手持、背负和第一人称武器全部隐藏，重新挑战后恢复默认长刀配置。
+- 靠墙时第一人称武器后移、第三人称双手收向胸前，离墙后恢复正常持械姿态。
 
 自动测试用于防止版本迭代破坏规则，不能代替真实玩家对难度和手感的判断。
 
@@ -639,12 +640,13 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 怪物群体稳定性日志：[`16-v1.4.0-monster-crowd-stability.md`](devlogs/16-v1.4.0-monster-crowd-stability.md)
 - 近距离攻击与刷怪增压日志：[`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)
 - 死亡结算装备遮挡日志：[`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)
+- 靠墙收枪日志：[`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)
 - 候选版说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
 
 - EditMode：`22/22 PASS`；
-- PlayMode：`51/51 PASS`；
+- PlayMode：`52/52 PASS`；
 - Windows Release：构建成功，`0 errors / 0 warnings`；
 - Android Release：构建成功，`0 errors / 0 warnings`；
 - 独立 Player：默认长刀、第三人称狙击枪、配镜、换弹、双手持械和背负武器截图通过检查。
@@ -691,10 +693,16 @@ Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装
 
 现在 `PlayerVisual` 在首次检测到死亡时关闭手持狙击枪、手持长刀、背负狙击枪和背负长刀；`WeaponController` 同时禁止死亡状态显示第一人称武器挂点。重新挑战先恢复生命，再由 `PrepareLoadout` 调用 `Equip` 恢复默认长刀和背负狙击枪。完整记录见 [`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)。
 
+### 靠墙收枪与武器模型防穿墙
+
+攻击判定早已使用射线阻止隔墙伤害，但显示模型仍可能在贴墙时穿入墙面。`WeaponController` 现在从玩家胸口沿角色朝向执行 `SphereCastNonAlloc`，按最近场景障碍距离计算 `ObstructionAmount`；检测忽略怪物，因此近身战不会因为敌人靠近而强制收枪。
+
+第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态。第三人称由 `PlayerVisual` 在动画之后调整双臂目标，把两只手收向胸前，实际缩短手持武器的世界空间前伸距离。离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见 [`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)。
+
 ### 尚未完成的发布步骤
 
 - 作者真人完整试玩和难度调平；
-- 最新死亡结算装备遮挡 APK 的真机回归；
+- 最新靠墙收枪 APK 的真机回归；
 - WebGL 构建；
 - GitHub PR 合并、`v1.4.0` 标签和 Release。
 
