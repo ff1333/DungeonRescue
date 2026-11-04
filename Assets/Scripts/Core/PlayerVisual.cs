@@ -20,6 +20,7 @@ namespace FogboundMaze
         private Vector3 previousPosition;
         private float attackUntil;
         private Vector3 gunMuzzleLocal;
+        private bool deathEquipmentHidden;
         public Transform HeldWeapon => (pistol != null && pistol.activeSelf ? pistol : knife)?.transform;
         public Vector3 GunMuzzle
         {
@@ -70,6 +71,7 @@ namespace FogboundMaze
 
         public void Equip(WeaponType weapon)
         {
+            deathEquipmentHidden = false;
             if (pistol != null) pistol.SetActive(weapon == WeaponType.SniperRifle);
             if (knife != null) knife.SetActive(weapon == WeaponType.LongBlade);
             if (backRifle != null) backRifle.SetActive(weapon == WeaponType.LongBlade);
@@ -97,6 +99,11 @@ namespace FogboundMaze
         private void LateUpdate()
         {
             if (animationPlayer == null || player.Health == null) return;
+            if (player.Health.IsDead && !deathEquipmentHidden)
+            {
+                SetEquipmentVisible(false);
+                deathEquipmentHidden = true;
+            }
             var delta = transform.position - previousPosition;
             delta.y = 0f;
             previousPosition = transform.position;
@@ -109,6 +116,14 @@ namespace FogboundMaze
                 if (!animationPlayer.IsPlaying(clip)) animationPlayer.CrossFade(clip, 0.12f);
             }
             if (!player.Health.IsDead) ApplySupportHandPose();
+        }
+
+        private void SetEquipmentVisible(bool visible)
+        {
+            if (pistol != null) pistol.SetActive(visible && player.Weapon.Type == WeaponType.SniperRifle);
+            if (knife != null) knife.SetActive(visible && player.Weapon.Type == WeaponType.LongBlade);
+            if (backRifle != null) backRifle.SetActive(visible && player.Weapon.Type == WeaponType.LongBlade);
+            if (backBlade != null) backBlade.SetActive(visible && player.Weapon.Type == WeaponType.SniperRifle);
         }
 
         private void ApplySupportHandPose()

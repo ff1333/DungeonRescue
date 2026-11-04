@@ -70,7 +70,8 @@ namespace FogboundMaze
 
         private void LateUpdate()
         {
-            viewMount.gameObject.SetActive(viewCamera.GetComponent<CameraRig>().UsesFirstPersonView && !aiming);
+            viewMount.gameObject.SetActive(!owner.Health.IsDead
+                && viewCamera.GetComponent<CameraRig>().UsesFirstPersonView && !aiming);
             recoil = Mathf.MoveTowards(recoil, 0f, Time.deltaTime * 9f);
             if (viewWeapon != null && !swinging && !reloading && !cyclingBolt)
             {

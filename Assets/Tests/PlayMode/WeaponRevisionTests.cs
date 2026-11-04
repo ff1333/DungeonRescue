@@ -146,6 +146,34 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
+        public IEnumerator DeathHidesHeldAndBackWeapons_RespawnRestoresDefaultLoadout()
+        {
+            yield return null;
+            var transforms = game.Player.GetComponentsInChildren<Transform>(true);
+            var heldRifle = System.Array.Find(transforms, value => value.name == "Rifle");
+            var heldBlade = System.Array.Find(transforms, value => value.name == "Knife");
+            var backRifle = System.Array.Find(transforms, value => value.name == "Back SniperRifle");
+            var backBlade = System.Array.Find(transforms, value => value.name == "Back LongBlade");
+
+            game.Player.Health.Damage(200f);
+            yield return null;
+
+            Assert.That(heldRifle.gameObject.activeSelf, Is.False);
+            Assert.That(heldBlade.gameObject.activeSelf, Is.False);
+            Assert.That(backRifle.gameObject.activeSelf, Is.False);
+            Assert.That(backBlade.gameObject.activeSelf, Is.False);
+
+            game.Player.Health.ResetHealth(100f);
+            game.Player.Weapon.PrepareLoadout();
+            yield return null;
+
+            Assert.That(heldBlade.gameObject.activeSelf, Is.True);
+            Assert.That(backRifle.gameObject.activeSelf, Is.True);
+            Assert.That(heldRifle.gameObject.activeSelf, Is.False);
+            Assert.That(backBlade.gameObject.activeSelf, Is.False);
+        }
+
+        [UnityTest]
         public IEnumerator ReloadPauseFreezesProgressAndReadyExpires()
         {
             var gun = game.Player.Weapon;
