@@ -1,7 +1,7 @@
 Result: Succeeded
 Platform: Android
-Build report size: 508834362
-APK size: 40200114
+Build report size: 508843622
+APK size: 40199546
 Errors: 0
 Warnings: 0
-SHA-256: 58eeb932fe586ebcd55b276e1d9e3d053076c527fd10ea96c853ceececeada88
+SHA-256: 89b10adf201cf9ff4f0044ba1d2b3f4f2047df5705903dc7db6b539d73e63972
