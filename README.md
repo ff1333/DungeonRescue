@@ -2,13 +2,13 @@
 
 使用 Unity 6 与 C# 开发的 3D 地下城生存迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找出口。普通怪物为哥布林，紫色精英为深渊蛮兵。游戏支持第一/第三人称切换、十关顺序解锁和本地进度保存。
 
-**当前正式版仍为 v1.3.1；v1.4.0 为功能分支发布候选。** v1.4.0 新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态。
+**当前正式版为 v1.4.0。** 本版新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态；同时完成怪物近身追击、死亡装备遮挡、贴墙武器后收、武器比例和终点/出生灯光收敛。
 
-- [下载 GitHub Release v1.3.1](https://github.com/ff1333/MazeEscape/releases/tag/v1.3.1)
-- [作品集演示视频](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕）
-- [v1.3.1 发布说明](docs/RELEASE_NOTES_v1.3.1.md)
+- [下载 GitHub Release v1.4.0](https://github.com/ff1333/MazeEscape/releases/tag/v1.4.0)
+- [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
+- [v1.3.1 历史发布说明](docs/RELEASE_NOTES_v1.3.1.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
 - [文档阅读入口](docs/README.md)
@@ -83,8 +83,8 @@
 - v1.4.0 Android Release：构建成功，0 errors，0 warnings
 - Windows 独立 Player：默认长刀、双手持械与背负武器、配镜画面、拉栓/换弹状态和地下环境截图通过检查
 - Android 真机已确认怪物近距离追击、死亡结算遮挡、第一人称侧墙检测和武器比例修正正常；最后一轮仅收敛终点与出生灯光，未再重复真机测试
-- WebGL：Edge 中完成设置、图鉴、选关、选武器、移动、攻击、装弹和暂停交互，未捕获游戏异常
-- Android：作者已完成一次 v1.3.0 真实设备基本验收，未发现阻塞发布的问题
+- WebGL：此前版本曾在 Edge 完成设置、图鉴、选关、移动、攻击、装弹和暂停交互；v1.4.0 本轮未重建 WebGL，不属于本次正式附件
+- Android：作者已完成 v1.4.0 候选包真机验收；最后一轮仅修改信号灯参数，未重复进行该 APK 的观感复测
 
 v1.4.0 证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和 Windows 构建不能替代真人手感、Android 多机型、长时间压力或商店审核；最后一轮灯光收敛也未做新版 APK 真机复测。
 
