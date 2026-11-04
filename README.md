@@ -7,7 +7,7 @@
 - [下载 GitHub Release v1.3.1](https://github.com/ff1333/MazeEscape/releases/tag/v1.3.1)
 - [作品集演示视频](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕）
 - [v1.3.1 发布说明](docs/RELEASE_NOTES_v1.3.1.md)
-- [v1.4.0 候选版说明](docs/RELEASE_NOTES_v1.4.0.md)
+- [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
@@ -78,15 +78,15 @@
 ## 当前验证结果
 
 - v1.4.0 EditMode：`22/22 PASS`
-- v1.4.0 PlayMode：`53/53 PASS`
+- v1.4.0 PlayMode：`54/54 PASS`
 - v1.4.0 Windows Release：构建成功，0 errors，0 warnings
-- v1.4.0 Android Release：构建成功，0 errors，0 warnings；最新侧墙检测与武器比例修正 APK 待覆盖安装回归
+- v1.4.0 Android Release：构建成功，0 errors，0 warnings
 - Windows 独立 Player：默认长刀、双手持械与背负武器、配镜画面、拉栓/换弹状态和地下环境截图通过检查
-- Android 真机已确认怪物近距离追击正常、暂未再出现鬼畜且死亡结算板状遮挡已消失；最新侧墙检测与武器比例修正、WebGL 和完整难度回归尚未完成，不能视为正式发布完成
+- Android 真机已确认怪物近距离追击、死亡结算遮挡、第一人称侧墙检测和武器比例修正正常；最后一轮仅收敛终点与出生灯光，未再重复真机测试
 - WebGL：Edge 中完成设置、图鉴、选关、选武器、移动、攻击、装弹和暂停交互，未捕获游戏异常
 - Android：作者已完成一次 v1.3.0 真实设备基本验收，未发现阻塞发布的问题
 
-正式版证据仍见 [v1.3.1 验证索引](docs/test-results/v1.3.1/README.md)，本轮证据见 [v1.4.0 候选版验证记录](docs/test-results/v1.4.0/README.md)。v1.4.0 当前属于候选版，自动测试和 Windows 冒烟不能替代真人手感、Android 真机、多机型、长时间压力或商店审核。
+v1.4.0 证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和 Windows 构建不能替代真人手感、Android 多机型、长时间压力或商店审核；最后一轮灯光收敛也未做新版 APK 真机复测。
 
 ## 项目结构
 
@@ -111,7 +111,7 @@ docs/
 4. 打开 `Assets/Scenes/Main.unity`。
 5. Console 没有红色错误后，点击 Unity 顶部三角形 Play。
 
-正式包位于 [GitHub Release v1.3.1](https://github.com/ff1333/MazeEscape/releases/tag/v1.3.1)。Windows ZIP 需要完整解压后运行 `MazeEscape.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。
+正式包位于 GitHub Releases。Windows ZIP 需要完整解压后运行 `MazeEscape.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。
 
 ## 素材与能力边界
 

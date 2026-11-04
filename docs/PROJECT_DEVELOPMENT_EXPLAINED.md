@@ -4,7 +4,7 @@
 
 这是一份持续更新的学习文档，用来解释《迷宫逃生》从主菜单、程序化迷宫、玩家控制、武器战斗到怪物行为和关卡结算的完整开发过程。
 
-当前正式版仍是 `v1.3.1`，功能分支已经完成 `v1.4.0` 发布候选。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验，并完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、双手持械、视觉与听觉感知、目标记忆、有限群体警报、Utility AI、固定地下城环境和局部雾区。
+当前文档对应 `v1.4.0` 正式发布内容。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验，并完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、双手持械、视觉与听觉感知、目标记忆、有限群体警报、Utility AI、固定地下城环境、局部雾区以及近墙和信号灯表现收尾。
 
 ## 一、先用一句话理解游戏
 
@@ -531,7 +531,7 @@ MazeExitTrigger
 - 攻击进入/退出距离迟滞，避免临界距离状态抖动；
 - 十关 `DungeonCondition` 和局部雾区配置。
 
-### v1.4 PlayMode `53/53`
+### v1.4 PlayMode `54/54`
 
 适合验证需要场景和组件生命周期的行为：
 
@@ -643,12 +643,13 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 死亡结算装备遮挡日志：[`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)
 - 靠墙收枪日志：[`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)
 - 第一人称侧墙与武器比例日志：[`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)
-- 候选版说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
+- 终点与出生灯光日志：[`21-v1.4.0-signal-light-containment.md`](devlogs/21-v1.4.0-signal-light-containment.md)
+- 发布说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
 
 - EditMode：`22/22 PASS`；
-- PlayMode：`53/53 PASS`；
+- PlayMode：`54/54 PASS`；
 - Windows Release：构建成功，`0 errors / 0 warnings`；
 - Android Release：构建成功，`0 errors / 0 warnings`；
 - 独立 Player：默认长刀、第三人称狙击枪、配镜、换弹、双手持械和背负武器截图通过检查。
@@ -701,14 +702,20 @@ Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装
 
 第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态，满额后收增加到 `0.75m`。第一人称狙击枪和长刀分别缩放为 `0.78` 和 `0.68`；第三人称手持狙击枪、长刀长度和背负武器也按角色比例下调。第三人称低持双手目标从腰部以下调整到胸前，离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见 [`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md) 与 [`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)。
 
-### 尚未完成的发布步骤
+### 终点与出生信号灯收敛
 
-- 作者真人完整试玩和难度调平；
-- 最新侧墙检测与武器比例修正 APK 的真机回归；
-- WebGL 构建；
-- GitHub PR 合并、`v1.4.0` 标签和 Release。
+终点灯原范围 `10m`、强度 `3`，怪物出生灯原范围 `5/7m`、脉冲最高强度 `4`，而且都没有阴影，因此墙体附近会出现明显绿色或红色漏光。v1.4 最终版把终点灯降到 `4.8m / 0.8`，普通/精英出生灯降到 `2.6m / 3.4m`，脉冲最高 `0.9`；两类灯都启用硬阴影，发光材质同步降亮度。
 
-自动测试能证明规则和回归状态，不能代替真人对战斗节奏、换弹压力、雾区可读性和移动手感的判断。
+测试锁定灯光范围、最大强度和阴影模式，防止后续版本把信号灯重新调成隔墙导航。完整记录见 [`21-v1.4.0-signal-light-containment.md`](devlogs/21-v1.4.0-signal-light-containment.md)。
+
+### 发布验收边界
+
+- 作者已在 Android 上确认移动操作、怪物追击、死亡结算遮挡、第一人称侧墙检测和武器比例修正；
+- 最后一轮只调整终点与出生灯光，作者决定不再重复 APK 真机测试，直接发布；
+- EditMode `22/22`、PlayMode `54/54`、Windows/Android Release 构建通过；
+- WebGL 本轮未重建，商店审核、多机型和长时间压力测试不属于本次作品集交付范围。
+
+自动测试能证明规则和回归状态，不能替代真人对最后一版灯光观感、战斗节奏和移动手感的判断。
 
 ### 面试讲法
 
