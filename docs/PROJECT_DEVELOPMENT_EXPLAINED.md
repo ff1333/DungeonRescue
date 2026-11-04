@@ -479,7 +479,7 @@ HUD 必须跟随当前武器改变，而不是只替换一行文字：
 - 第一人称和第三人称都要同步正确的持枪、持刀和攻击动作；
 - 移动端保留独立换弹键，并增加明确的双武器切换控件。
 
-角色视觉使用现有骨骼动画配合运行时支撑手 IK：离武器握把较远的一只手会贴到狙击枪前护木或长刀刀柄；当前武器手持，另一把武器挂在背部。第一人称相机眼位保持在 CharacterController 胶囊内部，仅向前 0.04 米，并把近裁剪面设为 0.03，避免角色贴墙时镜头先于碰撞体穿过墙面。
+角色视觉使用现有骨骼动画配合运行时支撑手 IK：离武器握把较远的一只手会贴到狙击枪前护木或长刀刀柄；当前武器手持，另一把武器挂在背部。第一人称相机眼位保持在 CharacterController 胶囊内部，仅向前 0.04 米，并把近裁剪面设为 0.03。第一人称武器另用相机位置和朝向检测近墙遮挡，解决身体不转、只转镜头看向侧墙时的显示穿墙。
 
 换弹采用手动触发。换弹期间允许移动和转向，但不能射击；切换到长刀会中断未完成换弹，再切回枪械时弹匣保持原状态。该规则比自动换弹更容易被玩家理解，也能形成“继续躲避、切刀自保还是冒险完成换弹”的决策。
 
@@ -531,7 +531,7 @@ MazeExitTrigger
 - 攻击进入/退出距离迟滞，避免临界距离状态抖动；
 - 十关 `DungeonCondition` 和局部雾区配置。
 
-### v1.4 PlayMode `52/52`
+### v1.4 PlayMode `53/53`
 
 适合验证需要场景和组件生命周期的行为：
 
@@ -555,6 +555,7 @@ MazeExitTrigger
 - 冲刺按钮点击锁定，以及摇杆上推自动冲刺、松手续跑和再次触摸解除。
 - 死亡时手持、背负和第一人称武器全部隐藏，重新挑战后恢复默认长刀配置。
 - 靠墙时第一人称武器后移、第三人称双手收向胸前，离墙后恢复正常持械姿态。
+- 玩家身体方向不变、第一人称相机转向侧墙时仍会收枪；同一位置换成怪物时不会误触发遮挡。
 
 自动测试用于防止版本迭代破坏规则，不能代替真实玩家对难度和手感的判断。
 
@@ -641,12 +642,13 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 近距离攻击与刷怪增压日志：[`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)
 - 死亡结算装备遮挡日志：[`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)
 - 靠墙收枪日志：[`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)
+- 第一人称侧墙与武器比例日志：[`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)
 - 候选版说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
 
 - EditMode：`22/22 PASS`；
-- PlayMode：`52/52 PASS`；
+- PlayMode：`53/53 PASS`；
 - Windows Release：构建成功，`0 errors / 0 warnings`；
 - Android Release：构建成功，`0 errors / 0 warnings`；
 - 独立 Player：默认长刀、第三人称狙击枪、配镜、换弹、双手持械和背负武器截图通过检查。
@@ -695,14 +697,14 @@ Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装
 
 ### 靠墙收枪与武器模型防穿墙
 
-攻击判定早已使用射线阻止隔墙伤害，但显示模型仍可能在贴墙时穿入墙面。`WeaponController` 现在从玩家胸口沿角色朝向执行 `SphereCastNonAlloc`，按最近场景障碍距离计算 `ObstructionAmount`；检测忽略怪物，因此近身战不会因为敌人靠近而强制收枪。
+攻击判定早已使用射线阻止隔墙伤害，但显示模型仍可能在贴墙时穿入墙面。第三人称由 `WeaponController` 从玩家胸口沿角色朝向执行 `SphereCastNonAlloc`；第一人称和配镜状态改用相机位置与相机朝向，因此身体不转、只转镜头看向侧墙也能得到正确的 `ObstructionAmount`。检测同时忽略玩家自身和怪物，因此近身战不会因为敌人靠近而强制收枪。
 
-第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态。第三人称由 `PlayerVisual` 在动画之后调整双臂目标，把两只手收向胸前，实际缩短手持武器的世界空间前伸距离。离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见 [`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)。
+第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态，满额后收增加到 `0.75m`。第一人称狙击枪和长刀分别缩放为 `0.78` 和 `0.68`；第三人称手持狙击枪、长刀长度和背负武器也按角色比例下调。第三人称低持双手目标从腰部以下调整到胸前，离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见 [`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md) 与 [`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)。
 
 ### 尚未完成的发布步骤
 
 - 作者真人完整试玩和难度调平；
-- 最新靠墙收枪 APK 的真机回归；
+- 最新侧墙检测与武器比例修正 APK 的真机回归；
 - WebGL 构建；
 - GitHub PR 合并、`v1.4.0` 标签和 Release。
 
