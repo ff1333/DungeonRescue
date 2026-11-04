@@ -325,6 +325,32 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
+        public IEnumerator ExitAndSpawnSignalLightsStayLocalAndCastWallShadows()
+        {
+            var exitLight = GameObject.Find("Exit Beacon").GetComponent<Light>();
+            Assert.That(exitLight.range, Is.EqualTo(MazeWorld.ExitLightRange));
+            Assert.That(exitLight.intensity, Is.EqualTo(MazeWorld.ExitLightIntensity));
+            Assert.That(exitLight.shadows, Is.EqualTo(LightShadows.Hard));
+
+            SpawnTelegraph.Create(new Vector3(500f, 0f, 500f), false, null);
+            SpawnTelegraph.Create(new Vector3(510f, 0f, 500f), true, null);
+            yield return null;
+
+            var normal = GameObject.Find("Goblin Spawn Warning");
+            var elite = GameObject.Find("Abyss Brute Spawn Warning");
+            Assert.That(normal.GetComponent<Light>().range, Is.EqualTo(SpawnTelegraph.NormalLightRange));
+            Assert.That(elite.GetComponent<Light>().range, Is.EqualTo(SpawnTelegraph.EliteLightRange));
+            foreach (var signal in new[] { normal, elite })
+            {
+                var light = signal.GetComponent<Light>();
+                Assert.That(light.intensity, Is.LessThanOrEqualTo(
+                    SpawnTelegraph.LightBaseIntensity + SpawnTelegraph.LightPulseIntensity));
+                Assert.That(light.shadows, Is.EqualTo(LightShadows.Hard));
+                Object.Destroy(signal);
+            }
+        }
+
+        [UnityTest]
         public IEnumerator UnifiedInput_MovesPlayerAndSwitchesCameraMode()
         {
             var director = GameDirector.Instance;

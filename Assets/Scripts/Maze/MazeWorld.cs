@@ -6,6 +6,8 @@ namespace FogboundMaze
     public sealed class MazeWorld : MonoBehaviour
     {
         public const float CellSize = 5f;
+        public const float ExitLightRange = 4.8f;
+        public const float ExitLightIntensity = 0.8f;
         private const float WallHeight = 3.4f;
         private const float WallThickness = 0.28f;
 
@@ -240,7 +242,7 @@ namespace FogboundMaze
             CreateWall(outside + Vector3.right * CellSize * 0.5f, new Vector3(WallThickness, WallHeight, CellSize));
             CreateWall(outside + Vector3.forward * CellSize * 0.5f, new Vector3(CellSize, WallHeight, WallThickness));
             CreateWall(outside + Vector3.back * CellSize * 0.5f, new Vector3(CellSize, WallHeight, WallThickness));
-            var exitFrame = RuntimeArt.Material("Exit Frame", new Color(0.24f, 0.88f, 0.68f), 0.2f, 0.6f);
+            var exitFrame = RuntimeArt.Material("Exit Frame", new Color(0.24f, 0.88f, 0.68f), 0.2f, 0.3f);
             RuntimeArt.Primitive(PrimitiveType.Cube, "Exit Left", generatedRoot,
                 goal + new Vector3(CellSize * 0.5f, 1.6f, -CellSize * 0.45f),
                 new Vector3(0.18f, 3.2f, 0.18f), exitFrame, false);
@@ -256,8 +258,10 @@ namespace FogboundMaze
             var point = beacon.AddComponent<Light>();
             point.type = LightType.Point;
             point.color = new Color(0.3f, 1f, 0.75f);
-            point.range = 10f;
-            point.intensity = 3f;
+            point.range = ExitLightRange;
+            point.intensity = ExitLightIntensity;
+            point.shadows = LightShadows.Hard;
+            point.shadowStrength = 0.7f;
 
             var triggerObject = new GameObject("Exit Trigger");
             triggerObject.transform.SetParent(generatedRoot, false);
