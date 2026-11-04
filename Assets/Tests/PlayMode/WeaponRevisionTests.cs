@@ -266,6 +266,36 @@ namespace FogboundMaze.Tests
         }
 
         [UnityTest]
+        public IEnumerator WeaponRetractsNearWallAndReturnsAfterClearance()
+        {
+            var gun = game.Player.Weapon;
+            var mount = game.CameraRig.transform.Find("First Person Weapon Mount");
+            Assert.That(mount, Is.Not.Null);
+            yield return null;
+            var heldWeapon = game.Player.GetComponent<PlayerVisual>().HeldWeapon;
+            var restForwardReach = Vector3.Dot(heldWeapon.position - game.Player.transform.position,
+                game.Player.transform.forward);
+            var restPosition = mount.localPosition;
+            var wall = Wall(new Vector3(0f, 1.2f, .72f), new Vector3(2.5f, 2.8f, .18f));
+
+            yield return new WaitForSeconds(.2f);
+
+            Assert.That(gun.ObstructionAmount, Is.GreaterThan(.45f));
+            Assert.That(mount.localPosition.z, Is.LessThan(restPosition.z - .15f));
+            Assert.That(Mathf.Abs(mount.localRotation.eulerAngles.x), Is.GreaterThan(5f));
+            var obstructedForwardReach = Vector3.Dot(heldWeapon.position - game.Player.transform.position,
+                game.Player.transform.forward);
+            Assert.That(obstructedForwardReach, Is.LessThan(restForwardReach - .08f));
+
+            Object.Destroy(wall);
+            Physics.SyncTransforms();
+            yield return new WaitForSeconds(.35f);
+
+            Assert.That(gun.ObstructionAmount, Is.LessThan(.05f));
+            Assert.That(Vector3.Distance(mount.localPosition, restPosition), Is.LessThan(.02f));
+        }
+
+        [UnityTest]
         public IEnumerator MuzzleBehindCoverCannotExploitClearCameraRay()
         {
             var enemy = Enemy(Vector3.forward * 8f);

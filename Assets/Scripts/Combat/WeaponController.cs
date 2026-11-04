@@ -38,6 +38,8 @@ namespace FogboundMaze
         private float nextDryFire;
         private AudioSource audioSource;
         private readonly HashSet<EnemyAgent> struck = new();
+        private readonly RaycastHit[] obstructionHits = new RaycastHit[8];
+        private float obstructionAmount;
 
         public float ReloadProgress => reloadProgress;
         public WeaponType Type => type;
@@ -54,6 +56,7 @@ namespace FogboundMaze
         public bool EmptyFeedback => Time.time < emptyFeedbackUntil;
         public bool HasLoadout => type != WeaponType.None;
         public float AttackCooldownRemaining => Mathf.Max(0f, nextAttack - Time.time);
+        public float ObstructionAmount => obstructionAmount;
 
         public void Initialize(PlayerController player, Camera camera)
         {
@@ -72,6 +75,14 @@ namespace FogboundMaze
         {
             viewMount.gameObject.SetActive(!owner.Health.IsDead
                 && viewCamera.GetComponent<CameraRig>().UsesFirstPersonView && !aiming);
+            var targetObstruction = owner.Health.IsDead ? 0f : MeasureWeaponObstruction();
+            obstructionAmount = Mathf.MoveTowards(obstructionAmount, targetObstruction,
+                Time.deltaTime * (targetObstruction > obstructionAmount ? 8f : 5f));
+            var restPosition = GetViewMountPosition();
+            viewMount.localPosition = restPosition + Vector3.Scale(
+                new Vector3(-.08f, -.24f, -.48f), Vector3.one * obstructionAmount);
+            viewMount.localRotation = Quaternion.Slerp(Quaternion.identity,
+                Quaternion.Euler(32f, -8f, 18f), obstructionAmount);
             recoil = Mathf.MoveTowards(recoil, 0f, Time.deltaTime * 9f);
             if (viewWeapon != null && !swinging && !reloading && !cyclingBolt)
             {
@@ -113,8 +124,8 @@ namespace FogboundMaze
             foreach (Transform child in viewMount) Destroy(child.gameObject);
             viewWeapon = muzzleTip = null;
             owner.GetComponent<PlayerVisual>()?.Equip(type);
-            viewMount.localPosition = type == WeaponType.SniperRifle
-                ? new Vector3(.32f,-.30f,.65f) : new Vector3(.38f,-.38f,.85f);
+            viewMount.localPosition = GetViewMountPosition();
+            viewMount.localRotation = Quaternion.identity;
             var prefab = Resources.Load<GameObject>(type == WeaponType.SniperRifle ? "Weapons/SniperRifle" : "Weapons/LongBlade");
             viewWeapon = Instantiate(prefab, viewMount).transform;
             muzzleTip = viewWeapon.Find("Muzzle");
@@ -360,6 +371,31 @@ namespace FogboundMaze
         }
 
         public void ExitAim() => UpdateAim(false);
+
+        private Vector3 GetViewMountPosition()
+            => type == WeaponType.SniperRifle
+                ? new Vector3(.32f, -.30f, .65f)
+                : new Vector3(.38f, -.38f, .85f);
+
+        private float MeasureWeaponObstruction()
+        {
+            if (type == WeaponType.None) return 0f;
+            var distance = type == WeaponType.LongBlade ? 1.45f : 1.15f;
+            var origin = owner.transform.position + Vector3.up * 1.22f;
+            var count = Physics.SphereCastNonAlloc(origin, .11f, owner.transform.forward,
+                obstructionHits, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var nearest = distance;
+            var found = false;
+            for (var index = 0; index < count; index++)
+            {
+                var hit = obstructionHits[index];
+                if (hit.collider == null || hit.collider.GetComponentInParent<EnemyAgent>() != null) continue;
+                found = true;
+                nearest = Mathf.Min(nearest, hit.distance);
+            }
+            if (!found) return 0f;
+            return 1f - Mathf.InverseLerp(.22f, distance, nearest);
+        }
 
         private void OnDestroy()
         {

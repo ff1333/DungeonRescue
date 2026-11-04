@@ -115,7 +115,13 @@ namespace FogboundMaze
                     : speed > 0.1f ? "Walk" + suffix : "Idle" + suffix;
                 if (!animationPlayer.IsPlaying(clip)) animationPlayer.CrossFade(clip, 0.12f);
             }
-            if (!player.Health.IsDead) ApplySupportHandPose();
+            if (!player.Health.IsDead)
+            {
+                if (player.Weapon.ObstructionAmount > .01f)
+                    ApplyObstructedWeaponPose(player.Weapon.ObstructionAmount);
+                else
+                    ApplySupportHandPose();
+            }
         }
 
         private void SetEquipmentVisible(bool visible)
@@ -154,8 +160,26 @@ namespace FogboundMaze
             }
         }
 
+        private void ApplyObstructedWeaponPose(float amount)
+        {
+            if (HeldWeapon == null || player.Weapon.Type == WeaponType.None) return;
+            var center = transform.position
+                + transform.up * Mathf.Lerp(1.12f, .82f, amount)
+                + transform.forward * Mathf.Lerp(.42f, .10f, amount);
+            var leftTarget = center - transform.right * .13f;
+            var rightTarget = center + transform.right * .13f;
+            for (var iteration = 0; iteration < 2; iteration++)
+            {
+                RotateJointToward(lowerArmLeft, palmLeft, leftTarget);
+                RotateJointToward(upperArmLeft, palmLeft, leftTarget);
+                RotateJointToward(lowerArmRight, palmRight, rightTarget);
+                RotateJointToward(upperArmRight, palmRight, rightTarget);
+            }
+        }
+
         private static void RotateJointToward(Transform joint, Transform end, Vector3 target)
         {
+            if (joint == null || end == null) return;
             var current = end.position - joint.position;
             var desired = target - joint.position;
             if (current.sqrMagnitude < 0.000001f || desired.sqrMagnitude < 0.000001f) return;
