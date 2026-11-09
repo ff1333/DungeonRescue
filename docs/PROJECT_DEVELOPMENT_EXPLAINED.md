@@ -6,6 +6,8 @@
 
 当前文档对应 `v1.4.0` 正式发布内容。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验，并完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、双手持械、视觉与听觉感知、目标记忆、有限群体警报、Utility AI、固定地下城环境、局部雾区以及近墙和信号灯表现收尾。
 
+文档末尾已增加 `v1.5.0` 候选版：十关营救叙事、固定 Boss 大厅、三阶段深渊狱长、公主营救结算和 Boss Replay。该版本代码与测试源码已完成静态编译，但 Unity Hub 尚未登录，不能把它写成已完成运行时验收或正式发布。
+
 ## 一、先用一句话理解游戏
 
 《迷宫逃生》是一款 3D 生存迷宫游戏：
@@ -721,7 +723,57 @@ Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装
 
 > v1.4 我没有继续把敌人判断堆进 EnemyAgent，而是拆成 NoiseSystem、EnemyPerception、EnemyDecisionModel 和 EnemyAgent 四层。声音系统只广播位置和半径，感知层保存视觉、听觉和最后已知位置，纯逻辑决策层使用可测试的 Utility 分数选择意图，执行层继续复用程序化迷宫 A* 和对象池。武器方面从连射冲锋枪改成 5 发栓动狙击枪，补充单发拉栓、手动换弹、右键配镜、前三秒时间减速、双手 IK 和背负武器；相机眼位回到碰撞胶囊内，解决贴墙穿墙。环境方面删除短局昼夜，改成固定地下城状态和会同步影响敌人视野的局部雾区。
 
-## 二十三、以后如何使用这份文档
+## 二十三、v1.5 深渊营救与最终 Boss
+
+### 23.1 为什么要改
+
+旧版十关在机制上完整，但叙事只有“找到出口”。这会让第十关看起来只是更大的迷宫，缺少作品集里能讲清楚的高潮、阶段状态和任务闭环。v1.5 把目标统一成“进入地下城营救公主”：前九关逐步寻找痕迹、追踪牢车、穿过污染监牢，第十关出口进入固定 Boss 大厅。
+
+### 23.2 第十关为什么不是直接通关
+
+前九关触发出口后仍然立即调用 `CompleteLevel()`。第十关出口只调用 `BossEncounterController.Begin()`，阶段从 `Playing` 变成 `BossIntro`，停止普通刷怪并清理场上怪物。Boss 死亡后进入 `Rescue`，只打开牢笼；玩家靠近公主后，`PrincessRescueController` 才触发真正的 `CompleteLevel()` 和存档。
+
+这条调用链是：
+
+```text
+MazeExitTrigger
+-> GameDirector.ReachExit
+-> BossEncounterController.Begin
+-> DungeonBossController.ActivateFight
+-> BossEncounterController.BossDefeated
+-> PrincessRescueController.OnTriggerEnter
+-> GameDirector.CompleteLevel
+-> CampaignProgress.Complete(10)
+```
+
+### 23.3 Boss 如何设计
+
+宏观层使用有限状态机：`Intro -> PhaseOne -> PhaseTwo -> PhaseThree -> Defeated`。阶段内部由 `BossDecisionModel` 对劈砍、冲锋、腐化弹、召唤和震荡评分。评分读取玩家距离、招式冷却、上一次招式和当前召唤数量；重复招式扣分，达到四只召唤上限后不再选择召唤。
+
+第一阶段建立基础预警；第二阶段加入召唤和震荡；第三阶段启动全场污染，只保留三处安全灯。冲锋、召唤和震荡后开放弱点窗口，狙击枪命中弱点获得 1.8 倍伤害。长刀用于处理召唤怪和利用近身恢复窗口，两把武器都保留明确用途。
+
+### 23.4 为什么 Boss 房不用迷宫 A*
+
+Boss 大厅位于程序化网格以外。如果把房间坐标直接传给 `WorldToCell`，坐标会被夹到迷宫终点格，召唤怪会错误地往迷宫出口移动。因此 `EnemyAgent` 在生成时记录 `arenaSummon`：迷宫内怪物继续使用网格 A*，Boss 房召唤怪改为直接追击，同时继续复用对象池、伤害、动画和分离逻辑。
+
+### 23.5 可讲的工程取舍
+
+- `GameDirector` 只负责全局阶段，不直接实现 Boss 招式。
+- `BossEncounterController` 管房间生命周期、门、补给、污染、召唤和营救。
+- `DungeonBossController` 管生命、阶段、移动、弱点和动作执行。
+- `BossDecisionModel` 是纯评分逻辑，便于 EditMode 测试。
+- 第十关保留程序化迷宫，Boss 大厅使用固定布局，兼顾重玩变化与战斗可控性。
+- 进入战斗最多恢复 55 生命并补到 5+20 弹药，避免长迷宫后出现零资源无解，但不提供无限补给。
+
+### 23.6 当前验证边界
+
+新增 10 项 EditMode 和 4 项 PlayMode 测试用例。运行时、EditMode 测试程序集、PlayMode 测试程序集已静态编译通过，均为 0 errors。当前 Unity Hub 未登录，Editor 无有效许可证，因此尚未实际运行 Test Runner，也没有生成 v1.5 Windows/Android 包。正式发布前必须完成三轮 EditMode、三轮 PlayMode、两平台构建和最终流程试玩。
+
+### 23.7 面试讲法
+
+> v1.5 我把原来单纯到达出口的十关改成了营救公主的连续任务。前九关仍由程序化迷宫提供探索变化，第十关出口进入固定 Boss 大厅。流程层把普通通关、Boss 战和营救拆成 Playing、BossIntro、BossFight、Rescue、Won，避免打死 Boss 就提前写存档。Boss 外层使用三阶段状态机，阶段内用可测试的 Utility 评分选择五种招式，并通过冷却、重复惩罚和召唤上限控制行为。Boss 房位于迷宫网格外，所以召唤怪不再使用会把坐标夹回终点的 A*，而是切换为房间内直接追击。这个版本主要体现的是状态机、职责拆分、可测试决策和任务闭环，而不只是增加一个大血量怪物。
+
+## 二十四、以后如何使用这份文档
 
 第一次阅读不需要背代码。按顺序做到：
 

@@ -1,5 +1,11 @@
 # Fogbound Maze - Game Design Baseline
 
+## v1.5 Abyss Rescue
+
+The player enters the dungeon to rescue a princess used by the Abyss Warden as a ritual anchor. Levels 1-3 establish her trail, 4-6 follow the prison convoy, 7-9 cross the contaminated prison, and level 10 connects its procedural maze to a fixed final arena. Defeating the Warden opens the cage; approaching the princess completes the campaign and unlocks Boss Replay.
+
+The blade clears summons and punishes close recovery windows. The sniper uses pillars for cover and deals amplified damage to an exposed weak point. Phase three activates arena contamination and three safe lights so standing still is not a viable strategy.
+
 ## Player Promise
 
 Choose a weapon, enter an unfamiliar maze, read the light and sound around you,

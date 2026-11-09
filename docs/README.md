@@ -1,5 +1,11 @@
 # Maze Escape / 迷宫逃生文档入口
 
+当前开发中的 `v1.5.0` 深渊营救与最终 Boss 说明：
+
+- `RELEASE_NOTES_v1.5.0.md`：候选版范围、玩法与尚未完成的发布门槛；
+- `devlogs/22-v1.5.0-princess-rescue-boss.md`：需求、架构、实现与调研记录；
+- `test-results/v1.5.0/README.md`：已执行的静态编译和 Unity 许可证阻塞边界。
+
 **当前正式版 v1.3.0：先看 [13_V1_3_0_SETTINGS.md](13_V1_3_0_SETTINGS.md)。** 默认中文，支持英文切换、静音、总音量、音乐与音效音量，并保留十关迷宫、全图避难灯、装弹反馈和此前的战斗修复。
 
 - [v1.3.0 Release 下载](https://github.com/ff1333/FogboundMaze/releases/tag/v1.3.0)

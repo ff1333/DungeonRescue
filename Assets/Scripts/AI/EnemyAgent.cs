@@ -34,6 +34,7 @@ namespace FogboundMaze
         private float staggerUntil;
         private Coroutine hitFlash;
         private System.Random random;
+        private bool arenaSummon;
 
         public EnemyState State { get; private set; } = EnemyState.Inactive;
         public bool IsActive => gameObject.activeSelf && State != EnemyState.Dead;
@@ -80,6 +81,7 @@ namespace FogboundMaze
             hitFlash = null;
             hadDirectSight = hasPatrolTarget = false;
             random = new System.Random(GetInstanceID() ^ Mathf.RoundToInt(position.x * 31f + position.z * 17f));
+            arenaSummon = !world.IsInside(position);
             var normal = transform.Find("Goblin Visual");
             var heavy = transform.Find("Abyss Brute Visual");
             if (normal != null) normal.gameObject.SetActive(!elite);
@@ -92,7 +94,7 @@ namespace FogboundMaze
         private void Update()
         {
             if (State is EnemyState.Inactive or EnemyState.Dead || player == null || world == null
-                || GameDirector.Instance?.Phase != GamePhase.Playing)
+                || GameDirector.Instance == null || !GameDirector.Instance.IsCombatPhase)
                 return;
             if (Time.time < staggerUntil) return;
 
@@ -105,6 +107,18 @@ namespace FogboundMaze
             hadDirectSight = perception.CanSeePlayer;
 
             var distance = Vector3.Distance(transform.position, player.transform.position);
+            if (arenaSummon)
+            {
+                State = distance <= 1.65f ? EnemyState.Attack : EnemyState.Chase;
+                ApplySeparation();
+                if (State == EnemyState.Attack) AttackPlayer();
+                else
+                {
+                    MoveInDirection(player.transform.position - transform.position, speed);
+                    Play("Run");
+                }
+                return;
+            }
             LastDecision = EnemyDecisionModel.Evaluate(new EnemyDecisionContext(
                 perception.CanSeePlayer,
                 perception.HeardRecently,
@@ -185,7 +199,8 @@ namespace FogboundMaze
             var directDelta = destination - transform.position;
             directDelta.y = 0f;
             if (running && perception.CanSeePlayer
-                && directDelta.sqrMagnitude <= DirectPursuitDistance * DirectPursuitDistance)
+                && (directDelta.sqrMagnitude <= DirectPursuitDistance * DirectPursuitDistance
+                    || !world.IsInside(transform.position)))
             {
                 MoveInDirection(directDelta, speed);
                 Play("Run");
