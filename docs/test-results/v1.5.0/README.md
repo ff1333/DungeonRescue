@@ -1,24 +1,50 @@
 # Maze Escape v1.5.0 候选版验证记录
 
-日期：2026-11-09
+日期：2026-11-12
 
-## 已完成
+## 自动测试
+
+Unity `6000.3.18f1` 在已激活的 Unity Personal 环境中串行运行六轮 Test Runner：
+
+| 模式 | 轮次 | 结果 | 通过 | 失败 | 跳过 |
+|---|---:|---|---:|---:|---:|
+| EditMode | 1 | Passed | 32 | 0 | 0 |
+| EditMode | 2 | Passed | 32 | 0 | 0 |
+| EditMode | 3 | Passed | 32 | 0 | 0 |
+| PlayMode | 1 | Passed | 58 | 0 | 0 |
+| PlayMode | 2 | Passed | 58 | 0 | 0 |
+| PlayMode | 3 | Passed | 58 | 0 | 0 |
+
+EditMode 包含原有 22 项回归与新增 10 项 Boss/剧情规则测试。PlayMode 包含原有 54 项回归与新增 4 项最终战流程测试。三轮结果分别保存在 `EditMode-round1.xml` 至 `EditMode-round3.xml`、`PlayMode-round1.xml` 至 `PlayMode-round3.xml`。
+
+## 构建结果
+
+- Windows Release：`Succeeded`，`0 errors / 0 warnings`，完整目录 `113,233,622` bytes。
+- Android Release：`Succeeded`，`0 errors / 0 warnings`，APK `40,236,166` bytes。
+- APK：`com.ff1333.fogboundmaze`，`versionName=1.5.0`，`versionCode=12`，minSdk 25，targetSdk 36。
+- Windows 发布 ZIP：`48,426,657` bytes，SHA-256 `460ae81686c3826312fe393e9562f830e4e54e628ecf18cffab446f4ecf784e2`。
+- Android 发布 APK：SHA-256 `08f465a8ae4beefe8f89b35a0fe9ba1a466306ef6ff9f5c6f82968d3b6c5d22e`。
+- Windows 正式 Player：第 10 关 gameplay 自动烟测退出码 0，版本为 `1.5.0`，日志命中 `FOGBOUND_RUNTIME_SMOKE_PASS`。
+
+构建摘要见 `Windows-build-summary.txt`、`Android-build-summary.txt` 和 `Windows-player-smoke-summary.txt`。本地附件位于 `Builds/Packages/v1.5.0/`，该目录被 `.gitignore` 排除，不进入源码提交。
+
+## 静态检查
 
 - `FogboundMaze.Runtime.csproj`：`dotnet build` 成功，0 errors。
 - `FogboundMaze.EditModeTests.csproj`：`dotnet build` 成功，0 errors。
 - `FogboundMaze.PlayModeTests.csproj`：`dotnet build` 成功，0 errors。
 - `git diff --check`：通过。
-- 本地化 JSON 可解析；本轮没有新增重复英文键。
-- 三轮静态检查摘要见 `static-compile.txt`。
+- 本地化 JSON 可解析，本轮没有新增重复英文键。
+- 静态检查摘要见 `static-compile.txt`。
 
-## 新增测试源码
+## 人工验证边界
 
-- EditMode：剧情元数据、Boss 关标记、阶段阈值、冷却、防重复、召唤上限、非战斗阶段禁用决策。
-- PlayMode：第十关出口只进入 Boss、Intro 不可受伤、Boss 死亡后等待营救、营救写入进度、召唤上限、重试清理、武器伤害数值。
-- 旧回归：前九关出口仍直接完成；原十关迷宫、移动、相机、AI、武器、HUD 与存档测试源码继续保留。
+自动测试已经验证状态流转、Boss 规则、营救存档、重试清理和历史回归，构建结果证明两个目标平台可以产出附件；它们不能替代真人手感和设备兼容性。
 
-## 未完成及原因
+公开发布前仍需：
 
-Unity `6000.3.18f1` 批处理返回：`No valid Unity Editor license found. Please activate your license.` 图形编辑器同样无法进入工程，Unity Hub 停留在 Sign in。因此没有生成 v1.5.0 EditMode/PlayMode XML，没有运行物理与生命周期测试，也没有构建 Windows/Android。
+1. Windows 真人完成“第十关迷宫 -> 进入 Boss 房 -> 击败深渊狱长 -> 靠近公主结算 -> Boss Replay”。
+2. Android 真机安装本次 v1.5.0 APK，复测移动、视角、攻击、开镜、换弹、切刀、暂停和最终战基本流程。
+3. 人工确认 Boss 血条、阶段提示、安全灯、牢笼和公主触发没有明显遮挡或穿模。
 
-正式发布前必须：登录并激活 Unity Personal；连续运行三轮 EditMode 和三轮 PlayMode；保存 XML；重建 Windows/Android；检查 BuildReport；进行 Windows 最终 Boss 流程试玩和 Android 基本操作回归。旧版 v1.4.0 证据不用于替代本轮测试。
+旧版 v1.4.0 的人工结果不替代本轮新增 Boss 内容。当前可以准确陈述“六轮自动测试和 Windows/Android 构建通过”，不能陈述“v1.5.0 已真人完整通关或已正式发布”。

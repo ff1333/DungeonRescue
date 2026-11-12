@@ -4,7 +4,7 @@
 
 **当前正式版为 v1.4.0。** 本版新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态；同时完成怪物近身追击、死亡装备遮挡、贴墙武器后收、武器比例和终点/出生灯光收敛。
 
-**当前开发分支为 v1.5.0 候选版。** 本轮把十关改写为“进入地下城营救公主”的连续任务，第十关出口进入固定监牢大厅；深渊狱长拥有三阶段、招式冷却、防重复 Utility 选择、召唤、弱点窗口和第三阶段污染。击败 Boss 只打开牢笼，玩家靠近公主后才写入最终通关记录，并解锁主菜单 Boss Replay。当前 C# 运行时与两套测试程序集已经通过静态编译；Unity 图形/批处理测试和正式构建仍受本机 Unity Hub 未登录、无有效 Editor license 阻塞，不能把候选版写成已发布或已通过运行时验收。
+**当前开发分支为 v1.5.0 发布候选版。** 本轮把十关改写为“进入地下城营救公主”的连续任务，第十关出口进入固定监牢大厅；深渊狱长拥有三阶段、招式冷却、防重复 Utility 选择、召唤、弱点窗口和第三阶段污染。击败 Boss 只打开牢笼，玩家靠近公主后才写入最终通关记录，并解锁主菜单 Boss Replay。Unity Test Runner 已连续完成三轮 EditMode `32/32` 和三轮 PlayMode `58/58`，Windows/Android Release 均以 `0 errors / 0 warnings` 构建成功。该分支尚未合并或发布，最终 Boss 全流程试玩和 v1.5.0 Android 真机回归仍需人工完成。
 
 - [下载 GitHub Release v1.4.0](https://github.com/ff1333/MazeEscape/releases/tag/v1.4.0)
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，核心流程仍适用）
@@ -84,8 +84,11 @@
 ## 当前验证结果
 
 - v1.5.0 候选版：运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译通过，`0 errors`
-- v1.5.0 候选版：新增 10 项 EditMode 与 4 项 PlayMode 测试用例；尚未取得 Unity Test Runner XML
-- v1.5.0 候选版：Unity Hub 当前未登录，Editor 报 `No valid Unity Editor license found`，Windows/Android 构建尚未执行
+- v1.5.0 EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过
+- v1.5.0 PlayMode：连续三轮 `58/58 PASS`，每轮 0 失败、0 跳过
+- v1.5.0 Windows Release：构建成功，`0 errors / 0 warnings`，完整目录 `113,233,622` bytes
+- v1.5.0 Android Release：构建成功，`0 errors / 0 warnings`，APK `40,236,166` bytes，`versionName=1.5.0`、`versionCode=12`
+- v1.5.0 人工边界：尚未完成“第十关迷宫 -> 深渊狱长 -> 靠近公主结算”的真人完整试玩，也未在 Android 真机安装本次 APK
 
 - v1.4.0 EditMode：`22/22 PASS`
 - v1.4.0 PlayMode：`54/54 PASS`
@@ -96,7 +99,7 @@
 - WebGL：此前版本曾在 Edge 完成设置、图鉴、选关、移动、攻击、装弹和暂停交互；v1.4.0 本轮未重建 WebGL，不属于本次正式附件
 - Android：作者已完成 v1.4.0 候选包真机验收；最后一轮仅修改信号灯参数，未重复进行该 APK 的观感复测
 
-v1.4.0 证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和 Windows 构建不能替代真人手感、Android 多机型、长时间压力或商店审核；最后一轮灯光收敛也未做新版 APK 真机复测。
+v1.5.0 自动证据见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)，已发布版本证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
 
 ## 项目结构
 

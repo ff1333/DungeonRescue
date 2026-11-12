@@ -6,7 +6,7 @@
 
 当前文档对应 `v1.4.0` 正式发布内容。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验，并完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、双手持械、视觉与听觉感知、目标记忆、有限群体警报、Utility AI、固定地下城环境、局部雾区以及近墙和信号灯表现收尾。
 
-文档末尾已增加 `v1.5.0` 候选版：十关营救叙事、固定 Boss 大厅、三阶段深渊狱长、公主营救结算和 Boss Replay。该版本代码与测试源码已完成静态编译，但 Unity Hub 尚未登录，不能把它写成已完成运行时验收或正式发布。
+文档末尾已增加 `v1.5.0` 候选版：十关营救叙事、固定 Boss 大厅、三阶段深渊狱长、公主营救结算和 Boss Replay。该版本已完成三轮 EditMode `32/32`、三轮 PlayMode `58/58` 以及 Windows/Android Release 构建；最终 Boss 全流程真人试玩和本次 Android APK 真机回归仍待完成，因此尚未正式发布。
 
 ## 一、先用一句话理解游戏
 
@@ -767,7 +767,7 @@ Boss 大厅位于程序化网格以外。如果把房间坐标直接传给 `Worl
 
 ### 23.6 当前验证边界
 
-新增 10 项 EditMode 和 4 项 PlayMode 测试用例。运行时、EditMode 测试程序集、PlayMode 测试程序集已静态编译通过，均为 0 errors。当前 Unity Hub 未登录，Editor 无有效许可证，因此尚未实际运行 Test Runner，也没有生成 v1.5 Windows/Android 包。正式发布前必须完成三轮 EditMode、三轮 PlayMode、两平台构建和最终流程试玩。
+新增 10 项 EditMode 和 4 项 PlayMode 测试用例。运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译均为 0 errors。Unity Test Runner 已连续完成三轮 EditMode `32/32` 和三轮 PlayMode `58/58`；Windows/Android Release 均为 `0 errors / 0 warnings`。正式发布前仍需完成最终 Boss 全流程真人试玩和本次 Android APK 真机回归。
 
 ### 23.7 面试讲法
 

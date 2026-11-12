@@ -1,8 +1,8 @@
 # Maze Escape v1.5.0 候选版
 
-日期：2026-11-09
+日期：2026-11-12
 
-状态：功能代码与测试源码已完成，尚未满足正式发布门槛。
+状态：自动测试与 Windows/Android 构建已通过，等待最终人工试玩、合并与公开发布。
 
 ## 本次更新
 
@@ -30,7 +30,11 @@
 - EditMode 测试程序集：编译通过，0 errors。
 - PlayMode 测试程序集：编译通过，0 errors。
 - `git diff --check`：通过。
-- Unity Test Runner：未执行，Unity Hub 未登录且 Editor 无有效许可证。
-- Windows / Android Release：未构建，不能生成或上传 v1.5.0 正式附件。
+- Unity EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过。
+- Unity PlayMode：连续三轮 `58/58 PASS`，每轮 0 失败、0 跳过。
+- Windows Release：`Succeeded`，`0 errors / 0 warnings`，完整目录 `113,233,622` bytes。
+- Android Release：`Succeeded`，`0 errors / 0 warnings`，APK `40,236,166` bytes。
+- APK 元数据：`com.ff1333.fogboundmaze`，`versionName=1.5.0`，`versionCode=12`，minSdk 25，targetSdk 36。
+- Windows 正式 Player：第 10 关 gameplay 自动烟测退出码 0，版本检查与 `FOGBOUND_RUNTIME_SMOKE_PASS` 通过。
 
-正式发布前必须登录 Unity Hub，实际运行三轮 EditMode、三轮 PlayMode，并重建 Windows 与 Android。旧版 `v1.4.0` Release 和标签保持不变。
+正式发布前仍需真人完成“第十关迷宫 -> 进入 Boss 房 -> 击败深渊狱长 -> 靠近公主结算 -> Boss Replay”完整流程，并在 Android 真机安装本次 APK 做基本输入回归。旧版 `v1.4.0` Release 和标签保持不变。

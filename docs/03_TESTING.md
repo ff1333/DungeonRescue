@@ -2,7 +2,7 @@
 
 当前 v1.5.0 候选版新增 10 项 EditMode 与 4 项 PlayMode 测试用例，覆盖十关剧情元数据、Boss 关标记、生命阈值阶段、招式冷却/防重复/召唤上限、第十关出口不直接通关、Boss 死亡后等待营救、营救存档、重试清理及武器伤害数值。运行时代码、EditMode 测试程序集和 PlayMode 测试程序集已分别通过 `dotnet build` 静态编译，均为 `0 errors`。
 
-本机 Unity Hub 当前停留在 Sign in，图形编辑器与批处理均返回 `No valid Unity Editor license found`。因此本轮尚未产生 Unity Test Runner XML，也尚未重建 Windows/Android；不能把“程序集能编译”写成“PlayMode 已运行通过”。登录并激活 Unity Personal 后，应连续运行三轮 EditMode 和三轮 PlayMode，再执行两个正式构建，结果写入 `test-results/v1.5.0/`。
+2026-11-12 登录并激活 Unity Personal 后，Unity `6000.3.18f1` 已连续运行三轮 EditMode 和三轮 PlayMode。EditMode 每轮均为 `32/32 PASS`，PlayMode 每轮均为 `58/58 PASS`；六轮均为 0 失败、0 跳过。随后 Windows 与 Android Release 均构建成功，BuildReport 为 `0 errors / 0 warnings`；Windows 正式 Player 还完成第 10 关 gameplay 自动烟测，退出码 0。原始 XML 和构建摘要见 [v1.5.0 验证索引](test-results/v1.5.0/README.md)。
 
 当前 v1.4.0：EditMode **22/22**、PlayMode **54/54 PASS**。除默认长刀、栓动狙击枪、手动换弹、配镜减速、双手持械和贴墙相机外，测试还覆盖移动端输入、敌人感知与群体稳定性、死亡装备隐藏、第一人称相机侧墙检测、第一/第三人称收枪，以及终点/出生灯光范围、最大强度与墙体阴影；Windows/Android Release 均为 0 errors / 0 warnings。证据见 [v1.4.0 验证索引](test-results/v1.4.0/README.md)。
 
@@ -75,5 +75,6 @@ Windows Development Player 可见窗口烟测，四组均有截图和 PASS 日�
 - 局部雾区、固定地下城环境状态、深渊蛮兵、污染区和避难灯能够被玩家理解。
 - Windows 与 Android 真机输入没有遮挡或失控；WebGL 若重新发布，需要单独完成浏览器交互回归。
 - 终点绿色灯与怪物出生红灯不会明显穿墙暴露位置。
+- 第十关出口进入 Boss 大厅，击败深渊狱长后牢笼开启，靠近公主才结算胜利并解锁 Boss Replay。
 
 文档不会把尚未执行的人工测试写成 PASS。
