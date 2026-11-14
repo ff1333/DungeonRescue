@@ -8,7 +8,7 @@ public static class PortfolioVideoBuild
 {
     public static void BuildWindows()
     {
-        const string output = "Builds/PortfolioCapture/MazeEscapeCapture.exe";
+        const string output = "Builds/PortfolioCapture/DungeonRescueCapture.exe";
         Directory.CreateDirectory(Path.GetDirectoryName(output));
         PlayerSettings.bundleVersion = FogboundMaze.ReleaseVersion.Current;
         var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions

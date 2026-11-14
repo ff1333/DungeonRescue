@@ -2,6 +2,6 @@ using UnityEditor;
 
 public static class FogboundCharacterBuilder
 {
-    [MenuItem("Maze Escape/Build Character Assets")]
+    [MenuItem("Dungeon Rescue/Build Character Assets")]
     public static void Build() => FogboundFantasyArtBuilder.Build();
 }

@@ -1,4 +1,4 @@
-# Maze Escape v1.5.1
+# Dungeon Rescue v1.5.1
 
 日期：2026-11-14
 
@@ -25,8 +25,9 @@
 
 ## 发布附件
 
-- `MazeEscape-Windows-v1.5.1.zip`：Windows 正式版，`50,418,195` bytes。
-- `MazeEscape-Android-v1.5.1.apk`：Android 正式版，`41,209,806` bytes。
+- `DungeonRescue-Windows-v1.5.1.zip`：Windows 正式版，`50,418,947` bytes，SHA-256 `a5ad071a4af9f2731ca402a61d997cd510428b15b09d77ce5e1ad65b74ac9987`。
+- `DungeonRescue-v1.5.1.apk`：Android 正式版，`41,209,814` bytes，SHA-256 `a9f26d05dfdb4b1dea4d4ca169675b4b258181038df608d11231a5b330185639`。
+- 改名前生成的候选包使用 `MazeEscape` 文件名，作为历史构建记录保留，不作为本轮 Release 附件。
 - `SHA256SUMS.txt`：两份正式附件的 SHA-256 校验值。
 
 Boss 快速验收包位于 `Builds/Packages/v1.5.1-boss-test/`，不应作为正式商店版本发布。Android 包仍需要在目标真机上完成最终触控、性能和画面验收。

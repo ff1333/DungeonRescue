@@ -12,7 +12,7 @@ public static class FogboundFantasyArtBuilder
     private const string CharacterOutput = "Assets/Resources/Characters";
     private const string PropOutput = "Assets/Resources/DungeonProps";
 
-    [MenuItem("Maze Escape/Build Fantasy Art Pass")]
+    [MenuItem("Dungeon Rescue/Build Fantasy Art Pass")]
     public static void Build()
     {
         Directory.CreateDirectory(CharacterOutput);

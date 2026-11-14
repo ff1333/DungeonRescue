@@ -1,4 +1,4 @@
-# Maze Escape / 迷宫逃生文档入口
+# Dungeon Rescue / 勇闯地下城文档入口
 
 当前 `v1.5.1` 深渊营救、最终 Boss 与奇幻美术统一发布候选说明：
 
@@ -12,7 +12,7 @@
 
 **当前公开正式版为 v1.4.0，v1.5.1 尚未合并或发布。** v1.5.1 继承 v1.5.0 最终战，并完成玩家、公主、怪物、Boss 与场景道具的统一奇幻美术迭代。
 
-- [v1.3.0 Release 下载](https://github.com/ff1333/FogboundMaze/releases/tag/v1.3.0)
+- [v1.3.0 Release 下载](https://github.com/ff1333/DungeonRescue/releases/tag/v1.3.0)
 - [v1.3.0 自动测试、平台构建和真机验收边界](test-results/v1.3.0/README.md)
 - [v1.2.2 避难灯和装弹反馈](12_V1_2_2_LIGHTS_AND_RELOAD.md)（历史）
 - [v1.2.1 右手武器与命中反馈](11_V1_2_1_WEAPONS.md)（历史）

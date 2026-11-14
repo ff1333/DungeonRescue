@@ -1,4 +1,4 @@
-# 迷宫逃生 / Maze Escape
+# 勇闯地下城 / Dungeon Rescue
 
 使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为骷髅仆从，精英怪为重甲骷髅守卫，最终 Boss 为独立骷髅法师。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
 
@@ -6,8 +6,8 @@
 
 **当前开发分支为 v1.5.1 发布候选版。** v1.5.0 的营救主线、三阶段深渊狱长和 Boss Replay 保持不变；本轮把玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并加入火炬、旗帜、木箱、碎石、宝箱、钥匙和装饰石柱。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。当前 EditMode `32/32`、PlayMode `58/58`，Windows Boss 验收构建为 `0 errors / 0 warnings`。
 
-- [下载 GitHub Release v1.4.0](https://github.com/ff1333/MazeEscape/releases/tag/v1.4.0)
-- [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，核心流程仍适用）
+- [下载 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
+- [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
 - [v1.5.0 候选版发布说明](docs/RELEASE_NOTES_v1.5.0.md)
@@ -134,7 +134,7 @@ docs/
 4. 打开 `Assets/Scenes/Main.unity`。
 5. Console 没有红色错误后，点击 Unity 顶部三角形 Play。
 
-正式包位于 GitHub Releases。Windows ZIP 需要完整解压后运行 `MazeEscape.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。
+正式包位于 GitHub Releases。最新版 Windows ZIP 需要完整解压后运行 `DungeonRescue.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。v1.4.0 及更早历史附件仍保留原文件名。
 
 ## 素材与能力边界
 

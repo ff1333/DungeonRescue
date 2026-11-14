@@ -11,13 +11,13 @@ public static class FogboundPlatformBuilder
 
     public static void BuildWindowsDevelopment()
     {
-        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/Development/MazeEscape.exe",
+        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/Development/DungeonRescue.exe",
             BuildOptions.Development | BuildOptions.AllowDebugging);
     }
 
     public static void BuildWindowsRelease()
     {
-        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/v1.5.1/MazeEscape.exe", BuildOptions.None);
+        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/v1.5.1/DungeonRescue.exe", BuildOptions.None);
     }
 
     public static void BuildWindowsBossTest()
@@ -25,9 +25,9 @@ public static class FogboundPlatformBuilder
         var previousProductName = PlayerSettings.productName;
         try
         {
-            PlayerSettings.productName = "Maze Escape Boss Test";
+            PlayerSettings.productName = "Dungeon Rescue Boss Test";
             Build(BuildTarget.StandaloneWindows64,
-                "Builds/Windows/v1.5.1-boss-test/MazeEscapeBossTest.exe",
+                "Builds/Windows/v1.5.1-boss-test/DungeonRescueBossTest.exe",
                 BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
         }
         finally
@@ -44,7 +44,7 @@ public static class FogboundPlatformBuilder
     public static void BuildAndroidRelease()
     {
         PrepareAndroidBuild();
-        Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.1.apk", BuildOptions.None);
+        Build(BuildTarget.Android, "Builds/Android/DungeonRescue-v1.5.1.apk", BuildOptions.None);
     }
 
     public static void BuildAndroidBossTest()
@@ -53,8 +53,8 @@ public static class FogboundPlatformBuilder
         var previousProductName = PlayerSettings.productName;
         try
         {
-            PlayerSettings.productName = "Maze Escape Boss Test";
-            Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.1-boss-test.apk",
+            PlayerSettings.productName = "Dungeon Rescue Boss Test";
+            Build(BuildTarget.Android, "Builds/Android/DungeonRescue-v1.5.1-boss-test.apk",
                 BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
         }
         finally
