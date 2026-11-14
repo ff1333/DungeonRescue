@@ -11,7 +11,7 @@
 
 ## 下载
 
-[GitHub Release v1.3.0](https://github.com/ff1333/FogboundMaze/releases/tag/v1.3.0) 提供 Windows、WebGL、Android 和 SHA-256 校验文件。
+[GitHub Release v1.3.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.3.0) 提供 Windows、WebGL、Android 和 SHA-256 校验文件。
 
 ## 验证范围
 

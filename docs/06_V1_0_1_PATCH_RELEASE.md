@@ -78,7 +78,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\build-release.ps1
 `.gitignore` 或 License。完成后，在本项目根目录的 PowerShell 运行一次：
 
 ```powershell
-git remote add origin https://github.com/ff1333/FogboundMaze.git
+git remote add origin https://github.com/ff1333/DungeonRescue.git
 git remote -v
 ```
 

@@ -109,7 +109,7 @@ python -m http.server 8092
 `.gitignore` 或 License，因为本地仓库已经包含这些内容。然后在项目根目录运行：
 
 ```powershell
-git remote add origin https://github.com/ff1333/FogboundMaze.git
+git remote add origin https://github.com/ff1333/DungeonRescue.git
 git push -u origin main
 git push origin v1.0.0
 ```

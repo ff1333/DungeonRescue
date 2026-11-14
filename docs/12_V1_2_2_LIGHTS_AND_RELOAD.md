@@ -44,7 +44,7 @@ Windows Player 和 Edge 实际运行已检查，APK 元数据为 1.2.2 / code 8 
 
 ## 提交和发布
 
-本次沿用 `polish/v1.2.0` 分支和 [PR #1](https://github.com/ff1333/FogboundMaze/pull/1)，分支名不代表游戏版本。
+本次沿用 `polish/v1.2.0` 分支和 [PR #1](https://github.com/ff1333/DungeonRescue/pull/1)，分支名不代表游戏版本。
 发布用 **v1.2.2**，不要再传 v1.2.1 包。发布正文见 [RELEASE_NOTES_v1.2.2.md](RELEASE_NOTES_v1.2.2.md)。
 资源管理器地址栏打开 `D:\software\documents\unity_games\projects\learning\FogboundMaze\Builds\Packages\v1.2.2`，
 其中两个 ZIP、一个 APK 和 `SHA256SUMS.txt` 是本次已生成的最终附件。
