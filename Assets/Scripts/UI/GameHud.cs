@@ -130,6 +130,8 @@ namespace FogboundMaze
 
         public void ShowWeaponSelection(int level)
         {
+            bossHud.SetActive(false);
+            bossMessage.gameObject.SetActive(false);
             HideCampaignMenu();
             transform.Find("Top Bar").gameObject.SetActive(true);
             if (mobileRoot != null) mobileRoot.SetActive(false);
@@ -168,6 +170,8 @@ namespace FogboundMaze
 
         public void ShowResult(bool won, int level, float elapsed, int kills)
         {
+            bossHud.SetActive(false);
+            bossMessage.gameObject.SetActive(false);
             if (mobileRoot != null) mobileRoot.SetActive(false);
             resultPanel.SetActive(true);
             weaponHud.SetActive(false);
@@ -177,6 +181,8 @@ namespace FogboundMaze
             resultStats.text = $"LEVEL {level:00}    {TimeSpan.FromSeconds(elapsed):mm\\:ss}    KILLS {kills:000}";
             var next = resultPanel.transform.Find("Next")?.gameObject;
             if (next != null) next.SetActive(won && level < 10);
+            var replay = resultPanel.transform.Find("Boss Replay")?.gameObject;
+            if (replay != null) replay.SetActive(won && level == 10);
         }
 
         public void SetPause(bool paused)
@@ -229,6 +235,7 @@ namespace FogboundMaze
             BuildCrosshair();
             BuildDamageFeedback();
             BuildEntryPrompt();
+            BuildBossHud();
             BuildSelection();
             BuildResult();
             BuildPause();
@@ -318,7 +325,7 @@ namespace FogboundMaze
 
         private void RefreshFogOverlay()
         {
-            var active = GameDirector.Instance != null && GameDirector.Instance.Phase == GamePhase.Playing
+            var active = GameDirector.Instance != null && GameDirector.Instance.IsCombatPhase
                 && GameDirector.Instance.IsPlayerInFog;
             var target = active ? 1f : 0f;
             var fadeSpeed = active ? 1.8f : 2.8f;
@@ -568,6 +575,10 @@ namespace FogboundMaze
             var levels = Button("Levels", resultPanel.transform, "LEVEL SELECT", new Color(0.16f, 0.22f, 0.23f));
             SetRect(levels.GetComponent<RectTransform>(), new Vector2(0.08f, 0.06f), new Vector2(0.92f, 0.20f));
             levels.onClick.AddListener(() => GameDirector.Instance.ShowLevelSelection());
+            var replay = Button("Boss Replay", resultPanel.transform, "REPLAY BOSS", new Color(.38f,.18f,.42f));
+            SetRect(replay.GetComponent<RectTransform>(), new Vector2(0.52f, 0.24f), new Vector2(0.92f, 0.40f));
+            replay.onClick.AddListener(() => GameDirector.Instance.ReplayBoss());
+            replay.gameObject.SetActive(false);
             resultPanel.SetActive(false);
         }
 

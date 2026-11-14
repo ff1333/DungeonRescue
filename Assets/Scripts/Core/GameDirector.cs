@@ -15,6 +15,7 @@ namespace FogboundMaze
         private CameraRig cameraRig;
         private EnemyPool pool;
         private EnvironmentController environment;
+        private BossEncounterController bossEncounter;
         private float nextSpawn;
         private float elapsed;
         private int kills;
@@ -35,14 +36,25 @@ namespace FogboundMaze
         public CameraRig CameraRig => cameraRig;
         public int Kills => kills;
         public float Elapsed => elapsed;
-        public bool IsPlayerSafe => !level.miasma || world.IsWithinSafeLight(player.transform.position, level.safeLightRadius);
+        public bool IsPlayerSafe
+        {
+            get
+            {
+                if (level.bossLevel && Phase is GamePhase.BossIntro or GamePhase.BossFight or GamePhase.Rescue)
+                    return bossEncounter?.Boss?.Phase != BossPhase.PhaseThree
+                        || world.IsWithinBossSafeLight(player.transform.position, 7f);
+                return !level.miasma || world.IsWithinSafeLight(player.transform.position, level.safeLightRadius);
+            }
+        }
         public int ActiveEnemyCount => pool.ActiveCount;
         public int EnemyPoolCapacity => pool.Capacity;
         public bool LoadoutConfirmed { get; private set; }
         public float EnemyVisionMultiplier => environment != null ? environment.EnemyVisionMultiplier : 1f;
         public float EnemyVisionMultiplierAt(Vector3 position) => EnemyVisionMultiplier * world.LocalVisibilityMultiplier(position);
         public bool IsPlayerInFog => world != null && player != null && world.IsInsideFogZone(player.transform.position);
-        public bool IsAimSlowMotion => aimSlowMotion && Phase == GamePhase.Playing;
+        public bool IsAimSlowMotion => aimSlowMotion && IsCombatPhase;
+        public BossEncounterController BossEncounter => bossEncounter;
+        public bool IsCombatPhase => Phase is GamePhase.Playing or GamePhase.BossFight;
 
         private void Awake()
         {
@@ -74,10 +86,18 @@ namespace FogboundMaze
                 Hud.Refresh(this, player);
             }
 
-            if (input.PausePressed && (Phase is GamePhase.Playing or GamePhase.Paused
+            if (input.PausePressed && (Phase is GamePhase.Playing or GamePhase.BossIntro
+                or GamePhase.BossFight or GamePhase.Rescue or GamePhase.Paused
                 || (Phase == GamePhase.Staging && LoadoutConfirmed)))
             {
                 SetPaused(Phase != GamePhase.Paused);
+            }
+
+            if (Phase is GamePhase.BossFight or GamePhase.Rescue)
+            {
+                elapsed += Time.deltaTime;
+                Hud.Refresh(this, player);
+                return;
             }
 
             if (Phase != GamePhase.Playing)
@@ -110,7 +130,7 @@ namespace FogboundMaze
             }
             if (focused && player != null && player.Weapon != null
                 && LoadoutConfirmed
-                && Phase is GamePhase.Staging or GamePhase.Playing)
+                && Phase is GamePhase.Staging or GamePhase.Playing or GamePhase.BossFight or GamePhase.Rescue)
                 SetCursorLocked(true);
         }
 
@@ -123,7 +143,7 @@ namespace FogboundMaze
 
         public void SetAimSlowMotion(bool active)
         {
-            aimSlowMotion = active && Phase == GamePhase.Playing;
+            aimSlowMotion = active && IsCombatPhase;
             if (Phase != GamePhase.Paused && !PortfolioSettings.IsOpen)
                 Time.timeScale = aimSlowMotion ? 0.5f : 1f;
         }
@@ -148,9 +168,42 @@ namespace FogboundMaze
             Hud.HideEntryPrompt();
         }
 
-        public void CompleteLevel()
+        public void ReachExit()
         {
             if (Phase != GamePhase.Playing) return;
+            if (level.bossLevel) bossEncounter.Begin();
+            else CompleteLevel();
+        }
+
+        public void EnterBossIntro()
+        {
+            if (Phase != GamePhase.Playing) return;
+            runGeneration++;
+            pendingSpawns = 0;
+            Phase = GamePhase.BossIntro;
+            player.Weapon.ExitAim();
+            SetAimSlowMotion(false);
+        }
+
+        public void EnterBossFight()
+        {
+            if (Phase != GamePhase.BossIntro) return;
+            Phase = GamePhase.BossFight;
+            Hud.SetPhase(Phase, currentLevel);
+        }
+
+        public void EnterRescue()
+        {
+            if (Phase != GamePhase.BossFight) return;
+            Phase = GamePhase.Rescue;
+            player.Weapon.ExitAim();
+            SetAimSlowMotion(false);
+        }
+
+        public void CompleteLevel()
+        {
+            if (level.bossLevel && Phase != GamePhase.Rescue) return;
+            if (!level.bossLevel && Phase != GamePhase.Playing) return;
             Phase = GamePhase.Won;
             player.Weapon.ExitAim();
             SetAimSlowMotion(false);
@@ -177,6 +230,14 @@ namespace FogboundMaze
                 LoadLevel(currentLevel + 1);
         }
 
+        public void ReplayBoss()
+        {
+            if (!Progress.CanReplayBoss) return;
+            LoadLevel(10);
+            BeginRun();
+            bossEncounter.Begin(true);
+        }
+
         public void ReturnToLoadout() => Retry();
 
         public bool SelectLevel(int number)
@@ -197,6 +258,7 @@ namespace FogboundMaze
             aimSlowMotion = false;
             runGeneration++;
             pool.DespawnAll();
+            bossEncounter.Cancel();
             pendingSpawns = 0;
             input.ResetMobile();
             LoadoutConfirmed = false;
@@ -224,13 +286,14 @@ namespace FogboundMaze
 
         public void SetPaused(bool paused)
         {
-            if (paused && Phase != GamePhase.Playing
+            if (paused && Phase is not (GamePhase.Playing or GamePhase.BossIntro or GamePhase.BossFight or GamePhase.Rescue)
                 && !(Phase == GamePhase.Staging && LoadoutConfirmed)) return;
             if (!paused && Phase != GamePhase.Paused) return;
             input.ResetMobile();
             if (paused) phaseBeforePause = Phase;
             Phase = paused ? GamePhase.Paused : phaseBeforePause;
-            Time.timeScale = paused ? 0f : aimSlowMotion && phaseBeforePause == GamePhase.Playing ? 0.5f : 1f;
+            Time.timeScale = paused ? 0f
+                : aimSlowMotion && (phaseBeforePause is GamePhase.Playing or GamePhase.BossFight) ? 0.5f : 1f;
             Hud.SetPause(paused);
             SetCursorLocked(!paused);
         }
@@ -249,6 +312,7 @@ namespace FogboundMaze
             pool.Prewarm(level.maxEnemies);
             pendingSpawns = 0;
             world.Build(level);
+            bossEncounter.Prepare(level, world);
             player.Teleport(world.StartPosition + Vector3.up * 0.08f);
             player.transform.rotation = Quaternion.identity;
             cameraRig.ResetView();
@@ -270,11 +334,13 @@ namespace FogboundMaze
             world = new GameObject("Maze World").AddComponent<MazeWorld>();
             pool = new GameObject("Enemy Pool").AddComponent<EnemyPool>();
             environment = new GameObject("Environment").AddComponent<EnvironmentController>();
+            bossEncounter = new GameObject("Boss Encounter").AddComponent<BossEncounterController>();
             player = CreatePlayer();
             var cameraObject = new GameObject("Player Camera");
             cameraRig = cameraObject.AddComponent<CameraRig>();
             cameraRig.Initialize(player.transform);
             player.Initialize(input, cameraRig);
+            bossEncounter.Initialize(this, pool);
             player.Health.Died += _ => Lose();
             Hud = GameHud.Create(input);
             Hud.BindHealth(player.Health);

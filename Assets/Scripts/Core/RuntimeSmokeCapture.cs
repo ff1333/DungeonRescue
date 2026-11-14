@@ -26,6 +26,9 @@ namespace FogboundMaze
             var reload = System.Array.Exists(arguments, value => value == "-fogboundReload");
             var scope = System.Array.Exists(arguments, value => value == "-fogboundScope");
             var fogZone = System.Array.Exists(arguments, value => value == "-fogboundFogZone");
+            var bossUnlockCheck = System.Array.Exists(arguments, value => value == "-fogboundBossUnlockCheck");
+            var bossReplay = System.Array.Exists(arguments, value => value == "-fogboundBossReplay");
+            var bossRescue = System.Array.Exists(arguments, value => value == "-fogboundBossRescue");
             var levelNumber = int.TryParse(ReadArgument(arguments, "-fogboundLevel"), out var requestedLevel)
                 ? Mathf.Clamp(requestedLevel, 1, 10) : 1;
             yield return new WaitForSecondsRealtime(1f);
@@ -58,6 +61,17 @@ namespace FogboundMaze
             if (levels || loadout || pause || gameplay || actors)
             {
                 GameDirector.Instance.ShowLevelSelection();
+                if (bossUnlockCheck)
+                {
+                    var progress = GameDirector.Instance.Progress;
+                    if (!progress.IsUnlocked(10) || progress.IsCompleted(10) || !progress.CanReplayBoss)
+                    {
+                        Debug.LogError($"FOGBOUND_BOSS_UNLOCK_FAIL completed={progress.CompletedCount}");
+                        Application.Quit(2);
+                        yield break;
+                    }
+                    Debug.Log("FOGBOUND_BOSS_UNLOCK_PASS level10Unlocked=true level10Completed=false bossReplay=true");
+                }
                 if (!levels)
                 {
                     for (var completed = 1; completed < levelNumber; completed++)
@@ -174,6 +188,28 @@ namespace FogboundMaze
                 }
                 Debug.Log($"FOGBOUND_HEALTH_PASS text={text} ratio={ratio} phase={director.Phase}");
                 yield return null;
+            }
+
+            if (bossReplay)
+            {
+                var director = GameDirector.Instance;
+                director.ReplayBoss();
+                yield return new WaitForSecondsRealtime(2.2f);
+                var direction = director.BossEncounter.Boss.transform.position - director.Player.transform.position;
+                var yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                director.CameraRig.TickLook(new Vector2(Mathf.DeltaAngle(director.CameraRig.Yaw, yaw), 0f), false);
+                if (bossRescue)
+                {
+                    director.BossEncounter.Boss.TakeDamage(9999f, false);
+                    yield return new WaitForSecondsRealtime(.8f);
+                    director.Player.Weapon.ClearLoadout();
+                    director.Player.Teleport(director.World.PrincessPosition + Vector3.left * 3.2f + Vector3.up * .08f);
+                    direction = director.World.PrincessPosition - director.Player.transform.position;
+                    yaw = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                    director.CameraRig.TickLook(new Vector2(Mathf.DeltaAngle(director.CameraRig.Yaw, yaw), 0f), true);
+                }
+                yield return new WaitForSecondsRealtime(.6f);
+                Time.timeScale = 0f;
             }
 
             if (!string.IsNullOrWhiteSpace(output))

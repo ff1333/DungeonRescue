@@ -35,12 +35,24 @@
 | 输入 | `GameInput` | Input System 与触控输入统一 |
 | UI | `GameHud`、`GameHud.Campaign` | 开始页、选关、双武器 HUD、准备、暂停与结算 |
 | 探索地图 | `MazeExploration`、`MiniMapHud` | 记录已走格子，以小纹理显示路径、朝向和未探索岔路口 |
+| 最终战流程 | `BossEncounterController` | Boss 房门、预备补给、召唤上限、第三阶段污染、牢笼与营救结算 |
+| Boss 决策 | `DungeonBossController`、`BossDecisionModel`、`BossConfig` | 三阶段状态机、Utility 招式选择、冷却、防重复、弱点窗口与数值配置 |
+
+## v1.5 最终营救流程
+
+前九关的 `MazeExitTrigger` 仍调用 `GameDirector.ReachExit()` 并立即完成关卡。第十关同一个入口会改为启动 Boss Encounter：停止普通刷怪、清理场上怪物、补充有限生命与弹药、关闭身后的大厅门，再从 `BossIntro` 进入 `BossFight`。
+
+Boss 宏观状态为 `Intro -> PhaseOne -> PhaseTwo -> PhaseThree -> Defeated`。阶段内部不写一条固定攻击脚本，而由 `BossDecisionModel` 根据距离、冷却、上一次招式、召唤数量和阶段评分，在 Cleave、Charge、CorruptionShot、Summon、Shockwave 中选择。Boss 死亡后只进入 `Rescue`，关闭污染并打开牢笼；`PrincessRescueController` 检测到玩家靠近后才调用 `CompleteLevel()`，从而把“打死 Boss”和“完成营救”分成两个可测试状态。
+
+第十关仍使用程序化迷宫，固定 Boss 大厅由 `MazeWorld` 追加在出口东侧。大厅有四根可阻挡冲锋与投射物的柱子、中央深渊封印、三处第三阶段安全灯、入口闸门和公主牢笼。Boss 房位于迷宫逻辑网格外，因此召唤怪切换为房间内直接追击，不错误复用会把坐标夹回终点格的迷宫 A*。
+
+参考实现只用于架构调研，没有复制网络代码或样例玩法：Unity Open Project 1 提供可组合状态机与事件通道思路（Apache-2.0），Unity Boss Room 提供动作数据与执行分离思路（Unity Companion License）。本项目保留自己的单机 `GameDirector`、CharacterController、程序化网格与对象池边界。
 
 ## 为什么不用 NavMesh
 
 迷宫在运行时生成。使用 NavMesh 需要运行时重新烘焙，并引入额外平台与包依赖。
 敌人直接使用迷宫的逻辑网格做 A*，路径天然不会穿墙，算法也可以在 EditMode
-中独立测试。当前上限只有 14 个敌人，每个敌人按 0.45-0.7 秒间隔重算路径，
+中独立测试。普通关卡上限最高 18 个敌人，每个敌人按 0.38-0.58 秒间隔重算路径，
 不需要每帧寻路。
 
 ## 第一/第三人称

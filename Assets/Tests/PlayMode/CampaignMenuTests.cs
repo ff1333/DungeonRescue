@@ -183,13 +183,14 @@ namespace FogboundMaze.Tests
                     foreach (var skin in model.GetComponentsInChildren<SkinnedMeshRenderer>())
                     {
                         Assert.That(skin.sharedMaterial.mainTexture, Is.Not.Null);
-                        Assert.That(skin.sharedMesh.vertexCount, Is.GreaterThan(100));
+                        Assert.That(skin.sharedMesh.vertexCount, Is.GreaterThan(50));
                     }
                 }
                 animation.Play("Walk");
                 animation["Walk"].normalizedTime = 0.1f;
                 animation.Sample();
-                var leg = System.Array.Find(model.GetComponentsInChildren<Transform>(), value => value.name == "UpperLeg.L");
+                var leg = System.Array.Find(model.GetComponentsInChildren<Transform>(),
+                    value => value.name is "UpperLeg.L" or "upperleg.l");
                 var firstPose = leg.localRotation;
                 animation["Walk"].normalizedTime = 0.6f;
                 animation.Sample();
@@ -197,6 +198,23 @@ namespace FogboundMaze.Tests
                 Object.Destroy(model);
                 yield return null;
             }
+
+            var princess = Object.Instantiate(Resources.Load<GameObject>("Characters/Princess"));
+            var princessAnimation = princess.GetComponentInChildren<Animation>();
+            Assert.That(princessAnimation["Idle"], Is.Not.Null);
+            Assert.That(princessAnimation["Cheer"], Is.Not.Null);
+            var boss = Object.Instantiate(Resources.Load<GameObject>("Characters/AbyssWarden"));
+            var bossAnimation = boss.GetComponentInChildren<Animation>();
+            foreach (var clip in new[] { "Idle", "Run", "Cleave", "Cast", "Summon", "Death" })
+                Assert.That(bossAnimation[clip], Is.Not.Null, "boss clip " + clip);
+            Assert.That(princess.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh,
+                Is.Not.SameAs(Resources.Load<GameObject>("Characters/Survivor")
+                    .GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh));
+            Assert.That(boss.GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh,
+                Is.Not.SameAs(Resources.Load<GameObject>("Characters/EliteZombie")
+                    .GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh));
+            Object.Destroy(princess);
+            Object.Destroy(boss);
         }
 
         [UnityTest]

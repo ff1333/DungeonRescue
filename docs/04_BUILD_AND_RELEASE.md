@@ -1,5 +1,7 @@
 # 构建与发布指南
 
+> `v1.5.0` 候选版已于 2026-11-12 完成三轮 EditMode `32/32`、三轮 PlayMode `58/58`，并生成 `Builds/Windows/v1.5.0/MazeEscape.exe` 和 `Builds/Android/MazeEscape-v1.5.0.apk`；两平台 BuildReport 均为 `0 errors / 0 warnings`。发布前仍需真人试玩“第十关进入 Boss 房 -> 击败深渊狱长 -> 靠近公主结算”完整链路，并在 Android 真机安装本次 APK。旧版 `v1.4.0` Release 不覆盖、不删除。
+
 > 这是 `v1.0.0` 发布时的历史记录。当前 `tools/build-release.ps1` 和
 > `tools/package-release.ps1` 已切换到 `v1.0.1`，不能再用下述命令重新生成
 > `v1.0.0` 包。最新补丁步骤请看 `06_V1_0_1_PATCH_RELEASE.md`。

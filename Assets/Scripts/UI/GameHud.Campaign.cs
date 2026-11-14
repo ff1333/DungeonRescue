@@ -10,14 +10,15 @@ namespace FogboundMaze
         private Text campaignSummary;
         private readonly Button[] levelButtons = new Button[10];
         private readonly Text[] levelStates = new Text[10];
+        private Button bossReplayButton;
 
         private void BuildCampaignPanels()
         {
             titlePanel = PanelObject("Title Screen", transform, new Color(0.02f, 0.035f, 0.04f, 0.54f));
             SetRect(titlePanel.GetComponent<RectTransform>(), Vector2.zero, Vector2.one);
-            var title = Label("Game Title", titlePanel.transform, "MAZE\nESCAPE", 100, TextAnchor.MiddleLeft);
+            var title = Label("Game Title", titlePanel.transform, "DUNGEON\nRESCUE", 100, TextAnchor.MiddleLeft);
             SetRect(title.rectTransform, new Vector2(0.08f, 0.52f), new Vector2(0.65f, 0.87f));
-            var subtitle = Label("Campaign", titlePanel.transform, "SURVIVAL CAMPAIGN", 27, TextAnchor.MiddleLeft, Accent);
+            var subtitle = Label("Campaign", titlePanel.transform, "ABYSS RESCUE CAMPAIGN", 27, TextAnchor.MiddleLeft, Accent);
             SetRect(subtitle.rectTransform, new Vector2(0.08f, 0.45f), new Vector2(0.50f, 0.51f));
             var start = Button("Start", titlePanel.transform, "START", Accent);
             SetRect(start.GetComponent<RectTransform>(), new Vector2(0.08f, 0.32f), new Vector2(0.32f, 0.41f));
@@ -25,6 +26,9 @@ namespace FogboundMaze
             var guide = Button("Guide", titlePanel.transform, "FIELD GUIDE", new Color(.19f,.28f,.30f));
             SetRect(guide.GetComponent<RectTransform>(), new Vector2(.08f,.21f), new Vector2(.32f,.30f));
             guide.onClick.AddListener(() => GameDirector.Instance.ShowGuide());
+            bossReplayButton = Button("Boss Replay", titlePanel.transform, "BOSS REPLAY", new Color(.38f,.18f,.42f));
+            SetRect(bossReplayButton.GetComponent<RectTransform>(), new Vector2(.35f,.32f), new Vector2(.56f,.41f));
+            bossReplayButton.onClick.AddListener(() => GameDirector.Instance.ReplayBoss());
             if (Application.platform != RuntimePlatform.WebGLPlayer)
             {
                 var quit = Button("Quit", titlePanel.transform, "QUIT", new Color(0.14f, 0.19f, 0.20f));
@@ -40,7 +44,7 @@ namespace FogboundMaze
             SetRect(heading.rectTransform, new Vector2(0.08f, 0.80f), new Vector2(0.60f, 0.92f));
             campaignSummary = Label("Progress", levelPanel.transform, string.Empty, 25, TextAnchor.MiddleRight, Accent);
             SetRect(campaignSummary.rectTransform, new Vector2(0.6f, 0.81f), new Vector2(0.92f, 0.90f));
-            var names = new[] { "ENTRY", "CROSSROADS", "NOISE", "FOG ZONES", "RED ALERT", "BLACKOUT", "CONTAMINATION", "DEEP ZONE", "LOCKDOWN", "LAST EXIT" };
+            var names = new[] { "DESCENT", "ROYAL MARK", "ECHO HALL", "CONVOY TRAIL", "WARDEN LINE", "DARK SHAFT", "ABYSS RIFT", "RITUAL TRACE", "FINAL LOCK", "ABYSS RESCUE" };
             for (var i = 0; i < 10; i++)
             {
                 var number = i + 1;
@@ -70,6 +74,8 @@ namespace FogboundMaze
             selectionPanel.SetActive(false);
             resultPanel.SetActive(false);
             pausePanel.SetActive(false);
+            bossHud.SetActive(false);
+            bossMessage.gameObject.SetActive(false);
             crosshair.SetActive(false);
             entryPrompt.gameObject.SetActive(false);
             miniMap.gameObject.SetActive(false);
@@ -79,6 +85,7 @@ namespace FogboundMaze
             titlePanel.SetActive(phase == GamePhase.Title);
             levelPanel.SetActive(phase == GamePhase.LevelSelect);
             guidePanel.SetActive(phase == GamePhase.Guide);
+            bossReplayButton.gameObject.SetActive(phase == GamePhase.Title && progress.CanReplayBoss);
             campaignSummary.text = $"{progress.CompletedCount:00} / 10 CLEARED";
             for (var i = 0; i < 10; i++)
             {

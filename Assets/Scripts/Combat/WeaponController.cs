@@ -40,6 +40,7 @@ namespace FogboundMaze
         private float nextDryFire;
         private AudioSource audioSource;
         private readonly HashSet<EnemyAgent> struck = new();
+        private readonly HashSet<DungeonBossController> struckBosses = new();
         private readonly RaycastHit[] obstructionHits = new RaycastHit[8];
         private float obstructionAmount;
 
@@ -110,6 +111,13 @@ namespace FogboundMaze
             foreach (Transform child in viewMount) Destroy(child.gameObject);
             viewWeapon = muzzleTip = null;
             owner.GetComponent<PlayerVisual>()?.Equip(type);
+        }
+
+        public void RefillForBoss()
+        {
+            ammunition = GunMagazineSize;
+            reserveAmmunition = Mathf.Max(reserveAmmunition, StartingReserveAmmunition);
+            reloadReadyUntil = Time.time + .85f;
         }
 
         public void Equip(WeaponType weaponType)
@@ -208,9 +216,12 @@ namespace FogboundMaze
             {
                 end = hit.point;
                 var enemy = hit.collider.GetComponentInParent<EnemyAgent>();
-                var hitEnemy = enemy != null && enemy.IsActive;
-                if (hitEnemy) ApplyHit(enemy, GunDamage);
-                CombatEffects.Impact(hit.point, hit.normal, hitEnemy);
+                var boss = hit.collider.GetComponentInParent<DungeonBossController>();
+                var hitTarget = enemy != null && enemy.IsActive || boss != null;
+                if (enemy != null && enemy.IsActive) ApplyHit(enemy, GunDamage);
+                else if (boss != null) ApplyHit(boss, GunDamage,
+                    hit.collider.GetComponent<BossWeakPoint>() != null);
+                CombatEffects.Impact(hit.point, hit.normal, hitTarget);
             }
             CombatEffects.Tracer(blocked ? chest : muzzle, end);
             if (!blocked) CombatEffects.Muzzle(muzzle, viewCamera.transform);
@@ -228,6 +239,15 @@ namespace FogboundMaze
             audioSource.PlayOneShot(ProceduralAudio.Impact, health.IsDead ? .8f : .5f);
         }
 
+        private void ApplyHit(DungeonBossController boss, float damage, bool weakPoint)
+        {
+            var before = boss.Health.Current;
+            boss.TakeDamage(damage, weakPoint);
+            var actual = Mathf.Max(0f, before - boss.Health.Current);
+            GameDirector.Instance?.Hud?.ConfirmHit(actual, boss.Health.IsDead);
+            audioSource.PlayOneShot(ProceduralAudio.Impact, boss.Health.IsDead ? .8f : .5f);
+        }
+
         private void ResolveBladeHit()
         {
             var forward = viewCamera.transform.forward;
@@ -237,10 +257,26 @@ namespace FogboundMaze
             CombatEffects.Slash(origin, forward);
             GameDirector.Instance?.Hud?.PulseShot();
             struck.Clear();
+            struckBosses.Clear();
             foreach (var collider in Physics.OverlapSphere(origin, BladeRange + .5f,
                 Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
             {
                 var enemy = collider.GetComponentInParent<EnemyAgent>();
+                var boss = collider.GetComponentInParent<DungeonBossController>();
+                if (boss != null && struckBosses.Add(boss))
+                {
+                    var bossDelta = boss.transform.position - transform.position;
+                    bossDelta.y = 0f;
+                    if (bossDelta.sqrMagnitude <= BladeRange * BladeRange
+                        && Vector3.Dot(forward, bossDelta.normalized) >= .5f
+                        && Physics.Linecast(origin, boss.transform.position + Vector3.up * 1.2f, out var bossHit,
+                            Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)
+                        && bossHit.collider.GetComponentInParent<DungeonBossController>() == boss)
+                    {
+                        ApplyHit(boss, BladeDamage, false);
+                        CombatEffects.Impact(boss.transform.position + Vector3.up, -forward, true);
+                    }
+                }
                 if (enemy == null || !enemy.IsActive || !struck.Add(enemy)) continue;
                 var delta = enemy.transform.position - transform.position;
                 delta.y = 0f;
@@ -255,7 +291,8 @@ namespace FogboundMaze
             }
             if (Physics.Raycast(origin, forward, out var wall, BladeRange,
                 Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)
-                && wall.collider.GetComponentInParent<EnemyAgent>() == null)
+                && wall.collider.GetComponentInParent<EnemyAgent>() == null
+                && wall.collider.GetComponentInParent<DungeonBossController>() == null)
                 CombatEffects.Impact(wall.point, wall.normal);
         }
 
@@ -272,7 +309,7 @@ namespace FogboundMaze
             while (GameDirector.Instance != null && GameDirector.Instance.Phase == GamePhase.Paused)
                 yield return null;
             if (owner.Health.IsDead || (GameDirector.Instance != null
-                && GameDirector.Instance.Phase is not (GamePhase.Playing or GamePhase.Staging)))
+                && GameDirector.Instance.Phase is not (GamePhase.Playing or GamePhase.BossFight or GamePhase.Rescue or GamePhase.Staging)))
             {
                 viewWeapon.localRotation = Quaternion.identity;
                 swinging = false;
@@ -314,7 +351,7 @@ namespace FogboundMaze
             while (GameDirector.Instance != null && GameDirector.Instance.Phase == GamePhase.Paused)
                 yield return null;
             if (owner.Health.IsDead || (GameDirector.Instance != null
-                && GameDirector.Instance.Phase is not (GamePhase.Playing or GamePhase.Staging)))
+                && GameDirector.Instance.Phase is not (GamePhase.Playing or GamePhase.BossFight or GamePhase.Rescue or GamePhase.Staging)))
             {
                 reloadProgress = 0f;
                 reloading = false;
@@ -400,6 +437,7 @@ namespace FogboundMaze
                 var hit = obstructionHits[index];
                 if (hit.collider == null
                     || hit.collider.GetComponentInParent<EnemyAgent>() != null
+                    || hit.collider.GetComponentInParent<DungeonBossController>() != null
                     || hit.collider.GetComponentInParent<PlayerController>() == owner) continue;
                 found = true;
                 nearest = Mathf.Min(nearest, hit.distance);

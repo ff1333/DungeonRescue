@@ -12,16 +12,16 @@ namespace FogboundMaze
 
         public static string LevelBrief(int number) => number switch
         {
-            1 => "THE FIRST EXIT\nLearn the corridors. Goblins follow the maze paths. Reach the exit alive.",
-            2 => "MORE CROSSROADS\nA larger maze and more dead ends. The map remembers where you have walked.",
-            3 => "NOISE DISCIPLINE\nGunfire reaches farther than the blade. Switch weapons to control how many monsters investigate.",
-            4 => "LOCAL FOG\nVisible fog pockets reduce both player awareness and monster sight. Use the explored map to cross them.",
-            5 => "RED ALERT\nEmergency lighting and Abyss Brutes increase pressure without changing during the short run.",
-            6 => "BLACKOUT\nMost fixed lights are offline. Use the flashlight, quieter attacks and remembered corridors.",
-            7 => "CONTAMINATION\nMiasma drains health outside safe lights. Lamps also stand in side routes and dead ends.",
-            8 => "DEEP ZONE\nFog pockets, elites and contamination combine while the environment remains consistently readable.",
-            9 => "LOCKDOWN\nRed warning lights, frequent enemies and group alerts make noisy routes dangerous.",
-            _ => "THE LAST EXIT\nThe largest maze and strongest combined pressure. Clear this exit to finish the campaign."
+            1 => "DESCENT INTO THE DUNGEON\nFind the first trace left by the captured princess and reach the lower gate.",
+            2 => "THE BROKEN CREST\nFollow fragments of the royal crest through a larger maze of dead ends.",
+            3 => "ECHO HALL\nTrack the prison convoy by its metal echoes while controlling the noise you create.",
+            4 => "TRAIL IN THE FOG\nUse the explored map to follow wheel marks through visible fog pockets.",
+            5 => "WARDEN LINE\nBreak through the Abyss Brutes guarding the route to the deep prison.",
+            6 => "DARK SHAFT\nCross the blackout zone and locate the lift shaft used by the convoy.",
+            7 => "ABYSS RIFT\nUse safe lights to survive contamination and continue the rescue.",
+            8 => "RITUAL TRACE\nFollow ritual energy through fog, elites and contaminated corridors.",
+            9 => "FINAL LOCKDOWN\nSurvive the last prison lockdown and open the path to the ritual hall.",
+            _ => "ABYSS RESCUE\nCross the final maze, defeat the Abyss Warden, open the cage and rescue the princess."
         };
 
         private void BuildGuide()

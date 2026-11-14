@@ -42,7 +42,7 @@ namespace FogboundMaze
                 return;
             }
 
-            if (GameDirector.Instance.Phase != GamePhase.Playing
+            if (GameDirector.Instance.Phase is not (GamePhase.Playing or GamePhase.BossFight or GamePhase.Rescue)
                 && !(GameDirector.Instance.Phase == GamePhase.Staging && GameDirector.Instance.LoadoutConfirmed))
             {
                 return;
@@ -67,7 +67,7 @@ namespace FogboundMaze
                 lastGroundedPosition = transform.position;
 
             if (input.SprintHeld && direction.sqrMagnitude > .1f && controller.isGrounded
-                && GameDirector.Instance.Phase == GamePhase.Playing && Time.time >= nextFootstepNoise)
+                && GameDirector.Instance.IsCombatPhase && Time.time >= nextFootstepNoise)
             {
                 nextFootstepNoise = Time.time + .48f;
                 NoiseSystem.Emit(transform.position, 10f, NoiseKind.Sprint, this);

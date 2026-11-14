@@ -1,0 +1,9 @@
+Result: Succeeded
+Platform: StandaloneWindows64
+Complete directory size: 113233622
+Files: 147
+Errors: 0
+Warnings: 0
+Package: MazeEscape-Windows-v1.5.0.zip
+Package size: 48426657
+SHA-256: 460ae81686c3826312fe393e9562f830e4e54e628ecf18cffab446f4ecf784e2

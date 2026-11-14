@@ -1,0 +1,12 @@
+Result: Succeeded
+Platform: Android
+Build report size: 510139539
+APK size: 40236166
+Errors: 0
+Warnings: 0
+Package: com.ff1333.fogboundmaze
+Version name: 1.5.0
+Version code: 12
+Min SDK: 25
+Target SDK: 36
+SHA-256: 08f465a8ae4beefe8f89b35a0fe9ba1a466306ef6ff9f5c6f82968d3b6c5d22e

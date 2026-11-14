@@ -25,6 +25,9 @@ namespace FogboundMaze
         public bool miasma;
         [Min(0f)] public float miasmaDamagePerSecond;
         [Min(2f)] public float safeLightRadius;
+        public string storyTitle;
+        public string storyObjective;
+        public bool bossLevel;
 
         public void Validate()
         {
@@ -79,6 +82,7 @@ namespace FogboundMaze
             int localFogZones,
             bool miasma)
         {
+            var story = StoryFor(number);
             return new LevelDefinition
             {
                 levelNumber = number,
@@ -98,8 +102,26 @@ namespace FogboundMaze
                 localFogZones = localFogZones,
                 miasma = miasma,
                 miasmaDamagePerSecond = miasma ? Mathf.Lerp(4f, 8f, (number - 7) / 3f) : 0f,
-                safeLightRadius = miasma ? Mathf.Lerp(7f, 6.25f, (number - 7) / 3f) : 7f
+                safeLightRadius = miasma ? Mathf.Lerp(7f, 6.25f, (number - 7) / 3f) : 7f,
+                storyTitle = story.title,
+                storyObjective = story.objective,
+                bossLevel = number == 10
             };
         }
+
+        private static (string title, string objective) StoryFor(int level) => level switch
+        {
+            1 => ("坠入地牢", "穿过入口层，寻找公主留下的第一处痕迹。"),
+            2 => ("破碎徽记", "沿着破损的王室徽记继续深入。"),
+            3 => ("回声走廊", "追踪牢车经过时留下的金属回声。"),
+            4 => ("雾中车辙", "在迷雾中辨认押送队伍的车辙。"),
+            5 => ("狱卒警戒", "突破精英狱卒的警戒线。"),
+            6 => ("熄灯区", "穿过断电区域，找到通往深层监牢的升降井。"),
+            7 => ("污染裂隙", "借助安全灯穿越深渊污染。"),
+            8 => ("仪式残响", "追踪仪式能量，确认公主仍被囚禁。"),
+            9 => ("最终封锁", "解除监牢前的最后一道封锁。"),
+            10 => ("深渊营救", "穿过最终迷宫，击败深渊狱长并营救公主。"),
+            _ => ("未知区域", "继续探索地牢。")
+        };
     }
 }

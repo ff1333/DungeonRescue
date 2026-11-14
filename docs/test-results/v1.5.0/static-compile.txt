@@ -1,0 +1,22 @@
+Maze Escape v1.5.0 static verification
+Date: 2026-11-09
+
+Round 1
+- FogboundMaze.Runtime.csproj: PASS, 0 errors
+
+Round 2
+- FogboundMaze.EditModeTests.csproj: PASS, 0 errors
+- FogboundMaze.PlayModeTests.csproj: PASS, 0 errors
+
+Round 3
+- FogboundMaze.Runtime.csproj: PASS, 0 errors
+- FogboundMaze.EditModeTests.csproj: PASS, 0 errors
+- FogboundMaze.PlayModeTests.csproj: PASS, 0 errors
+- Localization JSON: parsed, 218 entries
+- git diff --check: PASS
+
+Editor assembly
+- Assembly-CSharp-Editor.csproj: PASS, 0 errors
+- Existing obsolete-API warnings remain in FogboundProjectBuilder.cs.
+
+Unity runtime tests and platform builds were not executed because Unity Hub was signed out and the Editor reported no valid license.

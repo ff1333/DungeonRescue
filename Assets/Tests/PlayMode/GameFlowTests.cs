@@ -462,7 +462,12 @@ namespace FogboundMaze.Tests
             Assert.That(director.EnemyPoolCapacity, Is.GreaterThanOrEqualTo(14));
             director.SelectWeapon(WeaponType.SniperRifle);
             director.BeginRun();
-            director.CompleteLevel();
+            director.ReachExit();
+            yield return new WaitForSeconds(1.9f);
+            director.BossEncounter.Boss.TakeDamage(10000f, false);
+            director.Player.Teleport(director.World.PrincessPosition + Vector3.up * .08f);
+            Physics.SyncTransforms();
+            yield return new WaitForFixedUpdate();
             Assert.That(director.Progress.CompletedCount, Is.EqualTo(10));
             director.NextLevel();
             Assert.That(director.Phase, Is.EqualTo(GamePhase.Won));

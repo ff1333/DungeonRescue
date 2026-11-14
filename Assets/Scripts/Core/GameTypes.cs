@@ -14,6 +14,9 @@ namespace FogboundMaze
         LevelSelect,
         Staging,
         Playing,
+        BossIntro,
+        BossFight,
+        Rescue,
         Paused,
         Won,
         Lost
@@ -39,5 +42,26 @@ namespace FogboundMaze
         Search,
         Attack,
         Dead
+    }
+
+    public enum BossPhase
+    {
+        Dormant,
+        Intro,
+        PhaseOne,
+        PhaseTwo,
+        PhaseThree,
+        Stunned,
+        Defeated
+    }
+
+    public enum BossActionType
+    {
+        None,
+        Cleave,
+        Charge,
+        CorruptionShot,
+        Summon,
+        Shockwave
     }
 }

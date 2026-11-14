@@ -1,13 +1,19 @@
-# 迷宫逃生 / Maze Escape
+# 勇闯地下城 / Dungeon Rescue
 
-使用 Unity 6 与 C# 开发的 3D 地下城生存迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找出口。普通怪物为哥布林，紫色精英为深渊蛮兵。游戏支持第一/第三人称切换、十关顺序解锁和本地进度保存。
+使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为骷髅仆从，精英怪为重甲骷髅守卫，最终 Boss 为独立骷髅法师。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
 
 **当前正式版为 v1.4.0。** 本版新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态；同时完成怪物近身追击、死亡装备遮挡、贴墙武器后收、武器比例和终点/出生灯光收敛。
 
-- [下载 GitHub Release v1.4.0](https://github.com/ff1333/MazeEscape/releases/tag/v1.4.0)
-- [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，核心流程仍适用）
+**当前开发分支为 v1.5.1 发布候选版。** v1.5.0 的营救主线、三阶段深渊狱长和 Boss Replay 保持不变；本轮把玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并加入火炬、旗帜、木箱、碎石、宝箱、钥匙和装饰石柱。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。当前 EditMode `32/32`、PlayMode `58/58`，Windows Boss 验收构建为 `0 errors / 0 warnings`。
+
+- [下载 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
+- [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
+- [v1.5.0 候选版发布说明](docs/RELEASE_NOTES_v1.5.0.md)
+- [v1.5.0 候选版验证边界](docs/test-results/v1.5.0/README.md)
+- [v1.5.1 奇幻美术候选版说明](docs/RELEASE_NOTES_v1.5.1.md)
+- [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)
 - [v1.3.1 历史发布说明](docs/RELEASE_NOTES_v1.3.1.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
@@ -20,16 +26,18 @@
 ## 核心玩法
 
 - 十关确定性迷宫，每关使用不同固定种子、尺寸和难度参数
+- 十关连续营救叙事，第十关连接固定监牢大厅、三阶段深渊狱长和公主营救结局
 - 开始页、十关选择、机制图鉴、默认长刀准备和本地顺序解锁
 - Growing Tree 程序化生成，并筛选路线长度、转弯和分岔质量
 - 探索小地图记录走过的区域，不直接暴露完整出口路线
 - 第一人称与第三人称切换，共用输入、瞄准和伤害逻辑
 - 默认同时携带栓动狙击枪与长刀，支持随时切换、单发拉栓、手动换弹、配镜瞄准、备用弹药、命中反馈和遮挡判断
-- 哥布林与深渊蛮兵通过视觉锥、墙体遮挡、听觉、目标记忆、Utility AI 和网格 A* 行动
+- 骷髅仆从与重甲骷髅守卫通过视觉锥、墙体遮挡、听觉、目标记忆、Utility AI 和网格 A* 行动
 - 对象池按关卡敌人上限预热，复用怪物实例
 - 后期关卡逐步加入局部雾区、应急红灯、断电、污染、封锁和全图避难灯
 - Windows、WebGL、Android 操作与构建支持
 - 默认中文，可切换英文；声音开关和分组音量本地保存
+- 完成战役后在主菜单解锁 Boss Replay，可直接重战最终首领
 
 ## 操作方式
 
@@ -77,6 +85,21 @@
 
 ## 当前验证结果
 
+- v1.5.1 EditMode：`32/32 PASS`
+- v1.5.1 PlayMode：`58/58 PASS`
+- v1.5.1 Windows Release：构建成功，`0 errors / 0 warnings`，ZIP `50,418,195` bytes
+- v1.5.1 Android Release：构建成功，`0 errors / 0 warnings`，APK `41,209,806` bytes，`versionName=1.5.1`、`versionCode=13`
+- v1.5.1 Boss 直测版：Windows/Android 均构建成功，`0 errors / 0 warnings`；仅开放快速最终战入口，不改变正式版解锁规则
+- v1.5.1 Windows 独立 Player：玩家、普通怪、精英怪、Boss、公主、第一人称武器和 Boss 大厅截图均通过视觉检查
+- v1.5.1 人工边界：Android 正式 APK 和 Boss 直测 APK 尚未完成本轮真机视觉、性能与触控复核
+
+- v1.5.0 候选版：运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译通过，`0 errors`
+- v1.5.0 EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过
+- v1.5.0 PlayMode：连续三轮 `58/58 PASS`，每轮 0 失败、0 跳过
+- v1.5.0 Windows Release：构建成功，`0 errors / 0 warnings`，完整目录 `113,233,622` bytes
+- v1.5.0 Android Release：构建成功，`0 errors / 0 warnings`，APK `40,236,166` bytes，`versionName=1.5.0`、`versionCode=12`
+- v1.5.0 人工边界：尚未完成“第十关迷宫 -> 深渊狱长 -> 靠近公主结算”的真人完整试玩，也未在 Android 真机安装本次 APK
+
 - v1.4.0 EditMode：`22/22 PASS`
 - v1.4.0 PlayMode：`54/54 PASS`
 - v1.4.0 Windows Release：构建成功，0 errors，0 warnings
@@ -86,7 +109,7 @@
 - WebGL：此前版本曾在 Edge 完成设置、图鉴、选关、移动、攻击、装弹和暂停交互；v1.4.0 本轮未重建 WebGL，不属于本次正式附件
 - Android：作者已完成 v1.4.0 候选包真机验收；最后一轮仅修改信号灯参数，未重复进行该 APK 的观感复测
 
-v1.4.0 证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和 Windows 构建不能替代真人手感、Android 多机型、长时间压力或商店审核；最后一轮灯光收敛也未做新版 APK 真机复测。
+v1.5.1 自动证据与视觉截图见 [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)，v1.5.0 Boss 功能证据见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)，已发布版本证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
 
 ## 项目结构
 
@@ -111,7 +134,7 @@ docs/
 4. 打开 `Assets/Scenes/Main.unity`。
 5. Console 没有红色错误后，点击 Unity 顶部三角形 Play。
 
-正式包位于 GitHub Releases。Windows ZIP 需要完整解压后运行 `MazeEscape.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。
+正式包位于 GitHub Releases。最新版 Windows ZIP 需要完整解压后运行 `DungeonRescue.exe`；WebGL ZIP 需要 HTTP 静态托管；Android APK 为作品集测试分发包。v1.4.0 及更早历史附件仍保留原文件名。
 
 ## 素材与能力边界
 
