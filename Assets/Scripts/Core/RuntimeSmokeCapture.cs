@@ -26,6 +26,7 @@ namespace FogboundMaze
             var reload = System.Array.Exists(arguments, value => value == "-fogboundReload");
             var scope = System.Array.Exists(arguments, value => value == "-fogboundScope");
             var fogZone = System.Array.Exists(arguments, value => value == "-fogboundFogZone");
+            var bossUnlockCheck = System.Array.Exists(arguments, value => value == "-fogboundBossUnlockCheck");
             var levelNumber = int.TryParse(ReadArgument(arguments, "-fogboundLevel"), out var requestedLevel)
                 ? Mathf.Clamp(requestedLevel, 1, 10) : 1;
             yield return new WaitForSecondsRealtime(1f);
@@ -58,6 +59,17 @@ namespace FogboundMaze
             if (levels || loadout || pause || gameplay || actors)
             {
                 GameDirector.Instance.ShowLevelSelection();
+                if (bossUnlockCheck)
+                {
+                    var progress = GameDirector.Instance.Progress;
+                    if (!progress.IsUnlocked(10) || progress.IsCompleted(10))
+                    {
+                        Debug.LogError($"FOGBOUND_BOSS_UNLOCK_FAIL completed={progress.CompletedCount}");
+                        Application.Quit(2);
+                        yield break;
+                    }
+                    Debug.Log("FOGBOUND_BOSS_UNLOCK_PASS level10Unlocked=true level10Completed=false");
+                }
                 if (!levels)
                 {
                     for (var completed = 1; completed < levelNumber; completed++)

@@ -20,12 +20,50 @@ public static class FogboundPlatformBuilder
         Build(BuildTarget.StandaloneWindows64, "Builds/Windows/v1.5.0/MazeEscape.exe", BuildOptions.None);
     }
 
+    public static void BuildWindowsBossTest()
+    {
+        var previousProductName = PlayerSettings.productName;
+        try
+        {
+            PlayerSettings.productName = "Maze Escape Boss Test";
+            Build(BuildTarget.StandaloneWindows64,
+                "Builds/Windows/v1.5.0-boss-test/MazeEscapeBossTest.exe",
+                BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
+        }
+        finally
+        {
+            PlayerSettings.productName = previousProductName;
+        }
+    }
+
     public static void BuildWebGLRelease()
     {
         Build(BuildTarget.WebGL, "Builds/WebGL/v1.5.0", BuildOptions.None);
     }
 
     public static void BuildAndroidRelease()
+    {
+        PrepareAndroidBuild();
+        Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.0.apk", BuildOptions.None);
+    }
+
+    public static void BuildAndroidBossTest()
+    {
+        PrepareAndroidBuild();
+        var previousProductName = PlayerSettings.productName;
+        try
+        {
+            PlayerSettings.productName = "Maze Escape Boss Test";
+            Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.0-boss-test.apk",
+                BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
+        }
+        finally
+        {
+            PlayerSettings.productName = previousProductName;
+        }
+    }
+
+    private static void PrepareAndroidBuild()
     {
         var destination = new Uri("https://dl.google.com");
         var proxy = WebRequest.DefaultWebProxy?.GetProxy(destination);
@@ -37,10 +75,10 @@ public static class FogboundPlatformBuilder
         EditorUserBuildSettings.buildAppBundle = false;
         PlayerSettings.Android.bundleVersionCode = FogboundMaze.ReleaseVersion.AndroidCode;
         PlayerSettings.Android.targetSdkVersion = AndroidSdkVersions.AndroidApiLevel36;
-        Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.0.apk", BuildOptions.None);
     }
 
-    private static void Build(BuildTarget target, string location, BuildOptions options)
+    private static void Build(BuildTarget target, string location, BuildOptions options,
+        string[] extraScriptingDefines = null)
     {
         PlayerSettings.bundleVersion = FogboundMaze.ReleaseVersion.Current;
         var directory = Path.GetDirectoryName(location);
@@ -50,7 +88,8 @@ public static class FogboundPlatformBuilder
             scenes = Scenes,
             target = target,
             locationPathName = location,
-            options = options
+            options = options,
+            extraScriptingDefines = extraScriptingDefines
         });
 
         var summary = report.summary;
