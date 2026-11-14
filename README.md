@@ -11,18 +11,22 @@ v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/And
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
-- [v1.5.0 候选版发布说明](docs/RELEASE_NOTES_v1.5.0.md)
-- [v1.5.0 候选版验证边界](docs/test-results/v1.5.0/README.md)
-- [v1.5.1 奇幻美术候选版说明](docs/RELEASE_NOTES_v1.5.1.md)
+- [v1.5.0 最终战实现说明](docs/RELEASE_NOTES_v1.5.0.md)
+- [v1.5.0 最终战验证记录](docs/test-results/v1.5.0/README.md)
+- [v1.5.1 奇幻美术与正式发布说明](docs/RELEASE_NOTES_v1.5.1.md)
 - [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)
 - [v1.3.1 历史发布说明](docs/RELEASE_NOTES_v1.3.1.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
 - [文档阅读入口](docs/README.md)
 
-![v1.3.1 中文开始界面](docs/test-results/v1.3.1/native/title-zh.png)
+![勇闯地下城 v1.5.1 奇幻角色与地下城](docs/test-results/v1.5.1/fantasy-actors.png)
 
-![中英文与声音设置](docs/test-results/v1.3.0/native/v1.3.0-settings-en.png)
+| 第一人称狙击战斗 | 三阶段深渊狱长 |
+|---|---|
+| ![第一人称狙击战斗](docs/test-results/v1.5.1/fantasy-first-person.png) | ![三阶段深渊狱长](docs/test-results/v1.5.1/fantasy-boss.png) |
+
+![营救公主结局](docs/test-results/v1.5.1/fantasy-princess.png)
 
 ## 核心玩法
 
@@ -88,29 +92,13 @@ v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/And
 
 - v1.5.1 EditMode：`32/32 PASS`
 - v1.5.1 PlayMode：`58/58 PASS`
-- v1.5.1 Windows Release：构建成功，`0 errors / 0 warnings`，ZIP `50,418,195` bytes
-- v1.5.1 Android Release：构建成功，`0 errors / 0 warnings`，APK `41,209,806` bytes，`versionName=1.5.1`、`versionCode=13`
+- v1.5.1 Windows Release：构建成功，`0 errors / 0 warnings`，ZIP `50,418,947` bytes
+- v1.5.1 Android Release：构建成功，`0 errors / 0 warnings`，APK `41,209,814` bytes，`versionName=1.5.1`、`versionCode=13`
 - v1.5.1 Boss 直测版：Windows/Android 均构建成功，`0 errors / 0 warnings`；仅开放快速最终战入口，不改变正式版解锁规则
 - v1.5.1 Windows 独立 Player：玩家、普通怪、精英怪、Boss、公主、第一人称武器和 Boss 大厅截图均通过视觉检查
 - v1.5.1 人工边界：Windows 最终 Boss 与美术验收通过；改名后的 Android APK 未重复执行多型号、长时间压力与商店审核测试
 
-- v1.5.0 候选版：运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译通过，`0 errors`
-- v1.5.0 EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过
-- v1.5.0 PlayMode：连续三轮 `58/58 PASS`，每轮 0 失败、0 跳过
-- v1.5.0 Windows Release：构建成功，`0 errors / 0 warnings`，完整目录 `113,233,622` bytes
-- v1.5.0 Android Release：构建成功，`0 errors / 0 warnings`，APK `40,236,166` bytes，`versionName=1.5.0`、`versionCode=12`
-- v1.5.0 人工边界：尚未完成“第十关迷宫 -> 深渊狱长 -> 靠近公主结算”的真人完整试玩，也未在 Android 真机安装本次 APK
-
-- v1.4.0 EditMode：`22/22 PASS`
-- v1.4.0 PlayMode：`54/54 PASS`
-- v1.4.0 Windows Release：构建成功，0 errors，0 warnings
-- v1.4.0 Android Release：构建成功，0 errors，0 warnings
-- Windows 独立 Player：默认长刀、双手持械与背负武器、配镜画面、拉栓/换弹状态和地下环境截图通过检查
-- Android 真机已确认怪物近距离追击、死亡结算遮挡、第一人称侧墙检测和武器比例修正正常；最后一轮仅收敛终点与出生灯光，未再重复真机测试
-- WebGL：此前版本曾在 Edge 完成设置、图鉴、选关、移动、攻击、装弹和暂停交互；v1.4.0 本轮未重建 WebGL，不属于本次正式附件
-- Android：作者已完成 v1.4.0 候选包真机验收；最后一轮仅修改信号灯参数，未重复进行该 APK 的观感复测
-
-v1.5.1 自动证据与视觉截图见 [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)，v1.5.0 Boss 功能证据见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)，已发布版本证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
+v1.5.1 自动证据、包体校验和视觉截图见 [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)。v1.5.0 最终战实现证据和 v1.4.0 武器/AI 迭代证据作为历史记录保留，分别见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)与 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
 
 ## 项目结构
 
@@ -139,7 +127,7 @@ docs/
 
 ## 素材与能力边界
 
-- 角色、两类怪物、武器模型、共享色板和角色动画来自 Quaternius Zombie Apocalypse Kit，采用 CC0 1.0；中文字体采用 SIL OFL 1.1。素材包名称按原许可证保留。详情见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+- v1.5.1 当前角色、普通怪、精英怪、Boss、公主和地下城装饰主要来自 KayKit Adventurers、KayKit Skeletons 与 KayKit Dungeon Remastered，采用 CC0 1.0；保留的狙击枪模型来自 Quaternius Zombie Apocalypse Kit，同样采用 CC0 1.0；中文字体采用 SIL OFL 1.1。详情见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 - 本项目负责素材集成、玩法、生成、寻路、战斗、UI、测试和交付，不将外部模型宣称为本人建模。
 - 当前是单机作品集项目，没有联网同步、服务器、热更新和完整商业化系统。
 - v1.2.2、v1.2.1、v1.2.0 和 v1.1.0 文档保留用于展示迭代历史，不代表当前版本。
