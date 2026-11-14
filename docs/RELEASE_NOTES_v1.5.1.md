@@ -2,7 +2,7 @@
 
 日期：2026-11-14
 
-状态：功能回归、Windows 视觉验收与 Windows/Android 构建均已完成。
+状态：功能回归、Windows 视觉验收、Windows/Android 构建、主分支合并、版本标签和 GitHub Release 均已完成。
 
 ## 本次更新
 

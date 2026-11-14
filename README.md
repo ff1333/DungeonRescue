@@ -2,11 +2,12 @@
 
 使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为骷髅仆从，精英怪为重甲骷髅守卫，最终 Boss 为独立骷髅法师。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
 
-**当前正式版为 v1.4.0。** 本版新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态；同时完成怪物近身追击、死亡装备遮挡、贴墙武器后收、武器比例和终点/出生灯光收敛。
+**当前正式版为 v1.5.1。** v1.4 完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、自适应 HUD、感知记忆、Utility AI 和固定地下城环境；v1.5 加入十关营救主线、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 将玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并补齐地下城环境装饰。
 
-**当前开发分支为 v1.5.1 发布候选版。** v1.5.0 的营救主线、三阶段深渊狱长和 Boss Replay 保持不变；本轮把玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并加入火炬、旗帜、木箱、碎石、宝箱、钥匙和装饰石柱。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。当前 EditMode `32/32`、PlayMode `58/58`，Windows Boss 验收构建为 `0 errors / 0 warnings`。
+v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/Android `0 errors / 0 warnings` 构建、版本标签和 GitHub Release。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。
 
-- [下载 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
+- [下载 GitHub Release v1.5.1](https://github.com/ff1333/DungeonRescue/releases/tag/v1.5.1)
+- [历史 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
@@ -91,7 +92,7 @@
 - v1.5.1 Android Release：构建成功，`0 errors / 0 warnings`，APK `41,209,806` bytes，`versionName=1.5.1`、`versionCode=13`
 - v1.5.1 Boss 直测版：Windows/Android 均构建成功，`0 errors / 0 warnings`；仅开放快速最终战入口，不改变正式版解锁规则
 - v1.5.1 Windows 独立 Player：玩家、普通怪、精英怪、Boss、公主、第一人称武器和 Boss 大厅截图均通过视觉检查
-- v1.5.1 人工边界：Android 正式 APK 和 Boss 直测 APK 尚未完成本轮真机视觉、性能与触控复核
+- v1.5.1 人工边界：Windows 最终 Boss 与美术验收通过；改名后的 Android APK 未重复执行多型号、长时间压力与商店审核测试
 
 - v1.5.0 候选版：运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译通过，`0 errors`
 - v1.5.0 EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过
