@@ -232,7 +232,7 @@ namespace FogboundMaze
 
         public void ReplayBoss()
         {
-            if (!Progress.IsCompleted(10)) return;
+            if (!Progress.CanReplayBoss) return;
             LoadLevel(10);
             BeginRun();
             bossEncounter.Begin(true);

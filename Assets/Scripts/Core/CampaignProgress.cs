@@ -43,6 +43,17 @@ namespace FogboundMaze
 
         public bool IsUnlocked(int level) => level >= 1 && level <= Mathf.Min(10, CompletedCount + 1);
         public bool IsCompleted(int level) => level >= 1 && level <= CompletedCount;
+        public bool CanReplayBoss
+        {
+            get
+            {
+#if FOGBOUND_BOSS_TEST && !UNITY_EDITOR
+                return IsUnlocked(10);
+#else
+                return IsCompleted(10);
+#endif
+            }
+        }
 
         public void Complete(int level)
         {

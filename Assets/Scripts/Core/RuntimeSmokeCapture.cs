@@ -62,13 +62,13 @@ namespace FogboundMaze
                 if (bossUnlockCheck)
                 {
                     var progress = GameDirector.Instance.Progress;
-                    if (!progress.IsUnlocked(10) || progress.IsCompleted(10))
+                    if (!progress.IsUnlocked(10) || progress.IsCompleted(10) || !progress.CanReplayBoss)
                     {
                         Debug.LogError($"FOGBOUND_BOSS_UNLOCK_FAIL completed={progress.CompletedCount}");
                         Application.Quit(2);
                         yield break;
                     }
-                    Debug.Log("FOGBOUND_BOSS_UNLOCK_PASS level10Unlocked=true level10Completed=false");
+                    Debug.Log("FOGBOUND_BOSS_UNLOCK_PASS level10Unlocked=true level10Completed=false bossReplay=true");
                 }
                 if (!levels)
                 {

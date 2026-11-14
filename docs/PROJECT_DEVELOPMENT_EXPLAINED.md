@@ -775,7 +775,7 @@ Boss 大厅位于程序化网格以外。如果把房间坐标直接传给 `Worl
 
 ### 23.8 如何快速验收最终战
 
-正式包继续要求顺序完成十关。为了避免每次回归 Boss 都重复打前九关，构建脚本支持 `FOGBOUND_BOSS_TEST` 条件编译：仅 Boss 验收版第一次启动时把前九关写为完成，第十关仍保持未完成。Windows 自动烟测还会断言 `level10Unlocked=true` 且 `level10Completed=false`。该方案没有修改正式包规则，也没有加入无敌、跳过第十关迷宫或自动击杀 Boss。
+正式包继续要求顺序完成十关。为了避免每次回归 Boss 都重复打前九关，构建脚本支持 `FOGBOUND_BOSS_TEST` 条件编译：仅 Boss 验收版第一次启动时把前九关写为完成，第十关仍保持未完成，并提前显示 Boss Replay，允许直接进入 Boss 大厅。Windows 自动烟测断言 `level10Unlocked=true`、`level10Completed=false` 且 `bossReplay=true`。该方案没有修改正式包规则，也没有加入无敌、无限资源或自动击杀 Boss。
 
 ## 二十四、以后如何使用这份文档
 

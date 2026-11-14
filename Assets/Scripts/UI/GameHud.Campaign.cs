@@ -85,7 +85,7 @@ namespace FogboundMaze
             titlePanel.SetActive(phase == GamePhase.Title);
             levelPanel.SetActive(phase == GamePhase.LevelSelect);
             guidePanel.SetActive(phase == GamePhase.Guide);
-            bossReplayButton.gameObject.SetActive(phase == GamePhase.Title && progress.IsCompleted(10));
+            bossReplayButton.gameObject.SetActive(phase == GamePhase.Title && progress.CanReplayBoss);
             campaignSummary.text = $"{progress.CompletedCount:00} / 10 CLEARED";
             for (var i = 0; i < 10; i++)
             {
