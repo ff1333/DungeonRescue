@@ -23,13 +23,18 @@ namespace FogboundMaze
         private Vector3 previousPosition;
         private float attackUntil;
         private Vector3 gunMuzzleLocal;
+        private Vector3 pistolRestPosition;
+        private Quaternion pistolRestRotation;
+        private Vector3 bladeRestPosition;
+        private Quaternion bladeRestRotation;
         private bool deathEquipmentHidden;
         public Transform HeldWeapon => (pistol != null && pistol.activeSelf ? pistol : knife)?.transform;
         public Vector3 GunMuzzle
         {
             get
             {
-                return pistol.transform.TransformPoint(gunMuzzleLocal);
+                return pistol != null ? pistol.transform.TransformPoint(gunMuzzleLocal)
+                    : transform.position + transform.up * 1.2f + transform.forward;
             }
         }
 
@@ -38,41 +43,36 @@ namespace FogboundMaze
             player = GetComponent<PlayerController>();
             animationPlayer = GetComponentInChildren<Animation>(true);
             var visual = transform.Find("Visual");
-            // The source rig is left-handed. Mirror only its graphics and authored animation.
-            visual.localScale = new Vector3(-1f, 1f, 1f);
-            foreach (var child in visual.GetComponentsInChildren<Transform>(true))
+            var rightSocket = FindBone(visual, "handslot.r") ?? FindBone(visual, "Middle1.R") ?? visual;
+            pistol = CreateHeldWeapon("Weapons/SniperRifle", "Rifle", rightSocket,
+                new Vector3(.01f, -.015f, -.015f), Quaternion.Euler(2f, 88f, 2f), HeldRifleScale);
+            knife = CreateHeldWeapon("Weapons/LongBlade", "Knife", rightSocket,
+                new Vector3(.015f, -.01f, .01f), Quaternion.Euler(0f, 0f, -88f), .86f);
+            if (pistol != null)
             {
-                if (child.name == "Rifle")
-                {
-                    pistol = child.gameObject;
-                    child.localScale *= HeldRifleScale;
-                }
-                if (child.name == "Knife")
-                {
-                    knife = child.gameObject;
-                    var mesh = child.GetComponent<MeshFilter>().sharedMesh;
-                    var size = mesh.bounds.size;
-                    var scale = Vector3.one;
-                    var axis = size.x > size.y ? 0 : 1;
-                    if (size.z > size[axis]) axis = 2;
-                    scale[axis] = HeldBladeLengthScale;
-                    child.localScale = Vector3.Scale(child.localScale, scale);
-                }
+                pistolRestPosition = pistol.transform.localPosition;
+                pistolRestRotation = pistol.transform.localRotation;
+            }
+            if (knife != null)
+            {
+                bladeRestPosition = knife.transform.localPosition;
+                bladeRestRotation = knife.transform.localRotation;
             }
             var torso = visual.GetComponentsInChildren<Transform>(true)
-                .FirstOrDefault(child => child.name == "Torso") ?? visual;
-            upperArmLeft = FindBone(visual, "UpperArm.L");
-            lowerArmLeft = FindBone(visual, "LowerArm.L");
-            palmLeft = FindBone(visual, "Middle1.L");
-            upperArmRight = FindBone(visual, "UpperArm.R");
-            lowerArmRight = FindBone(visual, "LowerArm.R");
-            palmRight = FindBone(visual, "Middle1.R");
+                .FirstOrDefault(child => child.name is "chest" or "Torso") ?? visual;
+            upperArmLeft = FindBone(visual, "upperarm.l") ?? FindBone(visual, "UpperArm.L");
+            lowerArmLeft = FindBone(visual, "lowerarm.l") ?? FindBone(visual, "LowerArm.L");
+            palmLeft = FindBone(visual, "hand.l") ?? FindBone(visual, "Middle1.L");
+            upperArmRight = FindBone(visual, "upperarm.r") ?? FindBone(visual, "UpperArm.R");
+            lowerArmRight = FindBone(visual, "lowerarm.r") ?? FindBone(visual, "LowerArm.R");
+            palmRight = FindBone(visual, "hand.r") ?? FindBone(visual, "Middle1.R");
             backRifle = CreateBackWeapon("Weapons/SniperRifle", torso,
                 new Vector3(-0.24f, 0.02f, -0.18f), Quaternion.Euler(12f, 8f, 48f));
             backBlade = CreateBackWeapon("Weapons/LongBlade", torso,
                 new Vector3(0.24f, 0.01f, -0.16f), Quaternion.Euler(6f, 178f, -42f));
             // Bake the socket in the editor; imported meshes are not CPU-readable in release players.
-            gunMuzzleLocal = pistol.transform.Find("Muzzle").localPosition;
+            var muzzle = pistol != null ? pistol.transform.Find("Muzzle") : null;
+            gunMuzzleLocal = muzzle != null ? muzzle.localPosition : Vector3.forward;
             previousPosition = transform.position;
         }
 
@@ -124,6 +124,7 @@ namespace FogboundMaze
             }
             if (!player.Health.IsDead)
             {
+                ResetHeldWeaponPose();
                 if (player.Weapon.ObstructionAmount > .01f)
                     ApplyObstructedWeaponPose(player.Weapon.ObstructionAmount);
                 else
@@ -182,6 +183,22 @@ namespace FogboundMaze
                 RotateJointToward(lowerArmRight, palmRight, rightTarget);
                 RotateJointToward(upperArmRight, palmRight, rightTarget);
             }
+            HeldWeapon.position -= transform.forward * (.28f * amount);
+            HeldWeapon.rotation = Quaternion.AngleAxis(-52f * amount, transform.right) * HeldWeapon.rotation;
+        }
+
+        private void ResetHeldWeaponPose()
+        {
+            if (pistol != null)
+            {
+                pistol.transform.localPosition = pistolRestPosition;
+                pistol.transform.localRotation = pistolRestRotation;
+            }
+            if (knife != null)
+            {
+                knife.transform.localPosition = bladeRestPosition;
+                knife.transform.localRotation = bladeRestRotation;
+            }
         }
 
         private static void RotateJointToward(Transform joint, Transform end, Vector3 target)
@@ -205,6 +222,21 @@ namespace FogboundMaze
             weapon.transform.localPosition = position;
             weapon.transform.localRotation = rotation;
             weapon.transform.localScale = Vector3.one * BackWeaponScale;
+            foreach (var child in weapon.GetComponentsInChildren<Transform>(true))
+                child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+            return weapon;
+        }
+
+        private static GameObject CreateHeldWeapon(string resource, string name, Transform parent,
+            Vector3 position, Quaternion rotation, float scale)
+        {
+            var prefab = Resources.Load<GameObject>(resource);
+            if (prefab == null) return null;
+            var weapon = Instantiate(prefab, parent);
+            weapon.name = name;
+            weapon.transform.localPosition = position;
+            weapon.transform.localRotation = rotation;
+            weapon.transform.localScale = Vector3.one * scale;
             foreach (var child in weapon.GetComponentsInChildren<Transform>(true))
                 child.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
             return weapon;

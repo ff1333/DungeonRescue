@@ -17,7 +17,7 @@ public static class FogboundPlatformBuilder
 
     public static void BuildWindowsRelease()
     {
-        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/v1.5.0/MazeEscape.exe", BuildOptions.None);
+        Build(BuildTarget.StandaloneWindows64, "Builds/Windows/v1.5.1/MazeEscape.exe", BuildOptions.None);
     }
 
     public static void BuildWindowsBossTest()
@@ -27,7 +27,7 @@ public static class FogboundPlatformBuilder
         {
             PlayerSettings.productName = "Maze Escape Boss Test";
             Build(BuildTarget.StandaloneWindows64,
-                "Builds/Windows/v1.5.0-boss-test/MazeEscapeBossTest.exe",
+                "Builds/Windows/v1.5.1-boss-test/MazeEscapeBossTest.exe",
                 BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
         }
         finally
@@ -38,13 +38,13 @@ public static class FogboundPlatformBuilder
 
     public static void BuildWebGLRelease()
     {
-        Build(BuildTarget.WebGL, "Builds/WebGL/v1.5.0", BuildOptions.None);
+        Build(BuildTarget.WebGL, "Builds/WebGL/v1.5.1", BuildOptions.None);
     }
 
     public static void BuildAndroidRelease()
     {
         PrepareAndroidBuild();
-        Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.0.apk", BuildOptions.None);
+        Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.1.apk", BuildOptions.None);
     }
 
     public static void BuildAndroidBossTest()
@@ -54,7 +54,7 @@ public static class FogboundPlatformBuilder
         try
         {
             PlayerSettings.productName = "Maze Escape Boss Test";
-            Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.0-boss-test.apk",
+            Build(BuildTarget.Android, "Builds/Android/MazeEscape-v1.5.1-boss-test.apk",
                 BuildOptions.None, new[] { "FOGBOUND_BOSS_TEST" });
         }
         finally

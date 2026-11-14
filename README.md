@@ -1,10 +1,10 @@
 # 迷宫逃生 / Maze Escape
 
-使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为哥布林，紫色精英为深渊蛮兵。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
+使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为骷髅仆从，精英怪为重甲骷髅守卫，最终 Boss 为独立骷髅法师。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
 
 **当前正式版为 v1.4.0。** 本版新增默认长刀开局、栓动狙击枪随时切换、5 发弹匣与手动换弹、右键配镜和短时专注减速、自适应武器 HUD、声音感知、视线遮挡、目标记忆、搜索、有限群体警报、Utility AI，以及替代短局昼夜循环的固定地下城环境状态；同时完成怪物近身追击、死亡装备遮挡、贴墙武器后收、武器比例和终点/出生灯光收敛。
 
-**当前开发分支为 v1.5.0 发布候选版。** 本轮把十关改写为“进入地下城营救公主”的连续任务，第十关出口进入固定监牢大厅；深渊狱长拥有三阶段、招式冷却、防重复 Utility 选择、召唤、弱点窗口和第三阶段污染。击败 Boss 只打开牢笼，玩家靠近公主后才写入最终通关记录，并解锁主菜单 Boss Replay。Unity Test Runner 已连续完成三轮 EditMode `32/32` 和三轮 PlayMode `58/58`，Windows/Android Release 均以 `0 errors / 0 warnings` 构建成功。该分支尚未合并或发布，最终 Boss 全流程试玩和 v1.5.0 Android 真机回归仍需人工完成。
+**当前开发分支为 v1.5.1 发布候选版。** v1.5.0 的营救主线、三阶段深渊狱长和 Boss Replay 保持不变；本轮把玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并加入火炬、旗帜、木箱、碎石、宝箱、钥匙和装饰石柱。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。当前 EditMode `32/32`、PlayMode `58/58`，Windows Boss 验收构建为 `0 errors / 0 warnings`。
 
 - [下载 GitHub Release v1.4.0](https://github.com/ff1333/MazeEscape/releases/tag/v1.4.0)
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/MazeEscape/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，核心流程仍适用）
@@ -12,6 +12,8 @@
 - [v1.4.0 自动验证证据与发布边界](docs/test-results/v1.4.0/README.md)
 - [v1.5.0 候选版发布说明](docs/RELEASE_NOTES_v1.5.0.md)
 - [v1.5.0 候选版验证边界](docs/test-results/v1.5.0/README.md)
+- [v1.5.1 奇幻美术候选版说明](docs/RELEASE_NOTES_v1.5.1.md)
+- [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)
 - [v1.3.1 历史发布说明](docs/RELEASE_NOTES_v1.3.1.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
@@ -30,7 +32,7 @@
 - 探索小地图记录走过的区域，不直接暴露完整出口路线
 - 第一人称与第三人称切换，共用输入、瞄准和伤害逻辑
 - 默认同时携带栓动狙击枪与长刀，支持随时切换、单发拉栓、手动换弹、配镜瞄准、备用弹药、命中反馈和遮挡判断
-- 哥布林与深渊蛮兵通过视觉锥、墙体遮挡、听觉、目标记忆、Utility AI 和网格 A* 行动
+- 骷髅仆从与重甲骷髅守卫通过视觉锥、墙体遮挡、听觉、目标记忆、Utility AI 和网格 A* 行动
 - 对象池按关卡敌人上限预热，复用怪物实例
 - 后期关卡逐步加入局部雾区、应急红灯、断电、污染、封锁和全图避难灯
 - Windows、WebGL、Android 操作与构建支持
@@ -83,6 +85,14 @@
 
 ## 当前验证结果
 
+- v1.5.1 EditMode：`32/32 PASS`
+- v1.5.1 PlayMode：`58/58 PASS`
+- v1.5.1 Windows Release：构建成功，`0 errors / 0 warnings`，ZIP `50,418,195` bytes
+- v1.5.1 Android Release：构建成功，`0 errors / 0 warnings`，APK `41,209,806` bytes，`versionName=1.5.1`、`versionCode=13`
+- v1.5.1 Boss 直测版：Windows/Android 均构建成功，`0 errors / 0 warnings`；仅开放快速最终战入口，不改变正式版解锁规则
+- v1.5.1 Windows 独立 Player：玩家、普通怪、精英怪、Boss、公主、第一人称武器和 Boss 大厅截图均通过视觉检查
+- v1.5.1 人工边界：Android 正式 APK 和 Boss 直测 APK 尚未完成本轮真机视觉、性能与触控复核
+
 - v1.5.0 候选版：运行时、EditMode 测试程序集、PlayMode 测试程序集静态编译通过，`0 errors`
 - v1.5.0 EditMode：连续三轮 `32/32 PASS`，每轮 0 失败、0 跳过
 - v1.5.0 PlayMode：连续三轮 `58/58 PASS`，每轮 0 失败、0 跳过
@@ -99,7 +109,7 @@
 - WebGL：此前版本曾在 Edge 完成设置、图鉴、选关、移动、攻击、装弹和暂停交互；v1.4.0 本轮未重建 WebGL，不属于本次正式附件
 - Android：作者已完成 v1.4.0 候选包真机验收；最后一轮仅修改信号灯参数，未重复进行该 APK 的观感复测
 
-v1.5.0 自动证据见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)，已发布版本证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
+v1.5.1 自动证据与视觉截图见 [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)，v1.5.0 Boss 功能证据见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)，已发布版本证据见 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
 
 ## 项目结构
 

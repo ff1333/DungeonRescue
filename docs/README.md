@@ -1,12 +1,16 @@
 # Maze Escape / 迷宫逃生文档入口
 
-当前 `v1.5.0` 深渊营救与最终 Boss 发布候选说明：
+当前 `v1.5.1` 深渊营救、最终 Boss 与奇幻美术统一发布候选说明：
+
+- `RELEASE_NOTES_v1.5.1.md`：五套角色拆分、地下城道具和当前验证结果；
+- `devlogs/23-v1.5.1-fantasy-art-pass.md`：资源决策、换模接入问题和修复记录；
+- `test-results/v1.5.1/README.md`：EditMode、PlayMode、平台构建与实际 Player 截图；
 
 - `RELEASE_NOTES_v1.5.0.md`：候选版范围、玩法、自动验证结果与尚未完成的人工门槛；
 - `devlogs/22-v1.5.0-princess-rescue-boss.md`：需求、架构、实现与调研记录；
 - `test-results/v1.5.0/README.md`：三轮 EditMode、三轮 PlayMode、Windows/Android 构建证据与人工边界。
 
-**当前公开正式版为 v1.4.0，v1.5.0 尚未合并或发布。** v1.5.0 已完成自动测试和 Windows/Android 构建，仍需最终 Boss 全流程真人试玩与新版 APK 真机回归。
+**当前公开正式版为 v1.4.0，v1.5.1 尚未合并或发布。** v1.5.1 继承 v1.5.0 最终战，并完成玩家、公主、怪物、Boss 与场景道具的统一奇幻美术迭代。
 
 - [v1.3.0 Release 下载](https://github.com/ff1333/FogboundMaze/releases/tag/v1.3.0)
 - [v1.3.0 自动测试、平台构建和真机验收边界](test-results/v1.3.0/README.md)

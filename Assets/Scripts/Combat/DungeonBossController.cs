@@ -18,6 +18,9 @@ namespace FogboundMaze
         private bool acting;
         private Material telegraphMaterial;
         private Renderer coreRenderer;
+        private Animation animationPlayer;
+        private Renderer[] visualRenderers;
+        private MaterialPropertyBlock phaseProperties;
 
         public Health Health { get; private set; }
         public BossPhase Phase { get; private set; } = BossPhase.Dormant;
@@ -43,14 +46,17 @@ namespace FogboundMaze
         {
             encounter = value;
             config = bossConfig;
+            phaseProperties = new MaterialPropertyBlock();
             controller = GetComponent<CharacterController>();
             Health = GetComponent<Health>();
             Health.Changed += OnHealthChanged;
             Health.Died += _ => Defeat();
-            var visual = Instantiate(Resources.Load<GameObject>("Characters/EliteZombie"), transform);
+            var visual = Instantiate(Resources.Load<GameObject>("Characters/AbyssWarden"), transform);
             visual.name = "Abyss Warden Visual";
             visual.transform.localScale = Vector3.one * 1.65f;
             foreach (var childCollider in visual.GetComponentsInChildren<Collider>()) childCollider.enabled = false;
+            animationPlayer = visual.GetComponentInChildren<Animation>(true);
+            visualRenderers = visual.GetComponentsInChildren<Renderer>(true);
             var weakPoint = new GameObject("Exposed Core");
             weakPoint.transform.SetParent(transform, false);
             weakPoint.transform.localPosition = new Vector3(0f, 1.8f, .68f);
@@ -81,6 +87,8 @@ namespace FogboundMaze
             acting = false;
             weakPointUntil = 0f;
             coreRenderer.enabled = false;
+            ApplyPhaseColor(new Color(1f, .82f, .72f));
+            Play("Idle", true);
         }
 
         public void ActivateFight()
@@ -97,7 +105,11 @@ namespace FogboundMaze
             FacePlayer();
             var distance = HorizontalDistance(transform.position, player.transform.position);
             if (distance > 6.5f && !acting)
+            {
                 controller.SimpleMove((player.transform.position - transform.position).normalized * config.moveSpeed);
+                Play("Run");
+            }
+            else if (!acting) Play("Idle");
             if (Time.time < nextDecision) return;
             var action = BossDecisionModel.Choose(new BossDecisionContext(
                 Phase, distance, GameDirector.Instance.ActiveEnemyCount, config.summonCap,
@@ -126,6 +138,7 @@ namespace FogboundMaze
             Phase = BossPhase.Stunned;
             encounter.NotifyPhaseChanged(Phase);
             weakPointUntil = Time.time + 1.2f;
+            Play("Stun", true);
             yield return new WaitForSeconds(1.05f);
             target = config.PhaseFor(Health.Current / Health.Maximum);
             SetPhase(target);
@@ -138,6 +151,15 @@ namespace FogboundMaze
             acting = true;
             previousAction = action;
             cooldowns[action] = Time.time + Cooldown(action);
+            Play(action switch
+            {
+                BossActionType.Cleave => "Cleave",
+                BossActionType.Charge => "Charge",
+                BossActionType.CorruptionShot => "Cast",
+                BossActionType.Summon => "Summon",
+                BossActionType.Shockwave => "Cast",
+                _ => "Idle"
+            }, true);
             yield return action switch
             {
                 BossActionType.Cleave => Cleave(),
@@ -248,13 +270,36 @@ namespace FogboundMaze
             acting = false;
             SetPhase(BossPhase.Defeated);
             controller.enabled = false;
+            Play("Death", true);
             encounter.BossDefeated();
         }
 
         private void SetPhase(BossPhase value)
         {
             Phase = value;
+            ApplyPhaseColor(value switch
+            {
+                BossPhase.PhaseTwo => new Color(.9f, .62f, 1f),
+                BossPhase.PhaseThree => new Color(1f, .42f, .5f),
+                _ => new Color(1f, .82f, .72f)
+            });
             encounter.NotifyPhaseChanged(value);
+        }
+
+        private void Play(string clip, bool restart = false)
+        {
+            if (animationPlayer == null || animationPlayer[clip] == null) return;
+            if (restart) animationPlayer.Stop();
+            if (!animationPlayer.IsPlaying(clip)) animationPlayer.CrossFade(clip, .1f);
+        }
+
+        private void ApplyPhaseColor(Color color)
+        {
+            if (visualRenderers == null) return;
+            phaseProperties.Clear();
+            phaseProperties.SetColor("_BaseColor", color);
+            phaseProperties.SetColor("_Color", color);
+            foreach (var renderer in visualRenderers) renderer.SetPropertyBlock(phaseProperties);
         }
 
         private static float HorizontalDistance(Vector3 a, Vector3 b)

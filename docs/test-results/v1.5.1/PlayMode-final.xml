@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="58" result="Passed" total="58" passed="58" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:01:48Z" duration="66.1814757">
+  <test-suite type="TestSuite" id="1072" name="Maze Escape" fullname="Maze Escape" runstate="Runnable" testcasecount="58" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:01:48Z" duration="66.181476" total="58" passed="58" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1067" name="FogboundMaze.PlayModeTests.dll" fullname="D:/software/documents/unity_games/projects/learning/MazeEscape/Library/ScriptAssemblies/FogboundMaze.PlayModeTests.dll" runstate="Runnable" testcasecount="58" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:01:48Z" duration="66.175425" total="58" passed="58" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="1684" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1068" name="FogboundMaze" fullname="FogboundMaze" runstate="Runnable" testcasecount="58" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:01:48Z" duration="66.174705" total="58" passed="58" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="SetUpFixture" id="1040" name="Tests" fullname="FogboundMaze.Tests.LocaleTestScope" classname="FogboundMaze.Tests.LocaleTestScope" runstate="Runnable" testcasecount="58" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:01:48Z" duration="66.173741" total="58" passed="58" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1001" name="BossEncounterTests" fullname="FogboundMaze.Tests.BossEncounterTests" classname="FogboundMaze.Tests.BossEncounterTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:00:53Z" duration="10.994057" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1005" name="BladeAttackDamagesBossThroughWeaponController" fullname="FogboundMaze.Tests.BossEncounterTests.BladeAttackDamagesBossThroughWeaponController" methodname="BladeAttackDamagesBossThroughWeaponController" classname="FogboundMaze.Tests.BossEncounterTests" runstate="Runnable" seed="908439984" result="Passed" start-time="2026-11-14 07:00:42Z" end-time="2026-11-14 07:00:45Z" duration="2.605610" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1003" name="BossDeathRequiresPrincessRescueBeforeCompletion" fullname="FogboundMaze.Tests.BossEncounterTests.BossDeathRequiresPrincessRescueBeforeCompletion" methodname="BossDeathRequiresPrincessRescueBeforeCompletion" classname="FogboundMaze.Tests.BossEncounterTests" runstate="Runnable" seed="1646804344" result="Passed" start-time="2026-11-14 07:00:45Z" end-time="2026-11-14 07:00:47Z" duration="2.176039" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1004" name="BossSummonsAreCappedAndRetryResetsEncounter" fullname="FogboundMaze.Tests.BossEncounterTests.BossSummonsAreCappedAndRetryResetsEncounter" methodname="BossSummonsAreCappedAndRetryResetsEncounter" classname="FogboundMaze.Tests.BossEncounterTests" runstate="Runnable" seed="1576025230" result="Passed" start-time="2026-11-14 07:00:47Z" end-time="2026-11-14 07:00:51Z" duration="4.041917" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1002" name="LevelTenExit_StartsBossAndDoesNotCompleteCampaign" fullname="FogboundMaze.Tests.BossEncounterTests.LevelTenExit_StartsBossAndDoesNotCompleteCampaign" methodname="LevelTenExit_StartsBossAndDoesNotCompleteCampaign" classname="FogboundMaze.Tests.BossEncounterTests" runstate="Runnable" seed="993578038" result="Passed" start-time="2026-11-14 07:00:51Z" end-time="2026-11-14 07:00:53Z" duration="2.162408" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1006" name="CampaignMenuTests" fullname="FogboundMaze.Tests.CampaignMenuTests" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-14 07:00:53Z" end-time="2026-11-14 07:01:00Z" duration="6.716726" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1007" name="BootShowsTitle_ThenLockedLevels_ThenLoadout" fullname="FogboundMaze.Tests.CampaignMenuTests.BootShowsTitle_ThenLockedLevels_ThenLoadout" methodname="BootShowsTitle_ThenLockedLevels_ThenLoadout" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="64870377" result="Passed" start-time="2026-11-14 07:00:53Z" end-time="2026-11-14 07:00:54Z" duration="0.203107" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1012" name="CharacterAssets_HaveTexturesAndWorkingAnimationClips" fullname="FogboundMaze.Tests.CampaignMenuTests.CharacterAssets_HaveTexturesAndWorkingAnimationClips" methodname="CharacterAssets_HaveTexturesAndWorkingAnimationClips" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="787641747" result="Passed" start-time="2026-11-14 07:00:54Z" end-time="2026-11-14 07:00:54Z" duration="0.091126" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1008" name="CompletionPersistsAcrossReload_EnteringAndDyingDoNotUnlock" fullname="FogboundMaze.Tests.CampaignMenuTests.CompletionPersistsAcrossReload_EnteringAndDyingDoNotUnlock" methodname="CompletionPersistsAcrossReload_EnteringAndDyingDoNotUnlock" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="40695510" result="Passed" start-time="2026-11-14 07:00:54Z" end-time="2026-11-14 07:00:54Z" duration="0.210114" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1010" name="GuideShowsEveryChapterWithoutUnlocking_AndEffectsStayBounded" fullname="FogboundMaze.Tests.CampaignMenuTests.GuideShowsEveryChapterWithoutUnlocking_AndEffectsStayBounded" methodname="GuideShowsEveryChapterWithoutUnlocking_AndEffectsStayBounded" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="1695522691" result="Passed" start-time="2026-11-14 07:00:54Z" end-time="2026-11-14 07:00:54Z" duration="0.326125" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1009" name="LegacyCompletionMigrates_ButSelectedLevelAndGappedRecordsDoNotUnlock" fullname="FogboundMaze.Tests.CampaignMenuTests.LegacyCompletionMigrates_ButSelectedLevelAndGappedRecordsDoNotUnlock" methodname="LegacyCompletionMigrates_ButSelectedLevelAndGappedRecordsDoNotUnlock" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="133522636" result="Passed" start-time="2026-11-14 07:00:54Z" end-time="2026-11-14 07:00:54Z" duration="0.079412" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1013" name="PooledMonster_ResetsDeathAndSwitchesToAbyssBruteModel" fullname="FogboundMaze.Tests.CampaignMenuTests.PooledMonster_ResetsDeathAndSwitchesToAbyssBruteModel" methodname="PooledMonster_ResetsDeathAndSwitchesToAbyssBruteModel" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="1036347247" result="Passed" start-time="2026-11-14 07:00:54Z" end-time="2026-11-14 07:00:55Z" duration="1.278752" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1011" name="ReloadFeedbackCompletes_AndLeavingRunClearsTransientState" fullname="FogboundMaze.Tests.CampaignMenuTests.ReloadFeedbackCompletes_AndLeavingRunClearsTransientState" methodname="ReloadFeedbackCompletes_AndLeavingRunClearsTransientState" classname="FogboundMaze.Tests.CampaignMenuTests" runstate="Runnable" seed="1770935763" result="Passed" start-time="2026-11-14 07:00:55Z" end-time="2026-11-14 07:01:00Z" duration="4.525865" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1014" name="EnemyPerceptionTests" fullname="FogboundMaze.Tests.EnemyPerceptionTests" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-14 07:01:00Z" end-time="2026-11-14 07:01:03Z" duration="3.449336" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1016" name="AnotherMonsterDoesNotBlockPlayerVision" fullname="FogboundMaze.Tests.EnemyPerceptionTests.AnotherMonsterDoesNotBlockPlayerVision" methodname="AnotherMonsterDoesNotBlockPlayerVision" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="1381609331" result="Passed" start-time="2026-11-14 07:01:00Z" end-time="2026-11-14 07:01:00Z" duration="0.100161" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1017" name="ClosePlayerRemainsDetectedOutsideTheForwardViewCone" fullname="FogboundMaze.Tests.EnemyPerceptionTests.ClosePlayerRemainsDetectedOutsideTheForwardViewCone" methodname="ClosePlayerRemainsDetectedOutsideTheForwardViewCone" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="189234934" result="Passed" start-time="2026-11-14 07:01:00Z" end-time="2026-11-14 07:01:00Z" duration="0.101796" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1021" name="GroupAlertHasBoundedRadius_AndPoolSpawnClearsMemory" fullname="FogboundMaze.Tests.EnemyPerceptionTests.GroupAlertHasBoundedRadius_AndPoolSpawnClearsMemory" methodname="GroupAlertHasBoundedRadius_AndPoolSpawnClearsMemory" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="299858602" result="Passed" start-time="2026-11-14 07:01:00Z" end-time="2026-11-14 07:01:00Z" duration="0.100158" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1018" name="MonsterRunsToStationaryPlayerAndAttacksInsteadOfReturningToPatrol" fullname="FogboundMaze.Tests.EnemyPerceptionTests.MonsterRunsToStationaryPlayerAndAttacksInsteadOfReturningToPatrol" methodname="MonsterRunsToStationaryPlayerAndAttacksInsteadOfReturningToPatrol" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="475391820" result="Passed" start-time="2026-11-14 07:01:00Z" end-time="2026-11-14 07:01:03Z" duration="2.299047" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1019" name="NearbyMonstersSteerApartInsteadOfStackingAtOnePoint" fullname="FogboundMaze.Tests.EnemyPerceptionTests.NearbyMonstersSteerApartInsteadOfStackingAtOnePoint" methodname="NearbyMonstersSteerApartInsteadOfStackingAtOnePoint" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="194712426" result="Passed" start-time="2026-11-14 07:01:03Z" end-time="2026-11-14 07:01:03Z" duration="0.645487" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1020" name="SoundCreatesInvestigationWithoutExactContinuousTracking" fullname="FogboundMaze.Tests.EnemyPerceptionTests.SoundCreatesInvestigationWithoutExactContinuousTracking" methodname="SoundCreatesInvestigationWithoutExactContinuousTracking" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="184044261" result="Passed" start-time="2026-11-14 07:01:03Z" end-time="2026-11-14 07:01:03Z" duration="0.102334" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1015" name="VisionUsesFieldOfViewAndWallOcclusion" fullname="FogboundMaze.Tests.EnemyPerceptionTests.VisionUsesFieldOfViewAndWallOcclusion" methodname="VisionUsesFieldOfViewAndWallOcclusion" classname="FogboundMaze.Tests.EnemyPerceptionTests" runstate="Runnable" seed="2001656644" result="Passed" start-time="2026-11-14 07:01:03Z" end-time="2026-11-14 07:01:03Z" duration="0.098649" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1022" name="GameFlowTests" fullname="FogboundMaze.Tests.GameFlowTests" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-11-14 07:01:03Z" end-time="2026-11-14 07:01:14Z" duration="10.699406" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1039" name="CampaignCanAdvanceToLevelTen_WithDifferentMazeSize" fullname="FogboundMaze.Tests.GameFlowTests.CampaignCanAdvanceToLevelTen_WithDifferentMazeSize" methodname="CampaignCanAdvanceToLevelTen_WithDifferentMazeSize" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1479045794" result="Passed" start-time="2026-11-14 07:01:03Z" end-time="2026-11-14 07:01:06Z" duration="2.718723" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1031" name="EscapePauseFromStaging_CanReturnToLoadout" fullname="FogboundMaze.Tests.GameFlowTests.EscapePauseFromStaging_CanReturnToLoadout" methodname="EscapePauseFromStaging_CanReturnToLoadout" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="660513962" result="Passed" start-time="2026-11-14 07:01:06Z" end-time="2026-11-14 07:01:06Z" duration="0.118544" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1035" name="ExitAndSpawnSignalLightsStayLocalAndCastWallShadows" fullname="FogboundMaze.Tests.GameFlowTests.ExitAndSpawnSignalLightsStayLocalAndCastWallShadows" methodname="ExitAndSpawnSignalLightsStayLocalAndCastWallShadows" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1504976039" result="Passed" start-time="2026-11-14 07:01:06Z" end-time="2026-11-14 07:01:06Z" duration="0.096594" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1030" name="ExplorationMap_TracksVisitedCellsAndResetsForNewRun" fullname="FogboundMaze.Tests.GameFlowTests.ExplorationMap_TracksVisitedCellsAndResetsForNewRun" methodname="ExplorationMap_TracksVisitedCellsAndResetsForNewRun" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1738110114" result="Passed" start-time="2026-11-14 07:01:06Z" end-time="2026-11-14 07:01:07Z" duration="0.111171" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1024" name="FatalDamage_ImmediatelyDisplaysZeroWithResultPanel" fullname="FogboundMaze.Tests.GameFlowTests.FatalDamage_ImmediatelyDisplaysZeroWithResultPanel" methodname="FatalDamage_ImmediatelyDisplaysZeroWithResultPanel" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="861054736" result="Passed" start-time="2026-11-14 07:01:07Z" end-time="2026-11-14 07:01:07Z" duration="0.094978" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1023" name="HealthBar_TracksDamageHealingAndRetryInRenderedWidth" fullname="FogboundMaze.Tests.GameFlowTests.HealthBar_TracksDamageHealingAndRetryInRenderedWidth" methodname="HealthBar_TracksDamageHealingAndRetryInRenderedWidth" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="84313171" result="Passed" start-time="2026-11-14 07:01:07Z" end-time="2026-11-14 07:01:07Z" duration="0.115948" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1032" name="MacheteSwing_DamagesEnemyInFront" fullname="FogboundMaze.Tests.GameFlowTests.MacheteSwing_DamagesEnemyInFront" methodname="MacheteSwing_DamagesEnemyInFront" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="2006365124" result="Passed" start-time="2026-11-14 07:01:07Z" end-time="2026-11-14 07:01:07Z" duration="0.296193" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1037" name="MiasmaOutsideSafeLight_DamagesPlayer" fullname="FogboundMaze.Tests.GameFlowTests.MiasmaOutsideSafeLight_DamagesPlayer" methodname="MiasmaOutsideSafeLight_DamagesPlayer" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="2030018846" result="Passed" start-time="2026-11-14 07:01:07Z" end-time="2026-11-14 07:01:08Z" duration="0.840666" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1025" name="MiniMap_ShowsUnvisitedExitMouthWithoutRevealingNeighbor" fullname="FogboundMaze.Tests.GameFlowTests.MiniMap_ShowsUnvisitedExitMouthWithoutRevealingNeighbor" methodname="MiniMap_ShowsUnvisitedExitMouthWithoutRevealingNeighbor" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1534874493" result="Passed" start-time="2026-11-14 07:01:08Z" end-time="2026-11-14 07:01:08Z" duration="0.100085" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1026" name="PhysicalMazeRoutes_AreWalkableInAllTenLevels" fullname="FogboundMaze.Tests.GameFlowTests.PhysicalMazeRoutes_AreWalkableInAllTenLevels" methodname="PhysicalMazeRoutes_AreWalkableInAllTenLevels" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="936776117" result="Passed" start-time="2026-11-14 07:01:08Z" end-time="2026-11-14 07:01:09Z" duration="1.156675" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1033" name="PistolCrosshair_DamagesEnemyInSight" fullname="FogboundMaze.Tests.GameFlowTests.PistolCrosshair_DamagesEnemyInSight" methodname="PistolCrosshair_DamagesEnemyInSight" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="780833364" result="Passed" start-time="2026-11-14 07:01:09Z" end-time="2026-11-14 07:01:09Z" duration="0.101003" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1029" name="PlayerCanWalkThroughOpenGateIntoMaze" fullname="FogboundMaze.Tests.GameFlowTests.PlayerCanWalkThroughOpenGateIntoMaze" methodname="PlayerCanWalkThroughOpenGateIntoMaze" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1975158931" result="Passed" start-time="2026-11-14 07:01:09Z" end-time="2026-11-14 07:01:09Z" duration="0.102138" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1034" name="PlayingRun_SpawnsEnemyAfterVisibleTelegraphDelay" fullname="FogboundMaze.Tests.GameFlowTests.PlayingRun_SpawnsEnemyAfterVisibleTelegraphDelay" methodname="PlayingRun_SpawnsEnemyAfterVisibleTelegraphDelay" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1680323295" result="Passed" start-time="2026-11-14 07:01:09Z" end-time="2026-11-14 07:01:13Z" duration="3.200187" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1027" name="StagingAndExitRooms_HaveSolidPerimeters" fullname="FogboundMaze.Tests.GameFlowTests.StagingAndExitRooms_HaveSolidPerimeters" methodname="StagingAndExitRooms_HaveSolidPerimeters" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="461457117" result="Passed" start-time="2026-11-14 07:01:13Z" end-time="2026-11-14 07:01:13Z" duration="0.102404" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1038" name="StartChooseEnterAndWin_CompletesCoreLoop" fullname="FogboundMaze.Tests.GameFlowTests.StartChooseEnterAndWin_CompletesCoreLoop" methodname="StartChooseEnterAndWin_CompletesCoreLoop" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="201210085" result="Passed" start-time="2026-11-14 07:01:13Z" end-time="2026-11-14 07:01:13Z" duration="0.095436" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1028" name="UnexpectedFall_RecoversAndRetryResetsGravity" fullname="FogboundMaze.Tests.GameFlowTests.UnexpectedFall_RecoversAndRetryResetsGravity" methodname="UnexpectedFall_RecoversAndRetryResetsGravity" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="1552881621" result="Passed" start-time="2026-11-14 07:01:13Z" end-time="2026-11-14 07:01:14Z" duration="0.895959" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1036" name="UnifiedInput_MovesPlayerAndSwitchesCameraMode" fullname="FogboundMaze.Tests.GameFlowTests.UnifiedInput_MovesPlayerAndSwitchesCameraMode" methodname="UnifiedInput_MovesPlayerAndSwitchesCameraMode" classname="FogboundMaze.Tests.GameFlowTests" runstate="Runnable" seed="545686710" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.549415" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1041" name="MobileHudLayoutTests" fullname="FogboundMaze.Tests.MobileHudLayoutTests" classname="FogboundMaze.Tests.MobileHudLayoutTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.026644" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1043" name="CombatButtonsOccupySeparatePositions" fullname="FogboundMaze.Tests.MobileHudLayoutTests.CombatButtonsOccupySeparatePositions" methodname="CombatButtonsOccupySeparatePositions" classname="FogboundMaze.Tests.MobileHudLayoutTests" runstate="Runnable" seed="1118899703" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.006684" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1045" name="ForwardDragLocksAutoSprintUntilTheStickIsTouchedAgain" fullname="FogboundMaze.Tests.MobileHudLayoutTests.ForwardDragLocksAutoSprintUntilTheStickIsTouchedAgain" methodname="ForwardDragLocksAutoSprintUntilTheStickIsTouchedAgain" classname="FogboundMaze.Tests.MobileHudLayoutTests" runstate="Runnable" seed="1144097130" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.007458" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1042" name="MoveAreaUsesOnlyLeftHalfAndStartsHidden" fullname="FogboundMaze.Tests.MobileHudLayoutTests.MoveAreaUsesOnlyLeftHalfAndStartsHidden" methodname="MoveAreaUsesOnlyLeftHalfAndStartsHidden" classname="FogboundMaze.Tests.MobileHudLayoutTests" runstate="Runnable" seed="169729877" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.005217" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1044" name="ScopeAndSprintButtonsUseTapToToggle" fullname="FogboundMaze.Tests.MobileHudLayoutTests.ScopeAndSprintButtonsUseTapToToggle" methodname="ScopeAndSprintButtonsUseTapToToggle" classname="FogboundMaze.Tests.MobileHudLayoutTests" runstate="Runnable" seed="678831878" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.006199" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1046" name="SettingsTests" fullname="FogboundMaze.Tests.SettingsTests" classname="FogboundMaze.Tests.SettingsTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.163952" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1047" name="LanguageAndMutedVolumesSurviveSceneReload" fullname="FogboundMaze.Tests.SettingsTests.LanguageAndMutedVolumesSurviveSceneReload" methodname="LanguageAndMutedVolumesSurviveSceneReload" classname="FogboundMaze.Tests.SettingsTests" runstate="Runnable" seed="511538453" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:14Z" duration="0.163132" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+          </test-suite>
+          <test-suite type="TestFixture" id="1048" name="WeaponRevisionTests" fullname="FogboundMaze.Tests.WeaponRevisionTests" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:48Z" duration="34.118585" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1062" name="BladeReachesThreePointTwoMetersAfterWindupAndHitsOnce" fullname="FogboundMaze.Tests.WeaponRevisionTests.BladeReachesThreePointTwoMetersAfterWindupAndHitsOnce" methodname="BladeReachesThreePointTwoMetersAfterWindupAndHitsOnce" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="647149097" result="Passed" start-time="2026-11-14 07:01:14Z" end-time="2026-11-14 07:01:15Z" duration="0.299223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1063" name="BladeRejectsBehindOutOfRangeAndOccludedTargets" fullname="FogboundMaze.Tests.WeaponRevisionTests.BladeRejectsBehindOutOfRangeAndOccludedTargets" methodname="BladeRejectsBehindOutOfRangeAndOccludedTargets" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1335935022" result="Passed" start-time="2026-11-14 07:01:15Z" end-time="2026-11-14 07:01:15Z" duration="0.297158" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1056" name="ChangingWeaponCancelsReloadCompletion" fullname="FogboundMaze.Tests.WeaponRevisionTests.ChangingWeaponCancelsReloadCompletion" methodname="ChangingWeaponCancelsReloadCompletion" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1694945228" result="Passed" start-time="2026-11-14 07:01:15Z" end-time="2026-11-14 07:01:18Z" duration="3.296598" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1052" name="CurrentWeaponIsHeldAndOtherWeaponIsCarriedOnBack" fullname="FogboundMaze.Tests.WeaponRevisionTests.CurrentWeaponIsHeldAndOtherWeaponIsCarriedOnBack" methodname="CurrentWeaponIsHeldAndOtherWeaponIsCarriedOnBack" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1254005313" result="Passed" start-time="2026-11-14 07:01:18Z" end-time="2026-11-14 07:01:18Z" duration="0.097223" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1064" name="DeathDuringWindupCancelsPendingDamage" fullname="FogboundMaze.Tests.WeaponRevisionTests.DeathDuringWindupCancelsPendingDamage" methodname="DeathDuringWindupCancelsPendingDamage" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="523456939" result="Passed" start-time="2026-11-14 07:01:18Z" end-time="2026-11-14 07:01:19Z" duration="0.296062" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1053" name="DeathHidesHeldAndBackWeapons_RespawnRestoresDefaultLoadout" fullname="FogboundMaze.Tests.WeaponRevisionTests.DeathHidesHeldAndBackWeapons_RespawnRestoresDefaultLoadout" methodname="DeathHidesHeldAndBackWeapons_RespawnRestoresDefaultLoadout" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="459600265" result="Passed" start-time="2026-11-14 07:01:19Z" end-time="2026-11-14 07:01:19Z" duration="0.099980" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1057" name="EmptyMagazineNeverAutoReloads_AndManualReloadIsRequired" fullname="FogboundMaze.Tests.WeaponRevisionTests.EmptyMagazineNeverAutoReloads_AndManualReloadIsRequired" methodname="EmptyMagazineNeverAutoReloads_AndManualReloadIsRequired" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1353645535" result="Passed" start-time="2026-11-14 07:01:19Z" end-time="2026-11-14 07:01:26Z" duration="7.298813" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1060" name="FirstPersonObstructionUsesCameraDirectionAndIgnoresMonsters" fullname="FogboundMaze.Tests.WeaponRevisionTests.FirstPersonObstructionUsesCameraDirectionAndIgnoresMonsters" methodname="FirstPersonObstructionUsesCameraDirectionAndIgnoresMonsters" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1965071162" result="Passed" start-time="2026-11-14 07:01:26Z" end-time="2026-11-14 07:01:27Z" duration="0.848232" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1066" name="GraphicsAreRightHandedAndLeavingCancelsWindup" fullname="FogboundMaze.Tests.WeaponRevisionTests.GraphicsAreRightHandedAndLeavingCancelsWindup" methodname="GraphicsAreRightHandedAndLeavingCancelsWindup" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="668225231" result="Passed" start-time="2026-11-14 07:01:27Z" end-time="2026-11-14 07:01:27Z" duration="0.397134" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1058" name="GunDoesNotShootThroughWallOrBeyondRange" fullname="FogboundMaze.Tests.WeaponRevisionTests.GunDoesNotShootThroughWallOrBeyondRange" methodname="GunDoesNotShootThroughWallOrBeyondRange" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="303967540" result="Passed" start-time="2026-11-14 07:01:27Z" end-time="2026-11-14 07:01:28Z" duration="0.996350" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1061" name="MuzzleBehindCoverCannotExploitClearCameraRay" fullname="FogboundMaze.Tests.WeaponRevisionTests.MuzzleBehindCoverCannotExploitClearCameraRay" methodname="MuzzleBehindCoverCannotExploitClearCameraRay" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="791898863" result="Passed" start-time="2026-11-14 07:01:28Z" end-time="2026-11-14 07:01:28Z" duration="0.096467" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1065" name="NearbyMonsterCannotDamagePlayerThroughWall" fullname="FogboundMaze.Tests.WeaponRevisionTests.NearbyMonsterCannotDamagePlayerThroughWall" methodname="NearbyMonsterCannotDamagePlayerThroughWall" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="78656228" result="Passed" start-time="2026-11-14 07:01:28Z" end-time="2026-11-14 07:01:30Z" duration="1.303762" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1055" name="ReloadDeathDoesNotRefillOrSignalReady" fullname="FogboundMaze.Tests.WeaponRevisionTests.ReloadDeathDoesNotRefillOrSignalReady" methodname="ReloadDeathDoesNotRefillOrSignalReady" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="2023985317" result="Passed" start-time="2026-11-14 07:01:30Z" end-time="2026-11-14 07:01:33Z" duration="3.295210" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1051" name="ReloadForcesScopeClosedEvenWhenAimInputRemainsHeld" fullname="FogboundMaze.Tests.WeaponRevisionTests.ReloadForcesScopeClosedEvenWhenAimInputRemainsHeld" methodname="ReloadForcesScopeClosedEvenWhenAimInputRemainsHeld" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1034019867" result="Passed" start-time="2026-11-14 07:01:33Z" end-time="2026-11-14 07:01:35Z" duration="1.895986" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1054" name="ReloadPauseFreezesProgressAndReadyExpires" fullname="FogboundMaze.Tests.WeaponRevisionTests.ReloadPauseFreezesProgressAndReadyExpires" methodname="ReloadPauseFreezesProgressAndReadyExpires" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1943277055" result="Passed" start-time="2026-11-14 07:01:35Z" end-time="2026-11-14 07:01:40Z" duration="5.599284" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1050" name="ScopeUsesFirstPersonViewAndOnlySlowsTheFirstThreeRealtimeSeconds" fullname="FogboundMaze.Tests.WeaponRevisionTests.ScopeUsesFirstPersonViewAndOnlySlowsTheFirstThreeRealtimeSeconds" methodname="ScopeUsesFirstPersonViewAndOnlySlowsTheFirstThreeRealtimeSeconds" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1599234528" result="Passed" start-time="2026-11-14 07:01:40Z" end-time="2026-11-14 07:01:44Z" duration="3.198507" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1049" name="SniperUsesSingleShotBoltCycleAndManualReload" fullname="FogboundMaze.Tests.WeaponRevisionTests.SniperUsesSingleShotBoltCycleAndManualReload" methodname="SniperUsesSingleShotBoltCycleAndManualReload" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="1342023446" result="Passed" start-time="2026-11-14 07:01:44Z" end-time="2026-11-14 07:01:48Z" duration="4.151303" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+            </test-case>
+            <test-case id="1059" name="WeaponRetractsNearWallAndReturnsAfterClearance" fullname="FogboundMaze.Tests.WeaponRevisionTests.WeaponRetractsNearWallAndReturnsAfterClearance" methodname="WeaponRetractsNearWallAndReturnsAfterClearance" classname="FogboundMaze.Tests.WeaponRevisionTests" runstate="Runnable" seed="2054513826" result="Passed" start-time="2026-11-14 07:01:48Z" end-time="2026-11-14 07:01:48Z" duration="0.647640" asserts="0">
+              <properties>
+                <property name="_JOINTYPE" value="UnityCombinatorial" />
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: D:\software\documents\unity_games\projects\learning\MazeEscape\docs\test-results\v1.5.1\PlayMode-final.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

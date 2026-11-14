@@ -118,6 +118,8 @@ namespace FogboundMaze
             world.SetBossSafeLights(false);
             world.SetBossGate(false);
             world.OpenPrincessCage();
+            var animation = princess != null ? princess.GetComponentInChildren<Animation>(true) : null;
+            if (animation != null && animation["Cheer"] != null) animation.CrossFade("Cheer", .12f);
             director.EnterRescue();
             director.Hud.ShowRescuePrompt("THE CAGE IS OPEN. REACH THE PRINCESS.");
         }
@@ -132,16 +134,9 @@ namespace FogboundMaze
             princess = new GameObject("Princess Rescue");
             princess.transform.SetParent(transform, false);
             princess.transform.position = world.PrincessPosition;
-            var model = Instantiate(Resources.Load<GameObject>("Characters/Survivor"), princess.transform);
+            var model = Instantiate(Resources.Load<GameObject>("Characters/Princess"), princess.transform);
             model.name = "Princess Visual";
             model.transform.localScale = Vector3.one * .88f;
-            foreach (var renderer in model.GetComponentsInChildren<Renderer>())
-            {
-                var properties = new MaterialPropertyBlock();
-                properties.SetColor("_BaseColor", new Color(1f, .72f, .86f));
-                properties.SetColor("_Color", new Color(1f, .72f, .86f));
-                renderer.SetPropertyBlock(properties);
-            }
             foreach (var collider in model.GetComponentsInChildren<Collider>()) collider.enabled = false;
             var trigger = princess.AddComponent<SphereCollider>();
             trigger.isTrigger = true;

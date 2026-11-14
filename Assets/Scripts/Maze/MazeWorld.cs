@@ -68,6 +68,7 @@ namespace FogboundMaze
             CreateEntryMarkers();
             CreateExit(level);
             CreateDungeonLights(level);
+            CreateDungeonProps(level);
             CreateLocalFogZones(level);
             if (level.miasma)
             {
@@ -225,6 +226,10 @@ namespace FogboundMaze
             entryLight.color = new Color(0.55f, 0.95f, 0.76f);
             entryLight.range = 7f;
             entryLight.intensity = 0.85f;
+            CreateProp("crates_stacked", center + new Vector3(-1.65f, 0f, -1.7f),
+                Quaternion.Euler(0f, 24f, 0f), Vector3.one * .82f);
+            CreateProp("table_small_decorated_A", center + new Vector3(1.45f, 0f, -1.45f),
+                Quaternion.Euler(0f, -18f, 0f), Vector3.one * .72f);
 
             var triggerObject = new GameObject("Entry Trigger");
             triggerObject.transform.SetParent(generatedRoot, false);
@@ -298,6 +303,9 @@ namespace FogboundMaze
             point.intensity = ExitLightIntensity;
             point.shadows = LightShadows.Hard;
             point.shadowStrength = 0.7f;
+            if (!level.bossLevel)
+                CreateProp("chest_gold", outside + new Vector3(1.15f, 0f, -1.15f),
+                    Quaternion.Euler(0f, -90f, 0f), Vector3.one * .82f);
             if (level.bossLevel) CreateBossArena(outside);
 
             var triggerObject = new GameObject("Exit Trigger");
@@ -344,14 +352,18 @@ namespace FogboundMaze
                 new Vector3(WallThickness * 1.5f, WallHeight, CellSize), trimMaterial);
             BossGate.SetActive(false);
 
-            var pillarMaterial = RuntimeArt.Material("Boss Pillars", new Color(.19f, .22f, .24f), .35f, .3f);
             foreach (var offset in new[]
                      {
                          new Vector3(-4.5f, 0f, -7f), new Vector3(-4.5f, 0f, 7f),
                          new Vector3(6f, 0f, -7f), new Vector3(6f, 0f, 7f)
                      })
-                RuntimeArt.Primitive(PrimitiveType.Cylinder, "Cover Pillar", generatedRoot,
-                    BossArenaCenter + offset + Vector3.up * 2f, new Vector3(1.2f, 2f, 1.2f), pillarMaterial);
+            {
+                var cover = RuntimeArt.Primitive(PrimitiveType.Cylinder, "Cover Pillar Collider", generatedRoot,
+                    BossArenaCenter + offset + Vector3.up * 2f, new Vector3(1.2f, 2f, 1.2f), wallMaterial);
+                cover.GetComponent<Renderer>().enabled = false;
+                CreateProp("pillar_decorated", BossArenaCenter + offset,
+                    Quaternion.identity, Vector3.one * 1.34f);
+            }
 
             var sealMaterial = RuntimeArt.Material("Abyss Seal", new Color(.32f, .05f, .42f), .15f, .65f);
             RuntimeArt.Primitive(PrimitiveType.Cylinder, "Abyss Seal", generatedRoot,
@@ -369,6 +381,16 @@ namespace FogboundMaze
             CreateCageBarrier(PrincessPosition + Vector3.right * 1.3f, new Vector3(.12f, 2.8f, 2.7f));
             CreateCageBarrier(PrincessPosition + Vector3.forward * 1.3f, new Vector3(2.7f, 2.8f, .12f));
             CreateCageBarrier(PrincessPosition + Vector3.back * 1.3f, new Vector3(2.7f, 2.8f, .12f));
+            CreateProp("keyring_hanging", PrincessPosition + new Vector3(-1.38f, 1.15f, 0f),
+                Quaternion.Euler(0f, 0f, 90f), Vector3.one * .85f, false);
+            CreateProp("banner_patternA_red", BossArenaCenter + new Vector3(width * .5f - .2f, 2.3f, -7f),
+                Quaternion.Euler(0f, -90f, 0f), Vector3.one * 1.25f, false);
+            CreateProp("banner_patternA_red", BossArenaCenter + new Vector3(width * .5f - .2f, 2.3f, 7f),
+                Quaternion.Euler(0f, -90f, 0f), Vector3.one * 1.25f, false);
+            CreateProp("sword_shield_broken", BossArenaCenter + new Vector3(8.5f, 0f, 10.5f),
+                Quaternion.Euler(0f, -25f, 0f), Vector3.one * .9f);
+            CreateProp("chest_gold", BossArenaCenter + new Vector3(10.5f, 0f, -10.5f),
+                Quaternion.Euler(0f, -120f, 0f), Vector3.one);
 
             foreach (var offset in new[] { new Vector3(-7f, 0f, -10f), new Vector3(-1f, 0f, 10f), new Vector3(8f, 0f, -9f) })
             {
@@ -421,6 +443,8 @@ namespace FogboundMaze
                 var fixture = new GameObject("Dungeon Ceiling Light");
                 fixture.transform.SetParent(generatedRoot, false);
                 fixture.transform.position = CellToWorld(cell) + Vector3.up * 3.05f;
+                CreateProp("torch_mounted", fixture.transform.position - Vector3.up * .45f,
+                    Quaternion.Euler(0f, (cell.x + cell.y) % 2 == 0 ? 0f : 180f, 0f), Vector3.one * .72f, false);
                 var light = fixture.AddComponent<Light>();
                 light.type = LightType.Point;
                 light.color = color;
@@ -593,6 +617,8 @@ namespace FogboundMaze
             light.color = new Color(1f, 0.78f, 0.35f);
             light.range = 9f;
             light.intensity = 2.8f;
+            CreateProp("candle_triple", position + new Vector3(.28f, .02f, .12f),
+                Quaternion.Euler(0f, 28f, 0f), Vector3.one * .72f);
         }
 
         private void CreateMaterials()
@@ -601,6 +627,43 @@ namespace FogboundMaze
             wallMaterial ??= RuntimeArt.MaterialFromResource("FogboundWall", new Color(0.24f, 0.27f, 0.25f));
             trimMaterial ??= RuntimeArt.MaterialFromResource("FogboundHazard", new Color(0.72f, 0.52f, 0.18f));
             wallBaseMaterial ??= RuntimeArt.Material("Wall Base", new Color(0.42f, 0.48f, 0.43f), 0f, 0.18f);
+            floorMaterial.color = new Color(.72f, .68f, .62f);
+            wallMaterial.color = new Color(.72f, .74f, .72f);
+            trimMaterial.color = new Color(.58f, .38f, .16f);
+            wallBaseMaterial.color = new Color(.32f, .34f, .32f);
+        }
+
+        private void CreateDungeonProps(LevelDefinition level)
+        {
+            var random = new System.Random(level.seed ^ 0xD06E0);
+            var count = Mathf.Clamp(Layout.Width * Layout.Height / 9, 5, 24);
+            var used = new HashSet<Vector2Int>();
+            for (var attempt = 0; attempt < count * 6 && used.Count < count; attempt++)
+            {
+                var cell = new Vector2Int(random.Next(Layout.Width), random.Next(Layout.Height));
+                if (cell == Layout.Start || cell == Layout.Goal || !used.Add(cell)) continue;
+                var position = CellToWorld(cell);
+                var corner = new Vector3(random.Next(2) == 0 ? -1.72f : 1.72f, 0f,
+                    random.Next(2) == 0 ? -1.72f : 1.72f);
+                var roll = random.Next(100);
+                var prop = roll < 38 ? "rubble_large" : roll < 63 ? "barrel_small_stack" : "crates_stacked";
+                var scale = prop == "rubble_large" ? .58f : .68f;
+                CreateProp(prop, position + corner, Quaternion.Euler(0f, random.Next(360), 0f), Vector3.one * scale);
+            }
+        }
+
+        private GameObject CreateProp(string resource, Vector3 position, Quaternion rotation, Vector3 scale,
+            bool isStatic = true)
+        {
+            var prefab = Resources.Load<GameObject>("DungeonProps/" + resource);
+            if (prefab == null) return null;
+            var prop = Instantiate(prefab, generatedRoot);
+            prop.name = "Dungeon Prop " + resource;
+            prop.transform.SetPositionAndRotation(position, rotation);
+            prop.transform.localScale = scale;
+            prop.isStatic = isStatic;
+            foreach (var collider in prop.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
+            return prop;
         }
 
         private void Clear()
