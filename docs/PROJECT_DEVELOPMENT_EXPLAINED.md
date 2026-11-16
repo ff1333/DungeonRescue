@@ -837,6 +837,16 @@ KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许�
 
 **面试讲法：**“美术迭代最初把道具都设为无碰撞，虽然不会堵迷宫，却产生穿模和镜头被模型遮住的问题。我将大块落地装饰缩到格子角落可容纳的尺寸，在根节点增加简化碰撞，同时保留壁挂装饰的纯视觉属性。第一次直接增加碰撞后，第 2 关通路测试发现路线被堵，于是把尺寸约束和十关实体通路回归一起纳入修复。这说明逻辑网格可达不等于三维场景真的可走。”
 
+### 24.9 壁挂火炬悬空的后续修复（2026-11-16，未发布）
+
+**问题与原因：**作者在 Windows 开发包里看到火炬悬在通道上方，没有墙面可供安装。`MazeWorld.CreateDungeonLights()` 原来按随机迷宫格选灯，把 `torch_mounted` 放在格子中心，只交替旋转朝向，没有查墙。
+
+**本次处理：**每个候选格先读取 `MazeLayout` 的封闭边；四面都开放则跳过。用关卡固定 seed 从封闭边中选一面，把火炬根节点放在墙的内侧表面，模型朝向通道；点光源改到火炬前方，不再独立悬在格子中心。火炬继续无碰撞，先前落地障碍的尺寸和 `BoxCollider` 不变。
+
+**调用链与验证：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonLights -> MazeLayout[cell].IsOpen -> CreateProp(torch_mounted)`。`PhysicalMazeRoutes_AreWalkableInAllTenLevels` 逐关检查火炬朝向的是封闭边、距墙面约 2 cm、背后能射线命中实体墙且火炬不占用通道碰撞，再驱动角色走完十关解法与所有开放通道。EditMode `32/32`、PlayMode `58/58`；Windows Development 构建 `0 errors / 0 warnings`。本地可见窗口仅检查首关入口，前方火炬贴在尽头墙面。候选包在 `Builds/Windows/Development/DungeonRescue.exe`，其余关卡光照和模型观感待作者从第一/第三人称试玩确认；GitHub 正式 Release 和 Android APK 尚未包含本轮两项修复。
+
+**面试讲法：**“我在场景道具碰撞回归后，又发现壁挂火炬悬空。根因是视觉装饰按格子中心生成，没有读取迷宫墙的拓扑。我改为先选实际封闭的墙边，再定位火炬与灯光，并把十关摆放和实体通路一起纳入 PlayMode 回归。”
+
 ## 二十五、以后如何使用这份文档
 
 第一次阅读不需要背代码。按顺序做到：
