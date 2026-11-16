@@ -86,6 +86,7 @@ namespace FogboundMaze.Tests
                 yield return null;
                 Physics.SyncTransforms();
                 AssertFloorPropsAreSolid(director.World, level.levelNumber);
+                AssertTorchesAreWallMounted(director.World, level);
                 PlaceController(controller, director.World.StartPosition);
                 var path = MazePathfinder.FindPath(director.World.Layout,
                     director.World.Layout.Start, director.World.Layout.Goal);
@@ -136,6 +137,39 @@ namespace FogboundMaze.Tests
                 checkedCount++;
             }
             Assert.That(checkedCount, Is.GreaterThan(0), $"Level {levelNumber}: no floor props tested");
+        }
+
+        private static void AssertTorchesAreWallMounted(MazeWorld world, LevelDefinition level)
+        {
+            var generated = world.transform.Find("Generated Maze");
+            var torches = 0;
+            var lights = 0;
+            foreach (Transform child in generated)
+            {
+                if (child.name == "Dungeon Wall Light") lights++;
+                if (child.name != "Dungeon Prop torch_mounted") continue;
+                torches++;
+                var cell = world.WorldToCell(child.position);
+                var center = world.CellToWorld(cell);
+                var outward = -child.forward;
+                var direction = Mathf.Abs(outward.x) > .5f
+                    ? (outward.x > 0f ? MazeDirection.East : MazeDirection.West)
+                    : (outward.z > 0f ? MazeDirection.North : MazeDirection.South);
+                Assert.That(world.Layout[cell].IsOpen(direction), Is.False,
+                    $"Level {level.levelNumber}: torch faces an open passage at {cell}");
+                Assert.That(Vector3.Dot(child.position - center, outward),
+                    Is.EqualTo(MazeWorld.CellSize * .5f - .16f).Within(.03f),
+                    $"Level {level.levelNumber}: torch floats away from wall at {cell}");
+                Assert.That(Physics.Raycast(child.position + Vector3.up * .2f, outward,
+                    out var hit, .5f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore)
+                    && hit.collider.name == "Wall", Is.True,
+                    $"Level {level.levelNumber}: torch has no physical wall behind it at {cell}");
+                foreach (var collider in child.GetComponentsInChildren<Collider>(true))
+                    Assert.That(collider.enabled, Is.False, "Wall torch must not block the corridor");
+            }
+            Assert.That(lights, Is.EqualTo(torches), $"Level {level.levelNumber}: wall-light count mismatch");
+            if (level.environment != DungeonCondition.Blackout && level.environment != DungeonCondition.DeepCore)
+                Assert.That(torches, Is.GreaterThan(0), $"Level {level.levelNumber}: no wall torches generated");
         }
 
         [Test]

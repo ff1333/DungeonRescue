@@ -429,6 +429,7 @@ namespace FogboundMaze
             var count = Mathf.Clamp((level.width * level.height) / 18, 4, 11);
             var random = new System.Random(level.seed ^ 0x51A7);
             var used = new HashSet<Vector2Int>();
+            var walls = new List<MazeDirection>(4);
             var color = level.environment switch
             {
                 DungeonCondition.Emergency or DungeonCondition.Lockdown => new Color(1f,.18f,.12f),
@@ -439,12 +440,22 @@ namespace FogboundMaze
             for (var i = 0; i < count * 5 && used.Count < count; i++)
             {
                 var cell = new Vector2Int(random.Next(Layout.Width), random.Next(Layout.Height));
-                if (cell == Layout.Start || cell == Layout.Goal || !used.Add(cell)) continue;
-                var fixture = new GameObject("Dungeon Ceiling Light");
+                if (cell == Layout.Start || cell == Layout.Goal || used.Contains(cell)) continue;
+                walls.Clear();
+                foreach (var direction in MazeDirections.All)
+                    if (!Layout[cell].IsOpen(direction)) walls.Add(direction);
+                if (walls.Count == 0) continue;
+
+                var offset = MazeDirections.ToOffset(walls[random.Next(walls.Count)]);
+                var outward = new Vector3(offset.x, 0f, offset.y);
+                used.Add(cell);
+                var inward = -outward;
+                var mount = CellToWorld(cell) + outward * (CellSize * .5f - WallThickness * .5f - .02f)
+                    + Vector3.up * 2.85f;
+                CreateProp("torch_mounted", mount, Quaternion.LookRotation(inward), Vector3.one * .72f, false);
+                var fixture = new GameObject("Dungeon Wall Light");
                 fixture.transform.SetParent(generatedRoot, false);
-                fixture.transform.position = CellToWorld(cell) + Vector3.up * 3.05f;
-                CreateProp("torch_mounted", fixture.transform.position - Vector3.up * .45f,
-                    Quaternion.Euler(0f, (cell.x + cell.y) % 2 == 0 ? 0f : 180f, 0f), Vector3.one * .72f, false);
+                fixture.transform.position = mount + inward * .35f - Vector3.up * .25f;
                 var light = fixture.AddComponent<Light>();
                 light.type = LightType.Point;
                 light.color = color;
