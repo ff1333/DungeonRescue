@@ -84,8 +84,9 @@ namespace FogboundMaze.Tests
                 director.World.OpenStartGate();
                 // Primitive decorations remove their colliders with deferred Destroy.
                 yield return null;
-                PlaceController(controller, director.World.StartPosition);
                 Physics.SyncTransforms();
+                AssertFloorPropsAreSolid(director.World, level.levelNumber);
+                PlaceController(controller, director.World.StartPosition);
                 var path = MazePathfinder.FindPath(director.World.Layout,
                     director.World.Layout.Start, director.World.Layout.Goal);
                 foreach (var cell in path)
@@ -105,6 +106,36 @@ namespace FogboundMaze.Tests
                     }
                 }
             }
+        }
+
+        private static void AssertFloorPropsAreSolid(MazeWorld world, int levelNumber)
+        {
+            var generated = world.transform.Find("Generated Maze");
+            var checkedCount = 0;
+            foreach (Transform child in generated)
+            {
+                if (!child.name.StartsWith("Dungeon Prop ")) continue;
+                var resource = child.name.Substring("Dungeon Prop ".Length);
+                var solid = resource is "rubble_large" or "barrel_small_stack" or "crates_stacked"
+                    or "table_small_decorated_A" or "chest_gold";
+                if (!solid) continue;
+
+                var box = child.GetComponent<BoxCollider>();
+                Assert.That(box, Is.Not.Null, $"Level {levelNumber}: {resource} has no prop collider");
+                Assert.That(box.enabled && !box.isTrigger, Is.True,
+                    $"Level {levelNumber}: {resource} has no solid collider");
+                var origin = box.bounds.center + Vector3.up * (box.bounds.extents.y + .2f);
+                Assert.That(Physics.Raycast(origin, Vector3.down, out var hit, .4f,
+                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore) && hit.collider == box,
+                    Is.True, $"Level {levelNumber}: {resource} is missing from physics queries");
+                var bounds = box.bounds;
+                var maximumSize = world.IsInside(child.position) ? 1.41f : 1.81f;
+                Assert.That(Mathf.Max(bounds.size.x, bounds.size.z), Is.LessThanOrEqualTo(maximumSize),
+                    $"Level {levelNumber}: {resource} blocks too much of a cell; " +
+                    $"rootScale={child.localScale}, boxSize={box.size}, boxScale={box.transform.lossyScale}");
+                checkedCount++;
+            }
+            Assert.That(checkedCount, Is.GreaterThan(0), $"Level {levelNumber}: no floor props tested");
         }
 
         [Test]
