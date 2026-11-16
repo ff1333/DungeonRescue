@@ -6,6 +6,8 @@
 
 v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/Android `0 errors / 0 warnings` 构建、版本标签和 GitHub Release。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。
 
+**未发布修复候选：**针对落地道具穿模，为大块装饰增加简化碰撞并限制占地；十关实体通路、EditMode `32/32`、PlayMode `58/58` 和 Windows Development 构建已通过。该修复尚未进入 `v1.5.1` Release 或 Android APK，见 [开发记录](docs/devlogs/24-solid-dungeon-props.md)。
+
 - [下载 GitHub Release v1.5.1](https://github.com/ff1333/DungeonRescue/releases/tag/v1.5.1)
 - [历史 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）

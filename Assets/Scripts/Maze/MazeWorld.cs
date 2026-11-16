@@ -429,6 +429,7 @@ namespace FogboundMaze
             var count = Mathf.Clamp((level.width * level.height) / 18, 4, 11);
             var random = new System.Random(level.seed ^ 0x51A7);
             var used = new HashSet<Vector2Int>();
+            var walls = new List<MazeDirection>(4);
             var color = level.environment switch
             {
                 DungeonCondition.Emergency or DungeonCondition.Lockdown => new Color(1f,.18f,.12f),
@@ -439,12 +440,22 @@ namespace FogboundMaze
             for (var i = 0; i < count * 5 && used.Count < count; i++)
             {
                 var cell = new Vector2Int(random.Next(Layout.Width), random.Next(Layout.Height));
-                if (cell == Layout.Start || cell == Layout.Goal || !used.Add(cell)) continue;
-                var fixture = new GameObject("Dungeon Ceiling Light");
+                if (cell == Layout.Start || cell == Layout.Goal || used.Contains(cell)) continue;
+                walls.Clear();
+                foreach (var direction in MazeDirections.All)
+                    if (!Layout[cell].IsOpen(direction)) walls.Add(direction);
+                if (walls.Count == 0) continue;
+
+                var offset = MazeDirections.ToOffset(walls[random.Next(walls.Count)]);
+                var outward = new Vector3(offset.x, 0f, offset.y);
+                used.Add(cell);
+                var inward = -outward;
+                var mount = CellToWorld(cell) + outward * (CellSize * .5f - WallThickness * .5f - .02f)
+                    + Vector3.up * 2.85f;
+                CreateProp("torch_mounted", mount, Quaternion.LookRotation(inward), Vector3.one * .72f, false);
+                var fixture = new GameObject("Dungeon Wall Light");
                 fixture.transform.SetParent(generatedRoot, false);
-                fixture.transform.position = CellToWorld(cell) + Vector3.up * 3.05f;
-                CreateProp("torch_mounted", fixture.transform.position - Vector3.up * .45f,
-                    Quaternion.Euler(0f, (cell.x + cell.y) % 2 == 0 ? 0f : 180f, 0f), Vector3.one * .72f, false);
+                fixture.transform.position = mount + inward * .35f - Vector3.up * .25f;
                 var light = fixture.AddComponent<Light>();
                 light.type = LightType.Point;
                 light.color = color;
@@ -648,12 +659,13 @@ namespace FogboundMaze
                 var roll = random.Next(100);
                 var prop = roll < 38 ? "rubble_large" : roll < 63 ? "barrel_small_stack" : "crates_stacked";
                 var scale = prop == "rubble_large" ? .58f : .68f;
-                CreateProp(prop, position + corner, Quaternion.Euler(0f, random.Next(360), 0f), Vector3.one * scale);
+                CreateProp(prop, position + corner, Quaternion.Euler(0f, random.Next(360), 0f),
+                    Vector3.one * scale, maxHorizontalSize: 1.4f);
             }
         }
 
         private GameObject CreateProp(string resource, Vector3 position, Quaternion rotation, Vector3 scale,
-            bool isStatic = true)
+            bool isStatic = true, float maxHorizontalSize = 0f)
         {
             var prefab = Resources.Load<GameObject>("DungeonProps/" + resource);
             if (prefab == null) return null;
@@ -662,7 +674,58 @@ namespace FogboundMaze
             prop.transform.SetPositionAndRotation(position, rotation);
             prop.transform.localScale = scale;
             prop.isStatic = isStatic;
+            var solid = resource is "rubble_large" or "barrel_small_stack" or "crates_stacked"
+                or "table_small_decorated_A" or "chest_gold";
+            if (solid && maxHorizontalSize <= 0f) maxHorizontalSize = 1.8f;
+            if (maxHorizontalSize > 0f)
+            {
+                var renderers = prop.GetComponentsInChildren<Renderer>(true);
+                if (renderers.Length > 0)
+                {
+                    var bounds = renderers[0].bounds;
+                    for (var i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+                    var width = Mathf.Max(bounds.size.x, bounds.size.z);
+                    if (width > maxHorizontalSize)
+                        prop.transform.localScale *= maxHorizontalSize / width;
+                    bounds = renderers[0].bounds;
+                    for (var i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+                    prop.transform.position += new Vector3(
+                        position.x - bounds.center.x, position.y - bounds.min.y,
+                        position.z - bounds.center.z);
+                }
+            }
             foreach (var collider in prop.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
+            if (solid)
+            {
+                // Keep collision on the prop root so static batching cannot change its child transform.
+                var hasBounds = false;
+                var bounds = new Bounds();
+                foreach (var filter in prop.GetComponentsInChildren<MeshFilter>(true))
+                {
+                    if (filter.sharedMesh == null) continue;
+                    var meshBounds = filter.sharedMesh.bounds;
+                    for (var corner = 0; corner < 8; corner++)
+                    {
+                        var point = meshBounds.center + Vector3.Scale(meshBounds.extents,
+                            new Vector3((corner & 1) == 0 ? -1f : 1f,
+                                (corner & 2) == 0 ? -1f : 1f,
+                                (corner & 4) == 0 ? -1f : 1f));
+                        var local = prop.transform.InverseTransformPoint(filter.transform.TransformPoint(point));
+                        if (!hasBounds)
+                        {
+                            bounds = new Bounds(local, Vector3.zero);
+                            hasBounds = true;
+                        }
+                        else bounds.Encapsulate(local);
+                    }
+                }
+                if (hasBounds)
+                {
+                    var collider = prop.AddComponent<BoxCollider>();
+                    collider.center = bounds.center;
+                    collider.size = bounds.size;
+                }
+            }
             return prop;
         }
 
