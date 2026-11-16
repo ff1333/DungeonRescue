@@ -4,7 +4,7 @@
 
 这是一份持续更新的学习文档，用来解释《勇闯地下城》从主菜单、程序化迷宫、玩家控制、武器战斗到地下城营救和关卡结算的完整开发过程。
 
-当前文档覆盖 `v1.5.1` 发布候选。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验；v1.5 加入十关营救主线、固定 Boss 大厅、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 进一步拆分玩家、公主、普通怪、精英怪和 Boss 的角色模型，并补齐地下城环境装饰。
+当前文档覆盖 `v1.5.2` bug 修复补丁。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验；v1.5 加入十关营救主线、固定 Boss 大厅、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 拆分角色模型并补齐地下城装饰；v1.5.2 修复落地道具穿模和壁挂火炬悬空。
 
 文档末尾已增加 `v1.5.0` 候选版：十关营救叙事、固定 Boss 大厅、三阶段深渊狱长、公主营救结算和 Boss Replay。该版本已完成三轮 EditMode `32/32`、三轮 PlayMode `58/58` 以及 Windows/Android Release 构建；最终 Boss 全流程真人试玩和本次 Android APK 真机回归仍待完成，因此尚未正式发布。
 
@@ -827,7 +827,7 @@ KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许�
 - Boss 直测版只缩短验收路径，正式版仍要求按顺序解锁十关。
 - Android 本轮换模后的最终真机观感、帧率和触控仍属于人工验收边界，不能用自动测试代替。
 
-### 24.8 落地道具穿模的后续修复（2026-11-16，未发布）
+### 24.8 落地道具穿模的后续修复（2026-11-16，v1.5.2）
 
 **问题与原因：**作者在 Windows 版发现碎石遮住玩家视野，角色和怪物能走进模型。`MazeWorld.CreateProp()` 原来会禁用道具及子物体的所有 `Collider`；迷宫墙有碰撞，但新加入的落地装饰没有。只给大模型加完整 `BoxCollider` 又会堵住开放通道，说明视觉尺寸和物理占地必须一起控制。
 
@@ -837,17 +837,17 @@ KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许�
 
 **面试讲法：**“美术迭代最初把道具都设为无碰撞，虽然不会堵迷宫，却产生穿模和镜头被模型遮住的问题。我将大块落地装饰缩到格子角落可容纳的尺寸，在根节点增加简化碰撞，同时保留壁挂装饰的纯视觉属性。第一次直接增加碰撞后，第 2 关通路测试发现路线被堵，于是把尺寸约束和十关实体通路回归一起纳入修复。这说明逻辑网格可达不等于三维场景真的可走。”
 
-### 24.9 壁挂火炬悬空的后续修复（2026-11-16，未发布）
+### 24.9 壁挂火炬悬空的后续修复（2026-11-16，v1.5.2）
 
 **问题与原因：**作者在 Windows 开发包里看到火炬悬在通道上方，没有墙面可供安装。`MazeWorld.CreateDungeonLights()` 原来按随机迷宫格选灯，把 `torch_mounted` 放在格子中心，只交替旋转朝向，没有查墙。
 
 **本次处理：**每个候选格先读取 `MazeLayout` 的封闭边；四面都开放则跳过。用关卡固定 seed 从封闭边中选一面，把火炬根节点放在墙的内侧表面，模型朝向通道；点光源改到火炬前方，不再独立悬在格子中心。火炬继续无碰撞，先前落地障碍的尺寸和 `BoxCollider` 不变。
 
-**调用链与验证：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonLights -> MazeLayout[cell].IsOpen -> CreateProp(torch_mounted)`。`PhysicalMazeRoutes_AreWalkableInAllTenLevels` 逐关检查火炬朝向的是封闭边、距墙面约 2 cm、背后能射线命中实体墙且火炬不占用通道碰撞，再驱动角色走完十关解法与所有开放通道。EditMode `32/32`、PlayMode `58/58`；Windows Development 构建 `0 errors / 0 warnings`。本地可见窗口仅检查首关入口，前方火炬贴在尽头墙面。作者随后确认候选包试玩无问题；没有十关人工逐关或 Android 真机回归的记录。GitHub 正式 Release 和 Android APK 尚未包含本轮两项修复。
+**调用链与验证：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonLights -> MazeLayout[cell].IsOpen -> CreateProp(torch_mounted)`。`PhysicalMazeRoutes_AreWalkableInAllTenLevels` 逐关检查火炬朝向的是封闭边、距墙面约 2 cm、背后能射线命中实体墙且火炬不占用通道碰撞，再驱动角色走完十关解法与所有开放通道。EditMode `32/32`、PlayMode `58/58`；Windows Development 构建 `0 errors / 0 warnings`。本地可见窗口仅检查首关入口，前方火炬贴在尽头墙面。作者随后确认候选包试玩无问题；没有十关人工逐关或 Android 真机回归的记录。v1.5.2 已为 Windows、WebGL、Android 重建正式包，见 `RELEASE_NOTES_v1.5.2.md`。
 
 **面试讲法：**“我在场景道具碰撞回归后，又发现壁挂火炬悬空。根因是视觉装饰按格子中心生成，没有读取迷宫墙的拓扑。我改为先选实际封闭的墙边，再定位火炬与灯光，并把十关摆放和实体通路一起纳入 PlayMode 回归。”
 
-**作者验收：**作者确认本次 Windows Development 候选包试玩无问题；不据此宣称十关均已人工逐关检查或 Android 真机已回归。修复已通过合并提交 `89a7344` 进入 `origin/main`；正式 Release 和 APK 仍是旧包，发布另行处理。
+**作者验收：**作者确认本次 Windows Development 候选包试玩无问题；不据此宣称十关均已人工逐关检查或 Android 真机已回归。修复已通过合并提交 `89a7344` 进入 `origin/main`；v1.5.2 重建三平台正式包并完成自动验证，新 APK 未真机复测。
 
 ## 二十五、以后如何使用这份文档
 

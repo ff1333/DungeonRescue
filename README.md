@@ -2,13 +2,14 @@
 
 使用 Unity 6 与 C# 开发的 3D 地下城营救迷宫作品。玩家同时携带栓动狙击枪和长刀进入程序化生成的地下设施，在局部雾区、断电、污染和具备感知记忆的怪物压力下寻找被囚禁的公主。普通怪物为骷髅仆从，精英怪为重甲骷髅守卫，最终 Boss 为独立骷髅法师。游戏支持第一/第三人称切换、十关顺序解锁、本地进度保存，以及第十关程序化迷宫后连接固定 Boss 大厅的最终营救战。
 
-**当前正式版为 v1.5.1。** v1.4 完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、自适应 HUD、感知记忆、Utility AI 和固定地下城环境；v1.5 加入十关营救主线、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 将玩家、公主、普通怪、精英怪和 Boss 拆成五套独立奇幻角色，并补齐地下城环境装饰。
+**当前正式版为 v1.5.2。** v1.4 完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、自适应 HUD、感知记忆、Utility AI 和固定地下城环境；v1.5 加入十关营救主线、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 完成奇幻角色与地下城装饰；v1.5.2 修复落地道具穿模和壁挂火炬悬空。
 
 v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/Android `0 errors / 0 warnings` 构建、版本标签和 GitHub Release。换模未修改碰撞根节点、对象池、A* 或 Boss 数值。
 
-**未发布修复候选：**针对落地道具穿模，为大块装饰增加简化碰撞并限制占地；十关实体通路、EditMode `32/32`、PlayMode `58/58` 和 Windows Development 构建已通过。该修复尚未进入 `v1.5.1` Release 或 Android APK，见 [开发记录](docs/devlogs/24-solid-dungeon-props.md)。
+**本轮 bug 修复：**为大块落地装饰增加简化碰撞并限制占地，壁挂火炬改为贴实体墙生成；三个平台均重建为 v1.5.2。作者验收过 Windows Development 修复候选包，新 Android APK 与 WebGL 包尚未人工游玩，见 [发布说明](docs/RELEASE_NOTES_v1.5.2.md)和[开发记录](docs/devlogs/24-solid-dungeon-props.md)。
 
-- [下载 GitHub Release v1.5.1](https://github.com/ff1333/DungeonRescue/releases/tag/v1.5.1)
+- [下载 GitHub Release v1.5.2](https://github.com/ff1333/DungeonRescue/releases/tag/v1.5.2)
+- [历史 GitHub Release v1.5.1](https://github.com/ff1333/DungeonRescue/releases/tag/v1.5.1)
 - [历史 GitHub Release v1.4.0](https://github.com/ff1333/DungeonRescue/releases/tag/v1.4.0)
 - [作品集演示视频（v1.3.1 录制）](https://github.com/ff1333/DungeonRescue/releases/download/v1.3.1/MazeEscape-v1.3.1-portfolio-720p.mp4)（中文旁白与字幕，录制时仍使用旧名称，核心流程仍适用）
 - [v1.4.0 发布说明](docs/RELEASE_NOTES_v1.4.0.md)
@@ -17,6 +18,8 @@ v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/And
 - [v1.5.0 最终战验证记录](docs/test-results/v1.5.0/README.md)
 - [v1.5.1 奇幻美术与正式发布说明](docs/RELEASE_NOTES_v1.5.1.md)
 - [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)
+- [v1.5.2 bug 修复说明](docs/RELEASE_NOTES_v1.5.2.md)
+- [v1.5.2 验证记录](docs/test-results/v1.5.2/README.md)
 - [v1.3.1 历史发布说明](docs/RELEASE_NOTES_v1.3.1.md)
 - [v1.3.0 设置与开发记录](docs/13_V1_3_0_SETTINGS.md)
 - [v1.3.0 自动测试、平台构建与验收边界](docs/test-results/v1.3.0/README.md)
@@ -92,6 +95,10 @@ v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/And
 
 ## 当前验证结果
 
+- v1.5.2 EditMode：`32/32 PASS`；PlayMode：`58/58 PASS`
+- v1.5.2 Windows、WebGL、Android Release：均 `0 errors / 0 warnings`；Android `versionName=1.5.2`、`versionCode=14`
+- v1.5.2 人工边界：Windows Development 修复候选包经作者试玩验收；新正式包仅检查主页，WebGL 未浏览器游玩、Android 新 APK 未真机复测
+
 - v1.5.1 EditMode：`32/32 PASS`
 - v1.5.1 PlayMode：`58/58 PASS`
 - v1.5.1 Windows Release：构建成功，`0 errors / 0 warnings`，ZIP `50,418,947` bytes
@@ -100,7 +107,7 @@ v1.5.1 已完成代码合并、EditMode `32/32`、PlayMode `58/58`、Windows/And
 - v1.5.1 Windows 独立 Player：玩家、普通怪、精英怪、Boss、公主、第一人称武器和 Boss 大厅截图均通过视觉检查
 - v1.5.1 人工边界：Windows 最终 Boss 与美术验收通过；改名后的 Android APK 未重复执行多型号、长时间压力与商店审核测试
 
-v1.5.1 自动证据、包体校验和视觉截图见 [v1.5.1 验证记录](docs/test-results/v1.5.1/README.md)。v1.5.0 最终战实现证据和 v1.4.0 武器/AI 迭代证据作为历史记录保留，分别见 [v1.5.0 验证记录](docs/test-results/v1.5.0/README.md)与 [v1.4.0 验证记录](docs/test-results/v1.4.0/README.md)。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
+v1.5.2 自动证据和包体校验见 [v1.5.2 验证记录](docs/test-results/v1.5.2/README.md)。v1.5.1、v1.5.0 和 v1.4.0 的验证记录作为历史保留。自动测试和平台构建不能替代真人手感、Android 真机、长时间压力或商店审核。
 
 ## 项目结构
 
