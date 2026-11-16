@@ -1,16 +1,17 @@
 # Dungeon Rescue / 勇闯地下城文档入口
 
-当前 `v1.5.1` 深渊营救、最终 Boss 与奇幻美术统一发布候选说明：
+当前正式版为 `v1.5.1`；本地另有未发布的落地道具碰撞修复候选：
 
 - `RELEASE_NOTES_v1.5.1.md`：五套角色拆分、地下城道具和当前验证结果；
 - `devlogs/23-v1.5.1-fantasy-art-pass.md`：资源决策、换模接入问题和修复记录；
 - `test-results/v1.5.1/README.md`：EditMode、PlayMode、平台构建与实际 Player 截图；
+- `devlogs/24-solid-dungeon-props.md`：v1.5.1 发布后发现的道具穿模、碰撞修复和未发布验证边界；
 
 - `RELEASE_NOTES_v1.5.0.md`：候选版范围、玩法、自动验证结果与尚未完成的人工门槛；
 - `devlogs/22-v1.5.0-princess-rescue-boss.md`：需求、架构、实现与调研记录；
 - `test-results/v1.5.0/README.md`：三轮 EditMode、三轮 PlayMode、Windows/Android 构建证据与人工边界。
 
-**当前公开正式版为 v1.4.0，v1.5.1 尚未合并或发布。** v1.5.1 继承 v1.5.0 最终战，并完成玩家、公主、怪物、Boss 与场景道具的统一奇幻美术迭代。
+**当前公开正式版为 v1.5.1。** 它继承 v1.5.0 最终战，并完成玩家、公主、怪物、Boss 与场景道具的统一奇幻美术迭代。落地道具碰撞修复尚未进入正式 Release 或 Android APK。
 
 - [v1.3.0 Release 下载](https://github.com/ff1333/DungeonRescue/releases/tag/v1.3.0)
 - [v1.3.0 自动测试、平台构建和真机验收边界](test-results/v1.3.0/README.md)
@@ -29,7 +30,7 @@
 2. `01_ARCHITECTURE.md`：代码模块、运行顺序和关键取舍。
 3. `02_CAMPAIGN_AND_BALANCE.md`：每关迷宫与压力参数。
 4. `03_TESTING.md`：自动测试、实际 Player 烟测和人工测试边界。
-5. `13_V1_3_0_SETTINGS.md` 和 `test-results/v1.3.0/README.md`：当前版本实现、验证和下载边界；`04_BUILD_AND_RELEASE.md` 仅保留首次发布的历史流程。
+5. `RELEASE_NOTES_v1.5.1.md` 和 `test-results/v1.5.1/README.md`：当前正式版范围与验证边界；`04_BUILD_AND_RELEASE.md` 仅保留首次发布的历史流程。
 6. `05_INTERVIEW_TALK.md`：面试时如何用 3-5 分钟讲清项目。
 7. `devlogs/`：从算法基线到发布版本的开发留痕。
 8. `devlogs/04-first-playtest-bugfix.md`：首次试玩反馈、原因、修复和复测证据。

@@ -1,16 +1,16 @@
 # 勇闯地下城完整开发解释
 
-> **仓库展示副本**：集中学习主文档位于本机 `项目学习文档/02_迷宫逃生_完整开发解释.md`。本文件用于 GitHub 阅读，并随主文档同步更新。
+> **命名说明**：最终发布名为《勇闯地下城》/ `Dungeon Rescue`。本地目录和集中学习文件名暂时保留，避免破坏 Unity 路径；GitHub 仓库改名为 `DungeonRescue`。
 
 这是一份持续更新的学习文档，用来解释《勇闯地下城》从主菜单、程序化迷宫、玩家控制、武器战斗到地下城营救和关卡结算的完整开发过程。
 
-当前文档对应 `v1.4.0` 正式发布内容。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验，并完成默认长刀、栓动狙击枪、配镜与拉栓、手动换弹、双手持械、视觉与听觉感知、目标记忆、有限群体警报、Utility AI、固定地下城环境、局部雾区以及近墙和信号灯表现收尾。
+当前文档覆盖 `v1.5.1` 发布候选。v1.4 把武器、HUD、环境主题和敌人感知统一成“地下城探索与生存”体验；v1.5 加入十关营救主线、固定 Boss 大厅、三阶段深渊狱长、公主营救结局和 Boss Replay；v1.5.1 进一步拆分玩家、公主、普通怪、精英怪和 Boss 的角色模型，并补齐地下城环境装饰。
 
 文档末尾已增加 `v1.5.0` 候选版：十关营救叙事、固定 Boss 大厅、三阶段深渊狱长、公主营救结算和 Boss Replay。该版本已完成三轮 EditMode `32/32`、三轮 PlayMode `58/58` 以及 Windows/Android Release 构建；最终 Boss 全流程真人试玩和本次 Android APK 真机回归仍待完成，因此尚未正式发布。
 
 ## 一、先用一句话理解游戏
 
-《勇闯地下城》是一款 3D 地下城探索、战斗与营救游戏：
+《勇闯地下城》是一款 3D 地下城探索与生存游戏：
 
 ```text
 进入开始界面
@@ -641,11 +641,11 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 - 狙击枪与相机补充日志：[`12-v1.4.0-sniper-camera-and-animation.md`](devlogs/12-v1.4.0-sniper-camera-and-animation.md)
 - 移动端开镜与冲刺日志：[`15-v1.4.0-mobile-scope-and-sprint.md`](devlogs/15-v1.4.0-mobile-scope-and-sprint.md)
 - 怪物群体稳定性日志：[`16-v1.4.0-monster-crowd-stability.md`](devlogs/16-v1.4.0-monster-crowd-stability.md)
-- 近距离攻击与刷怪增压日志：[`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)
-- 死亡结算装备遮挡日志：[`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)
-- 靠墙收枪日志：[`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md)
-- 第一人称侧墙与武器比例日志：[`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)
-- 终点与出生灯光日志：[`21-v1.4.0-signal-light-containment.md`](devlogs/21-v1.4.0-signal-light-containment.md)
+- 近距离攻击与刷怪增压日志：仓库 `docs/devlogs/17-v1.4.0-close-combat-and-pacing.md`
+- 死亡结算装备遮挡日志：仓库 `docs/devlogs/18-v1.4.0-defeat-equipment-occlusion.md`
+- 靠墙收枪日志：仓库 `docs/devlogs/19-v1.4.0-weapon-wall-retraction.md`
+- 第一人称侧墙与武器比例日志：仓库 `docs/devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md`
+- 终点与出生灯光日志：仓库 `docs/devlogs/21-v1.4.0-signal-light-containment.md`
 - 发布说明：[`RELEASE_NOTES_v1.4.0.md`](RELEASE_NOTES_v1.4.0.md)
 
 ### 自动验证结果
@@ -682,7 +682,7 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 
 现在追击状态在 `1.34m` 内进入攻击，攻击状态超过 `1.72m` 才退出，使用迟滞避免临界距离逐帧反复切换。`EnemyAgent` 对 `1.2m` 内的其他活跃怪物施加独立分离移动，即使已经停下攻击也会保持间距。`EnemyPerception` 忽略其他怪物的碰撞体，但墙体仍会阻挡视线。
 
-普通怪物命名为“哥布林 / Goblin”，紫色精英命名为“深渊蛮兵 / Abyss Brute”，其他说明统一使用“怪物”。第三方素材包和原始资源路径中的 Zombie 保留，因为它们属于外部资源名称和引用路径。完整记录见 [`16-v1.4.0-monster-crowd-stability.md`](devlogs/16-v1.4.0-monster-crowd-stability.md)。
+普通怪物命名为“哥布林 / Goblin”，紫色精英命名为“深渊蛮兵 / Abyss Brute”，其他说明统一使用“怪物”。第三方素材包和原始资源路径中的 Zombie 保留，因为它们属于外部资源名称和引用路径。完整记录见仓库 `docs/devlogs/16-v1.4.0-monster-crowd-stability.md`。
 
 ### 近距离攻击与关卡增压
 
@@ -690,25 +690,25 @@ v1.4 的较大系统不得脱离参考直接编写。每一步开始前先查看
 
 现在玩家可见且距离不超过 `4.5m` 时，`EnemyAgent` 直接追向玩家实际位置。玩家进入 `2.4m` 后，`EnemyPerception` 不再使用前向视野角淘汰目标，但仍保留墙体遮挡射线，因此怪物不会在玩家面前停下，也不会隔墙攻击。
 
-关卡压力同步提高：第一关上限为 `6`、生成间隔 `4.2s`，之后逐关递增到第十关上限 `18`、间隔 `1.8s`；首次出生预警提前到 `0.8s`。出生点仍避开起点、终点和玩家 `12m` 范围，保留预警，不通过贴脸生成制造虚假难度。完整记录见 [`17-v1.4.0-close-combat-and-pacing.md`](devlogs/17-v1.4.0-close-combat-and-pacing.md)。
+关卡压力同步提高：第一关上限为 `6`、生成间隔 `4.2s`，之后逐关递增到第十关上限 `18`、间隔 `1.8s`；首次出生预警提前到 `0.8s`。出生点仍避开起点、终点和玩家 `12m` 范围，保留预警，不通过贴脸生成制造虚假难度。完整记录见仓库 `docs/devlogs/17-v1.4.0-close-combat-and-pacing.md`。
 
 ### 死亡结算装备遮挡
 
 Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装备与动画的组合问题：背负狙击枪挂在角色胸骨上，死亡动画让胸骨大幅旋转，武器会随骨骼进入第三人称镜头近裁剪范围，视觉上像角色前方突然多出一块板。
 
-现在 `PlayerVisual` 在首次检测到死亡时关闭手持狙击枪、手持长刀、背负狙击枪和背负长刀；`WeaponController` 同时禁止死亡状态显示第一人称武器挂点。重新挑战先恢复生命，再由 `PrepareLoadout` 调用 `Equip` 恢复默认长刀和背负狙击枪。完整记录见 [`18-v1.4.0-defeat-equipment-occlusion.md`](devlogs/18-v1.4.0-defeat-equipment-occlusion.md)。
+现在 `PlayerVisual` 在首次检测到死亡时关闭手持狙击枪、手持长刀、背负狙击枪和背负长刀；`WeaponController` 同时禁止死亡状态显示第一人称武器挂点。重新挑战先恢复生命，再由 `PrepareLoadout` 调用 `Equip` 恢复默认长刀和背负狙击枪。完整记录见仓库 `docs/devlogs/18-v1.4.0-defeat-equipment-occlusion.md`。
 
 ### 靠墙收枪与武器模型防穿墙
 
 攻击判定早已使用射线阻止隔墙伤害，但显示模型仍可能在贴墙时穿入墙面。第三人称由 `WeaponController` 从玩家胸口沿角色朝向执行 `SphereCastNonAlloc`；第一人称和配镜状态改用相机位置与相机朝向，因此身体不转、只转镜头看向侧墙也能得到正确的 `ObstructionAmount`。检测同时忽略玩家自身和怪物，因此近身战不会因为敌人靠近而强制收枪。
 
-第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态，满额后收增加到 `0.75m`。第一人称狙击枪和长刀分别缩放为 `0.78` 和 `0.68`；第三人称手持狙击枪、长刀长度和背负武器也按角色比例下调。第三人称低持双手目标从腰部以下调整到胸前，离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见 [`19-v1.4.0-weapon-wall-retraction.md`](devlogs/19-v1.4.0-weapon-wall-retraction.md) 与 [`20-v1.4.0-camera-obstruction-and-weapon-scale.md`](devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md)。
+第一人称挂点根据遮挡量平滑向后下方移动并旋转为低持姿态，满额后收增加到 `0.75m`。第一人称狙击枪和长刀分别缩放为 `0.78` 和 `0.68`；第三人称手持狙击枪、长刀长度和背负武器也按角色比例下调。第三人称低持双手目标从腰部以下调整到胸前，离墙后遮挡量平滑归零，两套显示均恢复原位。完整记录见仓库 `docs/devlogs/19-v1.4.0-weapon-wall-retraction.md` 与 `docs/devlogs/20-v1.4.0-camera-obstruction-and-weapon-scale.md`。
 
 ### 终点与出生信号灯收敛
 
 终点灯原范围 `10m`、强度 `3`，怪物出生灯原范围 `5/7m`、脉冲最高强度 `4`，而且都没有阴影，因此墙体附近会出现明显绿色或红色漏光。v1.4 最终版把终点灯降到 `4.8m / 0.8`，普通/精英出生灯降到 `2.6m / 3.4m`，脉冲最高 `0.9`；两类灯都启用硬阴影，发光材质同步降亮度。
 
-测试锁定灯光范围、最大强度和阴影模式，防止后续版本把信号灯重新调成隔墙导航。完整记录见 [`21-v1.4.0-signal-light-containment.md`](devlogs/21-v1.4.0-signal-light-containment.md)。
+测试锁定灯光范围、最大强度和阴影模式，防止后续版本把信号灯重新调成隔墙导航。完整记录见仓库 `docs/devlogs/21-v1.4.0-signal-light-containment.md`。
 
 ### 发布验收边界
 
@@ -717,9 +717,11 @@ Android 真机确认怪物追击恢复正常后，死亡结算画面暴露出装
 - EditMode `22/22`、PlayMode `54/54`、Windows/Android Release 构建通过；
 - WebGL 本轮未重建，商店审核、多机型和长时间压力测试不属于本次作品集交付范围。
 
-自动测试能证明规则和回归状态，不能替代真人对最后一版灯光观感、战斗节奏和移动手感的判断。
+自动测试能证明规则和回归状态，不能代替真人对最后一版灯光观感、战斗节奏和移动手感的判断。
 
 ### 面试讲法
+
+当前 Unity 客户端投递版简历将本项目放在第二个 Unity 项目，重点对应四项证据：程序化迷宫、网格 A*、感知/决策/执行分层，以及第一/第三人称双武器和多平台输入。面试时优先讲清为什么复用逻辑网格、为什么拆分 EnemyPerception 与 EnemyDecisionModel，以及自动测试怎样覆盖生成、寻路和战斗规则。
 
 > v1.4 我没有继续把敌人判断堆进 EnemyAgent，而是拆成 NoiseSystem、EnemyPerception、EnemyDecisionModel 和 EnemyAgent 四层。声音系统只广播位置和半径，感知层保存视觉、听觉和最后已知位置，纯逻辑决策层使用可测试的 Utility 分数选择意图，执行层继续复用程序化迷宫 A* 和对象池。武器方面从连射冲锋枪改成 5 发栓动狙击枪，补充单发拉栓、手动换弹、右键配镜、前三秒时间减速、双手 IK 和背负武器；相机眼位回到碰撞胶囊内，解决贴墙穿墙。环境方面删除短局昼夜，改成固定地下城状态和会同步影响敌人视野的局部雾区。
 
@@ -777,7 +779,65 @@ Boss 大厅位于程序化网格以外。如果把房间坐标直接传给 `Worl
 
 正式包继续要求顺序完成十关。为了避免每次回归 Boss 都重复打前九关，构建脚本支持 `FOGBOUND_BOSS_TEST` 条件编译：仅 Boss 验收版第一次启动时把前九关写为完成，第十关仍保持未完成，并提前显示 Boss Replay，允许直接进入 Boss 大厅。Windows 自动烟测断言 `level10Unlocked=true`、`level10Completed=false` 且 `bossReplay=true`。该方案没有修改正式包规则，也没有加入无敌、无限资源或自动击杀 Boss。
 
-## 二十四、以后如何使用这份文档
+## 二十四、v1.5.1 奇幻美术统一与角色身份拆分
+
+### 24.1 为什么不能继续复用同一套模型
+
+v1.5.0 的功能链路已经完整，但玩家和公主共用幸存者模型，Boss 和紫色精英共用重型怪模型，只靠缩放和改色区分。这会让剧情角色没有身份辨识度，也会让最终 Boss 看起来只是“血更多的普通怪”。场景中的墙、地面和柱子也以运行时基础几何体为主，玩法正确但作品集画面缺少地下城层次。
+
+v1.5.1 发布时没有改碰撞根节点、CharacterController、对象池和 Boss 数值，只替换视觉子节点并增加无碰撞装饰。后来发现大块落地道具会与玩家和怪物穿模，见 24.8 节的后续修复。
+
+### 24.2 五套角色怎样分工
+
+- 玩家：KayKit 兜帽冒险者，继续使用狙击枪和双手长刀。
+- 公主：独立法师角色，牢笼打开后播放欢呼动画。
+- 普通怪：骷髅仆从，携带短刃。
+- 精英怪：重甲骷髅守卫，携带战斧和盾牌。
+- Boss：骷髅法师，携带法杖、胸前弱点核心，并随阶段改变材质色调。
+
+`FogboundFantasyArtBuilder` 负责把第三方 FBX 中需要的动画片段重命名为项目已有接口，例如把 `Running_C` 映射成 `Run`、把 `Death_C_Skeletons` 映射成 `Death`。运行时代码仍然调用 `Play("Run")` 或 `Play("Death")`，因此 AI 不需要知道具体素材包的原始片段名称。
+
+### 24.3 为什么武器和碰撞不直接写进模型
+
+玩家、怪物和 Boss 的碰撞体仍在逻辑根节点；模型只是根节点下面的视觉对象。玩家武器由 `PlayerVisual` 根据手部骨骼 `handslot.r` 动态挂接，背负武器挂在胸部骨骼。这样换角色模型时不会同时改变攻击距离、角色半径或墙体碰撞。
+
+新骨骼初次接入后暴露了三个问题：FBX 内置隐藏刀具和项目长刀同名、贴墙收枪方向与旧骨骼不同、Boss 的材质块不能在 MonoBehaviour 字段初始化器中创建。对应修复是删除不用的内置装备节点、显式保存/恢复武器局部姿态并沿玩家前向收枪、把 MaterialPropertyBlock 移到初始化方法创建。
+
+### 24.4 场景如何增加层次而不破坏寻路
+
+迷宫的逻辑墙和地面仍由 `MazeWorld` 生成。v1.5.1 发布时，KayKit Dungeon 的火炬、蜡烛、木箱、木桶、碎石、旗帜、宝箱、钥匙和石柱均作为无碰撞装饰加入；随机装饰使用关卡 seed，因此同一关卡可复现。大块落地道具无碰撞造成的穿模已在 24.8 节修正。
+
+Boss 大厅保留原柱体碰撞作为掩体，但关闭基础柱体的 Renderer，再在同位置放置装饰石柱模型。这样视觉变复杂，掩体尺寸和战斗测试仍保持原规则。
+
+### 24.5 资源许可与作品集表述
+
+KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许可证和集成说明记录在 `Assets/Art/KayKitFantasy/` 与 `THIRD_PARTY_NOTICES.md`。面试时应表述为“完成资源选型、导入配置、动画映射、骨骼挂点、材质和运行时场景集成”，不能说第三方角色模型和动画是自己建模制作的。
+
+### 24.6 面试讲法
+
+> v1.5.1 我没有重写已经稳定的玩法，而是把视觉层和逻辑层分开迭代。原版玩家与公主、精英怪与 Boss 都存在模型复用，身份辨识度不足。我选择统一的 CC0 奇幻资源，把玩家、公主、普通怪、精英怪和 Boss 拆成五套角色预制体，并在编辑器构建器里完成动画片段映射、材质分配和装备挂点。碰撞体、对象池、AI 和 Boss 数值仍留在原逻辑根节点。当时场景装饰只作为无碰撞视觉对象按关卡 seed 生成；后续试玩发现大块道具需要实体碰撞，具体修复见 24.8 节。
+
+### 24.7 最终验证与交付结果
+
+- EditMode：`32/32 PASS`。
+- PlayMode：`58/58 PASS`。
+- Windows 正式版、Android 正式版、Windows Boss 直测版、Android Boss 直测版均为 `0 errors / 0 warnings`。
+- Windows 独立 Player 已分别截图检查玩家/普通怪/精英怪、第一人称狙击枪、Boss 与 Boss 大厅、公主营救阶段。
+- 正式发布附件位于 `Builds/Packages/v1.5.1/`；快速验证最终战的包位于 `Builds/Packages/v1.5.1-boss-test/`。
+- Boss 直测版只缩短验收路径，正式版仍要求按顺序解锁十关。
+- Android 本轮换模后的最终真机观感、帧率和触控仍属于人工验收边界，不能用自动测试代替。
+
+### 24.8 落地道具穿模的后续修复（2026-11-16，未发布）
+
+**问题与原因：**作者在 Windows 版发现碎石遮住玩家视野，角色和怪物能走进模型。`MazeWorld.CreateProp()` 原来会禁用道具及子物体的所有 `Collider`；迷宫墙有碰撞，但新加入的落地装饰没有。只给大模型加完整 `BoxCollider` 又会堵住开放通道，说明视觉尺寸和物理占地必须一起控制。
+
+**本次处理：**`CreateDungeonProps()` 继续把随机装饰放在格子角落，并把其水平占地限制在 1.4m；入口、出口和 Boss 场景的落地道具限制在 1.8m。`CreateProp()` 仅为碎石、木桶、木箱、桌子和宝箱计算模型局部包围盒，在道具根节点挂非 Trigger 的 `BoxCollider`。壁挂火炬、旗帜、钥匙等仍是纯视觉；Boss 厅石柱继续使用原先独立的掩体碰撞。迷宫的 A* 仍在逻辑网格上寻路，装饰物不进入网格；因此必须用真实角色通路测试验证装饰没有堵路。
+
+**验证调用链：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonProps -> CreateProp -> BoxCollider`。PlayMode `PhysicalMazeRoutes_AreWalkableInAllTenLevels` 会逐关核查落地道具碰撞可被物理射线命中，再驱动角色走过十关的通关路径和所有开放通道。EditMode `32/32`、PlayMode 最终 `58/58`；首轮完整 PlayMode 有一项长刀命中测试失败，单项重跑及后续完整测试通过。Windows Development 构建 `0 errors / 0 warnings`，路径为 `Builds/Windows/Development/DungeonRescue.exe`。独立 Player 在隐藏窗口模式运行 120 秒未生成自动截图，进程已结束，因此不能记为画面验证通过。该包不是公开正式包；尚需人工复核第一/第三人称靠近大块装饰时的画面、角色和怪物贴边移动，以及关卡入口和 Boss 大厅。
+
+**面试讲法：**“美术迭代最初把道具都设为无碰撞，虽然不会堵迷宫，却产生穿模和镜头被模型遮住的问题。我将大块落地装饰缩到格子角落可容纳的尺寸，在根节点增加简化碰撞，同时保留壁挂装饰的纯视觉属性。第一次直接增加碰撞后，第 2 关通路测试发现路线被堵，于是把尺寸约束和十关实体通路回归一起纳入修复。这说明逻辑网格可达不等于三维场景真的可走。”
+
+## 二十五、以后如何使用这份文档
 
 第一次阅读不需要背代码。按顺序做到：
 
@@ -789,3 +849,9 @@ Boss 大厅位于程序化网格以外。如果把房间坐标直接传给 `Worl
 6. 能完成一个小需求修改或排错。
 
 能够解释和修改比重复背诵整份文档更重要。
+
+## 二十六、双项目发布口径同步（2026-11-14）
+
+- 本项目中文发布名保持《勇闯地下城》，仓库技术名保持 `MazeEscape`。
+- 配套 2D 项目正式命名为《星舰求生》/ `Starship Survival`。
+- 《星舰求生》`v1.5.0` 已移除太空场景网格，三种玩家可见武器统一命名为脉冲炮台、速射炮台和激光炮台，小首领与最终首领也已换成两种不同舰体轮廓；Windows/Android 候选包均构建成功，当前等待作者人工试玩；两款项目的 GitHub 发布动作仍分别以各自验收记录为准。
