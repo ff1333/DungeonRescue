@@ -847,7 +847,7 @@ KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许�
 
 **面试讲法：**“我在场景道具碰撞回归后，又发现壁挂火炬悬空。根因是视觉装饰按格子中心生成，没有读取迷宫墙的拓扑。我改为先选实际封闭的墙边，再定位火炬与灯光，并把十关摆放和实体通路一起纳入 PlayMode 回归。”
 
-**作者验收：**作者确认本次 Windows Development 候选包试玩无问题；不据此宣称十关均已人工逐关检查或 Android 真机已回归。正式 Release 和 APK 仍是旧包，后续合并与发布另行处理。
+**作者验收：**作者确认本次 Windows Development 候选包试玩无问题；不据此宣称十关均已人工逐关检查或 Android 真机已回归。修复已通过合并提交 `89a7344` 进入 `origin/main`；正式 Release 和 APK 仍是旧包，发布另行处理。
 
 ## 二十五、以后如何使用这份文档
 

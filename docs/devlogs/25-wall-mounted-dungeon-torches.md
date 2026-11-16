@@ -1,9 +1,10 @@
 # 壁挂火炬贴墙摆放
 
 日期：2026-11-16
-状态：作者确认 Windows Development 试玩无问题；尚未合并或发布
+状态：作者确认 Windows Development 试玩无问题；修复已合并推送 `main`，尚未更新正式 Release 或 APK
 
 代码提交：`ea7ed25`（本地分支 `fix/solid-dungeon-props`）
+合并提交：`89a7344`（`origin/main`）
 
 ## 试玩反馈与根因
 
