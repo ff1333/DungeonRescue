@@ -843,9 +843,11 @@ KayKit Adventurers、Skeletons 和 Dungeon Remastered 均为 CC0。源码、许�
 
 **本次处理：**每个候选格先读取 `MazeLayout` 的封闭边；四面都开放则跳过。用关卡固定 seed 从封闭边中选一面，把火炬根节点放在墙的内侧表面，模型朝向通道；点光源改到火炬前方，不再独立悬在格子中心。火炬继续无碰撞，先前落地障碍的尺寸和 `BoxCollider` 不变。
 
-**调用链与验证：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonLights -> MazeLayout[cell].IsOpen -> CreateProp(torch_mounted)`。`PhysicalMazeRoutes_AreWalkableInAllTenLevels` 逐关检查火炬朝向的是封闭边、距墙面约 2 cm、背后能射线命中实体墙且火炬不占用通道碰撞，再驱动角色走完十关解法与所有开放通道。EditMode `32/32`、PlayMode `58/58`；Windows Development 构建 `0 errors / 0 warnings`。本地可见窗口仅检查首关入口，前方火炬贴在尽头墙面。候选包在 `Builds/Windows/Development/DungeonRescue.exe`，其余关卡光照和模型观感待作者从第一/第三人称试玩确认；GitHub 正式 Release 和 Android APK 尚未包含本轮两项修复。
+**调用链与验证：**`GameDirector.LoadLevel -> MazeWorld.Build -> CreateDungeonLights -> MazeLayout[cell].IsOpen -> CreateProp(torch_mounted)`。`PhysicalMazeRoutes_AreWalkableInAllTenLevels` 逐关检查火炬朝向的是封闭边、距墙面约 2 cm、背后能射线命中实体墙且火炬不占用通道碰撞，再驱动角色走完十关解法与所有开放通道。EditMode `32/32`、PlayMode `58/58`；Windows Development 构建 `0 errors / 0 warnings`。本地可见窗口仅检查首关入口，前方火炬贴在尽头墙面。作者随后确认候选包试玩无问题；没有十关人工逐关或 Android 真机回归的记录。GitHub 正式 Release 和 Android APK 尚未包含本轮两项修复。
 
 **面试讲法：**“我在场景道具碰撞回归后，又发现壁挂火炬悬空。根因是视觉装饰按格子中心生成，没有读取迷宫墙的拓扑。我改为先选实际封闭的墙边，再定位火炬与灯光，并把十关摆放和实体通路一起纳入 PlayMode 回归。”
+
+**作者验收：**作者确认本次 Windows Development 候选包试玩无问题；不据此宣称十关均已人工逐关检查或 Android 真机已回归。正式 Release 和 APK 仍是旧包，后续合并与发布另行处理。
 
 ## 二十五、以后如何使用这份文档
 
